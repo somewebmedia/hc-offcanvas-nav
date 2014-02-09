@@ -1,0 +1,280 @@
+
+#menu-trigger {
+    position: absolute;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: none;
+    top: 50%;
+    margin-top: -17px;
+    right: 20px;
+}
+
+#menu-trigger:before {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    width: 30px;
+    height: 4px;
+    background: #34495E;
+    box-shadow: 0 4px transparent, 0 9px #34495E, 0 14px transparent, 0 18px #34495E;
+    content: '';
+}
+
+.mobile-nav {
+	position: fixed !important;
+    display: none;
+}
+
+
+.mobile-nav .menu, .mobile-nav .sub-menu {
+    background: #336ca6;
+}
+
+.mobile-nav li, .mobile-nav .sub-menu li {
+    border-bottom: 1px solid #295685;
+}
+
+.mobile-nav li > a:hover {
+    background: #295685;
+    color: #FFF;
+}
+
+.mobile-nav ul {
+    height: 100%;
+    overflow: scroll;
+    overflow-x: visible;
+    overflow-y: auto;
+}
+
+.mobile-nav, .mobile-nav .menu-wrap {
+    min-width: 240px;
+    max-width: 100%;
+    height: 100%;
+    float: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0;
+    z-index: 9990;
+    -webkit-transform: translate3d(-100%, 0, 0);
+    -ms-transform: translate3d(-100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
+    -webkit-transition: -webkit-transform 0.4s;
+    transition: transform 0.4s;
+}
+
+.mobile-nav .menu-wrap {
+    z-index: 9999;
+    visibility: hidden;
+    -webkit-transition: visibility 0s 0.4s, -webkit-transform 0.4s;
+    transition: visibility 0s 0.4s, transform 0.4s;
+}
+
+.mobile-nav > .menu-wrap {
+    visibility: visible;
+    -webkit-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+.open-menu .mobile-nav {
+    visibility: visible;
+    -webkit-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+
+.mobile-nav li.open > .menu-wrap {
+    visibility: visible;
+    -webkit-transform: translate3d(-40px, 0, 0);
+    -ms-transform: translate3d(-40px, 0, 0);
+    transform: translate3d(-40px, 0, 0);
+    -webkit-transition: -webkit-transform 0.4s;
+    transition: transform 0.4s;
+}
+
+.mobile-nav li, .mobile-nav .sub-menu li {
+    position: relative;
+    float: none;
+    width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.mobile-nav li a, .mobile-nav .sub-menu li a {
+    position: relative;
+    display: block;
+    width: 100%;
+    color: #fff;
+    padding: 13px 17px;
+    font-size: 15px;
+    -webkit-transition: background 0.3s;
+    transition: background 0.3s;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.mobile-nav li.close a, .mobile-nav li.back a {
+	padding: 20px 17px;
+}
+
+.mobile-nav a:hover {
+    text-decoration: none;
+}
+
+.mobile-nav li.parent {
+    position: static;
+}
+
+.mobile-nav li.close span, .mobile-nav li.parent span.next, .mobile-nav li.back span {
+    display: block;
+    width: 45px;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    -webkit-transition: background 0.2s ease;
+}
+
+.mobile-nav span.next {
+    border-left: 1px solid #295685;
+}
+
+body:after, .mobile-nav:after, .mobile-nav .menu-wrap:after {
+    content: '';
+    position: absolute;
+    z-index: 9980;
+    background: rgba(0, 0, 0, 0.5);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    -webkit-transition: visibility 0s ease 0.4s, opacity 0.4s ease;
+    transition: visibility 0s ease 0.4s, opacity 0.4s ease;
+}
+
+body:after {
+    display: none;
+    position: fixed;
+}
+
+.open-menu:after, .mobile-nav.submenu-open:after, .mobile-nav .submenu-open:after, .mobile-nav .menu-wrap.submenu-open:after {
+    visibility: visible;
+    opacity: 1;
+    filter: alpha(opacity=100);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    -webkit-transition-delay: .05s;
+    transition-delay: .05s;
+}
+
+/* Close icon */
+.mobile-nav li.close span:before,
+.mobile-nav li.close span:after {
+	display: block;
+	content: '';
+	position: relative;
+	top: 50%;
+	left: 50%;
+	margin-top: -7px;
+    width: 2px;
+    height: 14px;
+    background: #fff;
+    -webkit-transform:rotate(45deg);
+    -moz-transform:rotate(45deg);
+    -ms-transform:rotate(45deg);
+    -o-transform:rotate(45deg);
+    transform:rotate(45deg);
+}
+
+.mobile-nav li.close span:after {
+    width: 14px;
+    height: 2px;
+    margin-left: -6px;
+    margin-top: -8px;
+}
+
+/* Back icon */
+.mobile-nav li.back span:before,
+.mobile-nav li.back span:after {
+	display: block;
+	content: '';
+	position: relative;
+	top: 50%;
+	left: 50%;
+	margin-top: -8px;
+	width: 2px;
+	height: 10px;
+	background: #fff;
+	-webkit-transform:rotate(45deg);
+	-moz-transform:rotate(45deg);
+	-ms-transform:rotate(45deg);
+	-o-transform:rotate(45deg);
+	transform:rotate(45deg);
+}
+
+.mobile-nav li.back span:after {
+	width: 10px;
+	height: 2px;
+	margin-left: -4px;
+	margin-top: 0px;
+}
+
+/* Next icon */
+.mobile-nav span.next:before,
+.mobile-nav span.next:after {
+	display: block;
+	content: '';
+	position: relative;
+	top: 50%;
+	left: 50%;
+	margin-top: -8px;
+	width: 2px;
+	height: 10px;
+	background: #fff;
+	-webkit-transform:rotate(-45deg);
+	-moz-transform:rotate(-45deg);
+	-ms-transform:rotate(-45deg);
+	-o-transform:rotate(-45deg);
+	transform:rotate(-45deg);
+}
+
+.mobile-nav span.next:after {
+	width: 10px;
+	height: 2px;
+	margin-left: -4px;
+	margin-top: 0px;
+}
+
+/* Old browsers */
+
+.mobile-nav.no-transition, .mobile-nav.no-transition .sub-menu {
+    left: -100%;
+}
+
+.open-menu .mobile-nav.no-transition {
+    left: 0;
+}
+
+.mobile-nav.no-transition li.open > .sub-menu {
+    left: -40px;
+}
+
+/* 768 */
+@media screen and (max-width:980px) {
+    #menu-trigger, .mobile-nav, body:after {
+        display: block;
+    }
+    .hc-menu {
+        display: none;
+    }
+}
