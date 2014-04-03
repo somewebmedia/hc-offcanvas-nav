@@ -1,7 +1,7 @@
 HC-MobileNav
 ===============
 
-> v.1.0
+> v.1.1
 
 
 jQuery plugin for converting menus to mobile navigations.
