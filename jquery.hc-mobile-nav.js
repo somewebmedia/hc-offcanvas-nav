@@ -1,6 +1,6 @@
 // jQuery HC-MobileNav
 // =============
-// Version: 1.0
+// Version: 1.1
 // Copyright: Some Web Media
 // Author: Some Web Guy
 // Author URL: http://twitter.com/some_web_guy
@@ -67,7 +67,6 @@
 				// check for transition support
 				if (!supportTransition) $nav.addClass('no-transition');
 
-
 				// funciton to open menu
 				var _openMenu = function(e){
 					e.stopPropagation();
@@ -119,6 +118,7 @@
 
 				// funciton to close menu
 				var _closeMenu = function(){
+					$('html').removeClass('noscroll');
 					$('body').removeClass('open-menu');
 					$nav.find('li.open').removeClass('open');
 					$nav.find('.submenu-open').removeClass('submenu-open');
@@ -147,7 +147,10 @@
 				$nav.find('li:not(".close"):not(".back")').children('a').click(_closeMenu);
 
 				// add class to body when menu is open
-				$document.on('click', '#menu-trigger', function(){$('body').addClass('open-menu')});
+				$document.on('click', '#menu-trigger', function(){
+					$('html').addClass('noscroll');
+					$('body').addClass('open-menu');
+				});
 
 				// add our class to regular menus so we can hide them
 				$this.addClass('hc-menu');
