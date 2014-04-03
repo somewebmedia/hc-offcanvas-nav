@@ -12,7 +12,10 @@
 
 	var $window = $(window),
 		document = window.document,
-		$document = $(document);
+		$document = $(document),
+		html = document.getElementsByTagName("html")[0],
+		$html = $(html),
+		$body = $(document.body);
 
 	var supportTransition = (function(){
 		var thisBody = document.body || document.documentElement,
@@ -101,7 +104,8 @@
 				// main menu back
 				$nav.find('li.close').first().children('a').click(function(e){
 					e.preventDefault();
-					$('body').removeClass('open-menu');
+					$html.removeClass('noscroll');
+					$body.removeClass('open-menu');
 					$nav.removeAttr('style');
 				});
 
@@ -118,8 +122,8 @@
 
 				// funciton to close menu
 				var _closeMenu = function(){
-					$('html').removeClass('noscroll');
-					$('body').removeClass('open-menu');
+					$html.removeClass('noscroll');
+					$body.removeClass('open-menu');
 					$nav.find('li.open').removeClass('open');
 					$nav.find('.submenu-open').removeClass('submenu-open');
 					// if selected element is <ul>
@@ -138,7 +142,7 @@
 				});
 
 				// insert menu to body
-				$('body').prepend($nav);
+				$body.prepend($nav);
 
 				// on document click close menu
 				$document.on('click', 'body.open-menu', _closeMenu);
@@ -148,8 +152,8 @@
 
 				// add class to body when menu is open
 				$document.on('click', '#menu-trigger', function(){
-					$('html').addClass('noscroll');
-					$('body').addClass('open-menu');
+					$html.addClass('noscroll');
+					$body.addClass('open-menu');
 				});
 
 				// add our class to regular menus so we can hide them
