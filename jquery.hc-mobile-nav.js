@@ -1,6 +1,6 @@
 // jQuery HC-MobileNav
 // =============
-// Version: 1.1
+// Version: 1.2
 // Copyright: Some Web Media
 // Author: Some Web Guy
 // Author URL: http://twitter.com/some_web_guy
@@ -12,10 +12,7 @@
 
 	var $window = $(window),
 		document = window.document,
-		$document = $(document),
-		html = document.getElementsByTagName("html")[0],
-		$html = $(html),
-		$body = $(document.body);
+		$document = $(document);
 
 	var supportTransition = (function(){
 		var thisBody = document.body || document.documentElement,
@@ -30,6 +27,15 @@
 
 			// check if selected element exist in DOM, user doesn't have to worry about that
 			if (this.length == 0) return this;
+
+			// select body document elements
+			var html = document.getElementsByTagName("html")[0],
+				$html = $(html),
+				$body = $(document.body);
+
+			var hasScrollBar = function(){
+				return document.body.scrollHeight > document.body.offsetHeight;
+			};
 
 			// create mobileNav object to store data
 			if (!this.data('mobileNav')) {
@@ -53,13 +59,20 @@
 			return this.each(function() {
 
 				var $this = $(this),
-					settings = $this.data('mobileNav').settings;
+					settings = $this.data('mobileNav').settings,
+					$nav,
+					open = false;
 
 				// insert trigger
 				$this.after('<a id="menu-trigger">');
 
 				// clone menu
-				var $nav = $this.clone().click(function(e){e.stopPropagation()});
+				if ($this.is('ul')) {
+					var $tmp_nav = $this.clone().click(function(e){e.stopPropagation()});
+					$nav = $tmp_nav.wrap('<nav></nav>').parent();
+				} else {
+					$nav = $this.clone().click(function(e){e.stopPropagation()});
+				}
 
 				// remove id's
 				$nav.removeAttr('id').addClass('mobile-nav').find('*').removeAttr('id');
@@ -71,9 +84,9 @@
 				if (!supportTransition) $nav.addClass('no-transition');
 
 				// funciton to open menu
-				var _openMenu = function(e){
-					e.stopPropagation();
-					e.preventDefault();
+				var _openSubMenu = function(event){
+					event.stopPropagation();
+					event.preventDefault();
 
 					var $this = $(this),
 						level = $this.parents('li').length,
@@ -89,31 +102,20 @@
 				};
 
 				// insert next level links
-				$('<span class="next">').click(_openMenu).appendTo($nav.find('li.parent').children('a'));
+				$('<span class="next">').click(_openSubMenu).appendTo($nav.find('li.parent').children('a'));
 
 				// insert back links
 				var $ul = $nav.find('ul');
-				if ($nav.is('ul')) {// if selected element is <ul>
-					$ul.prepend('<li class="menu-item back"><a href="#">' + settings.back + '<span /></a></li>');
-					$nav.prepend('<li class="menu-item close"><a href="#">' + settings.close + '<span /></a></li>');
-				} else {
-					$ul.not(':first').prepend('<li class="menu-item back"><a href="#">' + settings.back + '<span /></a></li>');
-					$ul.first().prepend('<li class="menu-item close"><a href="#">' + settings.close + '<span /></a></li>');
-				}
-
-				// main menu back
-				$nav.find('li.close').first().children('a').click(function(e){
-					e.preventDefault();
-					$html.removeClass('noscroll');
-					$body.removeClass('open-menu');
-					$nav.removeAttr('style');
-				});
+				$ul.not(':first').prepend('<li class="menu-item back"><a href="#">' + settings.back + '<span /></a></li>');
+				$ul.first().prepend('<li class="menu-item close"><a href="#">' + settings.close + '<span /></a></li>');
 
 				// funciton to animate menu
 				var _setTransform = function(val){
 					if (supportTransition) {
 						$nav[0].style.WebkitTransform = 'translate3d(' + val + 'px,0,0)';
 						$nav[0].style.MozTransform = 'translate3d(' + val + 'px,0,0)';
+						$nav[0].style.MsTransform = 'translate3d(' + val + 'px,0,0)';
+						$nav[0].style.OTransform = 'translate3d(' + val + 'px,0,0)';
 						$nav[0].style.transform = 'translate3d(' + val + 'px,0,0)';
 					} else {
 						$nav.css({left:val});
@@ -121,38 +123,64 @@
 				};
 
 				// funciton to close menu
-				var _closeMenu = function(){
-					$html.removeClass('noscroll');
+				var _closeMenu = function(event){
+					event.preventDefault();
+					open = false;
+					$html.removeClass('notouchmove yscroll');
 					$body.removeClass('open-menu');
 					$nav.find('li.open').removeClass('open');
 					$nav.find('.submenu-open').removeClass('submenu-open');
-					// if selected element is <ul>
-					if ($nav.is('ul')) $nav.removeClass('submenu-open');
 					$nav.removeAttr('style');
 				};
 
 				// submenus back
-				$nav.find('li.back').children('a').click(function(e){
-					e.preventDefault();
+				var _goBack = function(event){
+					event.preventDefault();
 					var $this = $(this);
 					$this.closest('li.open').removeClass('open');
 					$this.closest('.submenu-open').removeClass('submenu-open');
 					var level = $(this).parents('li').length - 2;
 					_setTransform(level * 40);
-				});
+				};
+				$nav.find('li.back').children('a').click(_goBack);
 
 				// insert menu to body
 				$body.prepend($nav);
 
+				/*
+				// disable scroll when opened
+				var disableScroll = function(event){
+					if (open && event.target.tagName == 'BODY') {
+						event.stopPropagation();
+						event.preventDefault();
+					}
+				};
+				$document.on('mousewheel DOMMouseScroll', disableScroll);
+
+				// allow scrolling on the menu
+				var menuScroll = function(event){
+					var original = event.originalEvent,
+						delta = original.wheelDelta || -original.detail;
+					this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+					event.preventDefault();
+				};
+				$ul.on('mousewheel DOMMouseScroll', menuScroll);
+				*/
+
 				// on document click close menu
 				$document.on('click', 'body.open-menu', _closeMenu);
-
+				// close button
+				$nav.find('li.close').first().children('a').click(_closeMenu);
 				// when clicked links close menu (in case of anchors)
 				$nav.find('li:not(".close"):not(".back")').children('a').click(_closeMenu);
 
 				// add class to body when menu is open
 				$document.on('click', '#menu-trigger', function(){
-					$html.addClass('noscroll');
+					open = true;
+					if (hasScrollBar()) {
+						$html.addClass('yscroll');
+					}
+					$html.addClass('notouchmove');
 					$body.addClass('open-menu');
 				});
 
