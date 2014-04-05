@@ -171,12 +171,12 @@
 	border-left: 1px solid #295685;
 }
 
-html.notouchmove {
+body.notouchmove {
 	position: fixed;
 	width: 100%;
 }
 
-html.yscroll {
+body.yscroll {
 	overflow-y: scroll;
 }
 

@@ -126,8 +126,7 @@
 				var _closeMenu = function(event){
 					event.preventDefault();
 					open = false;
-					$html.removeClass('notouchmove yscroll');
-					$body.removeClass('open-menu');
+					$body.removeClass('open-menu notouchmove yscroll');
 					$nav.find('li.open').removeClass('open');
 					$nav.find('.submenu-open').removeClass('submenu-open');
 					$nav.removeAttr('style');
@@ -178,10 +177,9 @@
 				$document.on('click', '#menu-trigger', function(){
 					open = true;
 					if (hasScrollBar()) {
-						$html.addClass('yscroll');
+						$body.addClass('yscroll');
 					}
-					$html.addClass('notouchmove');
-					$body.addClass('open-menu');
+					$body.addClass('open-menu notouchmove');
 				});
 
 				// add our class to regular menus so we can hide them
