@@ -1,6 +1,6 @@
 // jQuery HC-MobileNav
 // =============
-// Version: 1.2
+// Version: 1.2.1
 // Copyright: Some Web Media
 // Author: Some Web Guy
 // Author URL: http://twitter.com/some_web_guy
@@ -124,7 +124,6 @@
 
 				// funciton to close menu
 				var _closeMenu = function(event){
-					event.preventDefault();
 					open = false;
 					$body.removeClass('open-menu notouchmove yscroll');
 					$nav.find('li.open').removeClass('open');
