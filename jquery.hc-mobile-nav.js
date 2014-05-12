@@ -1,6 +1,6 @@
 // jQuery HC-MobileNav
 // =============
-// Version: 1.2.1
+// Version: 1.2.2
 // Copyright: Some Web Media
 // Author: Some Web Guy
 // Author URL: http://twitter.com/some_web_guy
@@ -102,7 +102,9 @@
 				};
 
 				// insert next level links
-				$('<span class="next">').click(_openSubMenu).appendTo($nav.find('li.parent').children('a'));
+				$('<span class="next">').click(_openSubMenu).appendTo($nav.find('li').filter(function(){
+					return $(this).find('ul').length > 0;
+				}).addClass('parent').children('a'));
 
 				// insert back links
 				var $ul = $nav.find('ul');
@@ -125,7 +127,8 @@
 				// funciton to close menu
 				var _closeMenu = function(event){
 					open = false;
-					$body.removeClass('open-menu notouchmove yscroll');
+					$html.removeClass('yscroll');
+					$body.removeClass('open-menu notouchmove');
 					$nav.find('li.open').removeClass('open');
 					$nav.find('.submenu-open').removeClass('submenu-open');
 					$nav.removeAttr('style');
@@ -176,7 +179,7 @@
 				$document.on('click', '#menu-trigger', function(){
 					open = true;
 					if (hasScrollBar()) {
-						$body.addClass('yscroll');
+						$html.addClass('yscroll');
 					}
 					$body.addClass('open-menu notouchmove');
 				});

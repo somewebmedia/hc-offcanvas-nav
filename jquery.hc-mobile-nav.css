@@ -176,7 +176,7 @@ body.notouchmove {
 	width: 100%;
 }
 
-body.yscroll {
+.yscroll {
 	overflow-y: scroll;
 }
 
