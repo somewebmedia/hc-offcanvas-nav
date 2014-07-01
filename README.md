@@ -1,8 +1,6 @@
 HC-MobileNav
 ===============
 
-> v.1.2.2
-
 
 jQuery plugin for converting menus to mobile navigations.
 
@@ -15,7 +13,9 @@ jQuery plugin for converting menus to mobile navigations.
 <script src="/path/to/jquery.hc-mobile-nav.js"></script>
 <script>
 	jQuery(document).ready(function($){
-		$('#main-nav').hcMobileNav();
+		$('#main-nav').hcMobileNav({
+			maxWidth: 730
+		});
 	});
 </script>
 ```
@@ -45,3 +45,26 @@ jQuery plugin for converting menus to mobile navigations.
 	</ul>
 </nav>
 ```
+
+## Options
+
+<table>
+	<tr>
+		<th>Property</th>
+		<th>Default</th>
+		<th>Type</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td><strong>maxWidth</strong></td>
+		<td>980</td>
+		<td>int</td>
+		<td>Resolution on which to show the mobile menu, and hide the regular.</td>
+	</tr>
+	<tr>
+		<td><strong>labels</strong></td>
+		<td>{close: 'Close', next: 'Next'}</td>
+		<td>object</td>
+		<td>You can cusomize your own text for close and next links.</td>
+	</tr>
+</table>
