@@ -1,6 +1,6 @@
 // jQuery HC-MobileNav
 // =============
-// Version: 1.2.2
+// Version: 1.2.3
 // Copyright: Some Web Media
 // Author: Some Web Guy
 // Author URL: http://twitter.com/some_web_guy
@@ -20,6 +20,22 @@
 			support = thisStyle.transition !== undefined || thisStyle.WebkitTransition !== undefined || thisStyle.MozTransition !== undefined || thisStyle.MsTransition !== undefined || thisStyle.OTransition !== undefined;
 		return support;
 	})();
+
+	$.fn.extend({
+		printStyle: function(css, id, prepend) {
+			var $this = $(this),
+				$style = $this.find('style#'+id);
+			if ($style.length > 0) {
+				$style.html(css);
+			} else {
+				if (prepend) {
+					$('<style id="'+id+'">' + css + '</style>').prependTo($this);
+				} else {
+					$('<style id="'+id+'">' + css + '</style>').appendTo($this);
+				}
+			}
+		}
+	});
 
 	$.fn.extend({
 
@@ -47,8 +63,11 @@
 				if (!$this.data('mobileNav').settings) {
 					// init our settings and attach to element
 					$this.data('mobileNav', {settings: $.extend({
-						close: 'Close',
-						back: 'Back'
+						maxWidth: 980,
+						labels: {
+							close: 'Close',
+							back: 'Back'
+						}
 					}, options || {})});
 				} else {
 					// update existing settings
@@ -108,8 +127,8 @@
 
 				// insert back links
 				var $ul = $nav.find('ul');
-				$ul.not(':first').prepend('<li class="menu-item back"><a href="#">' + settings.back + '<span /></a></li>');
-				$ul.first().prepend('<li class="menu-item close"><a href="#">' + settings.close + '<span /></a></li>');
+				$ul.not(':first').prepend('<li class="menu-item back"><a href="#">' + settings.labels.back + '<span /></a></li>');
+				$ul.first().prepend('<li class="menu-item close"><a href="#">' + settings.labels.close + '<span /></a></li>');
 
 				// funciton to animate menu
 				var _setTransform = function(val){
@@ -186,6 +205,14 @@
 
 				// add our class to regular menus so we can hide them
 				$this.addClass('hc-menu');
+
+
+				var css = '@media screen and (max-width:' + settings.maxWidth + 'px) {';
+						css += '#menu-trigger, .mobile-nav, body:after { display: block; }';
+						css += '.hc-menu { display: none; }';
+					css += '}';
+
+				$('head').printStyle(css, 'hcMobileNav');
 			});
 		}
 

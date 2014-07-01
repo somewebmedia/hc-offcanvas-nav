@@ -30,7 +30,7 @@
 }
 
 .mobile-nav li, .mobile-nav .sub-menu li {
-	border-bottom: 1px solid #295685;
+	border-bottom: 1px solid rgba(0,0,0,.1);
 }
 
 .mobile-nav li > a:hover {
@@ -168,7 +168,7 @@
 }
 
 .mobile-nav span.next {
-	border-left: 1px solid #295685;
+	border-left: 1px solid rgba(0,0,0,.1);
 }
 
 body.notouchmove {
@@ -297,14 +297,4 @@ body:after {
 
 .mobile-nav.no-transition li.open > .sub-menu {
 	left: -40px;
-}
-
-/* 768 */
-@media screen and (max-width:980px) {
-	#menu-trigger, .mobile-nav, body:after {
-		display: block;
-	}
-	.hc-menu {
-		display: none;
-	}
 }
