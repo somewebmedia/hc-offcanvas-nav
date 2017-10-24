@@ -48,26 +48,7 @@ jQuery plugin for converting menus to mobile navigations.
 
 ## Options
 
-<table>
-  <tr>
-    <th>Property</th>
-    <th>Default</th>
-    <th>Type</th>
-    <th>Description</th>
-  </tr>
-  <tr>
-    <td><strong>maxWidth</strong></td>
-    <td>1024</td>
-    <td>int</td>
-    <td>Resolution below which to display the mobile menu, and hide the regular.</td>
-  </tr>
-  <tr>
-    <td><strong>labels</strong></td>
-    <td><pre>{
-  close: 'Close',
-  back: 'Back'
-}</pre></td>
-    <td>object</td>
-    <td>Close and back links labels.</td>
-  </tr>
-</table>
+| Property | Default | Type | Description |
+|-----------|---------|-------|-------------|
+| *`maxWidth`* | 1024 | int | Resolution below which to display the mobile menu, and hide the regular. |
+| *`labels`* | <pre>{<br>  close: 'Close',<br>  back: 'Back'<br>}</pre> | object | Close and back links labels. |
