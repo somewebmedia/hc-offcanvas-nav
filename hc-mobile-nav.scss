@@ -1,0 +1,262 @@
+$hc_mobile_nav_trigger_color: #34495E;
+$hc_mobile_nav_color: #336ca6;
+
+#menu-trigger {
+  position: absolute;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: none;
+  top: 50%;
+  margin-top: -17px;
+  right: 20px;
+
+  &::before {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    width: 30px;
+    height: 4px;
+    background: $hc_mobile_nav_trigger_color;
+    box-shadow: 0 4px transparent, 0 9px $hc_mobile_nav_trigger_color, 0 14px transparent, 0 18px $hc_mobile_nav_trigger_color;
+    content: '';
+  }
+}
+
+.hc-mobile-nav {
+  position: fixed !important;
+  display: none;
+
+  &,
+  .menu-wrap {
+    min-width: 240px;
+    max-width: 100%;
+    height: 100%;
+    float: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0;
+    z-index: 9990;
+    transform: translate(-100%, 0);
+    transition: transform .4s;
+  }
+
+  .menu-wrap {
+    z-index: 9999;
+    visibility: hidden;
+    transition: visibility 0s .4s, transform .4s;
+  }
+
+  & > .menu-wrap {
+    visibility: visible;
+    transform: translate(0, 0);
+  }
+
+  .menu,
+  .sub-menu {
+    background: $hc_mobile_nav_color;
+  }
+
+  a {
+    &:hover {
+      text-decoration: none;
+      background: rgba(0, 0, 0, .1);
+    }
+  }
+
+  ul {
+    height: 100%;
+    overflow: scroll;
+    overflow-x: visible;
+    overflow-y: auto;
+  }
+
+  li {
+
+    &.open {
+      & > .menu-wrap {
+        visibility: visible;
+        transform: translate(-40px, 0);
+        transition: transform .4s;
+      }
+    }
+
+    &.parent {
+      position: static;
+    }
+
+    &.close,
+    &.back {
+      a {
+        padding: 20px 17px;
+      }
+    }
+
+    &.close span,
+    &.parent span.next,
+    &.back span {
+      display: block;
+      width: 45px;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    &.close {
+      /* Close icon */
+      span {
+        &::before,
+        &::after {
+          display: block;
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 6px;
+          height: 6px;
+          margin-top: -3px;
+          border-top: 2px solid #fff;
+          border-left: 2px solid #fff;
+        }
+
+        &::before {
+          margin-left: -9px;
+          transform: rotate(135deg);
+        }
+
+        &::after {
+          transform: rotate(-45deg);
+        }
+      }
+    }
+  }
+
+  li,
+  .sub-menu li {
+    position: relative;
+    float: none;
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: 1px solid rgba(0, 0, 0, .1);
+
+    a {
+      position: relative;
+      display: block;
+      width: 100%;
+      color: #fff;
+      padding: 13px 17px;
+      font-size: 15px;
+      box-sizing: border-box;
+      transition: background .3s;
+    }
+  }
+
+  span.next {
+    border-left: 1px solid rgba(0,0,0,.1);
+  }
+
+  /* Next and Back icons */
+  span.next,
+  li.back span {
+    &::before {
+      display: block;
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      margin-left: -8px;
+      margin-top: -5px;
+      border-top: 2px solid #fff;
+      border-left: 2px solid #fff;
+    }
+  }
+
+  span.next {
+    &::before {
+      transform: rotate(135deg);
+    }
+  }
+
+  li.back span {
+    &::before {
+      transform: rotate(-45deg);
+    }
+  }
+
+  /* Old browsers */
+  &.no-transition {
+    &,
+    .sub-menu {
+      left: -100%;
+    }
+
+    .open-menu & {
+      left: 0;
+    }
+
+    li.open > .sub-menu {
+      left: -40px;
+    }
+  }
+}
+
+html.yscroll {
+  overflow-y: scroll;
+}
+
+body {
+  &::after {
+    display: none;
+    position: fixed;
+  }
+
+  &.open-menu {
+    .hc-mobile-nav {
+      visibility: visible;
+      transform: translate(0, 0);
+    }
+  }
+
+  &.notouchmove {
+    position: fixed;
+    width: 100%;
+  }
+}
+
+body,
+.hc-mobile-nav,
+.hc-mobile-nav .menu-wrap {
+  &::after {
+    content: '';
+    position: absolute;
+    z-index: 9980;
+    background: rgba(0, 0, 0, .5);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s ease .4s, opacity .4s ease;
+  }
+}
+
+body.open-menu,
+.mobile-nav.submenu-open,
+.mobile-nav .submenu-open,
+.mobile-nav .menu-wrap.submenu-open {
+  &::after {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: .05s;
+  }
+}
