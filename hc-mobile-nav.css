@@ -1,5 +1,5 @@
-#menu-trigger { position: absolute; cursor: pointer; width: 32px; height: 32px; display: none; top: 50%; margin-top: -17px; right: 20px; }
-#menu-trigger::before { position: absolute; top: 2px; left: 0; width: 30px; height: 4px; background: #34495E; box-shadow: 0 4px transparent, 0 9px #34495E, 0 14px transparent, 0 18px #34495E; content: ''; }
+#menu-trigger { position: absolute; cursor: pointer; width: 30px; height: 30px; display: none; top: 50%; margin-top: -17px; right: 20px; }
+#menu-trigger::before { position: absolute; top: 4px; left: 0; width: 100%; height: 4px; background: #34495E; box-shadow: 0 4px transparent, 0 9px #34495E, 0 14px transparent, 0 18px #34495E; content: ''; }
 .hc-mobile-nav { position: fixed !important; display: none; }
 .hc-mobile-nav, .hc-mobile-nav .menu-wrap { min-width: 240px; max-width: 100%; height: 100%; float: none; position: absolute; left: 0; top: 0; margin: 0; z-index: 9990; -webkit-transform: translate(-100%, 0); -ms-transform: translate(-100%, 0); transform: translate(-100%, 0); -webkit-transition: -webkit-transform .4s; transition: transform .4s; }
 .hc-mobile-nav .menu-wrap { z-index: 9999; visibility: hidden; -webkit-transition: visibility 0s .4s, -webkit-transform .4s; transition: visibility 0s .4s, transform .4s; }
