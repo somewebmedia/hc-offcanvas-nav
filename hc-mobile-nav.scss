@@ -120,7 +120,6 @@ $hc_mobile_nav_color: #336ca6;
     }
 
     &.close {
-      /* Close icon */
       span {
         &::before,
         &::after {
@@ -149,10 +148,9 @@ $hc_mobile_nav_color: #336ca6;
   }
 
   span.next {
-    border-left: 1px solid rgba(0,0,0,.1);
+    border-left: 1px solid rgba(0, 0, 0, .1);
   }
 
-  /* Next and Back icons */
   span.next,
   li.back span {
     &::before {
@@ -182,7 +180,6 @@ $hc_mobile_nav_color: #336ca6;
     }
   }
 
-  /* Old browsers */
   &.no-transition {
     &,
     ul ul {

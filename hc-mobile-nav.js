@@ -111,7 +111,7 @@
         var $trigger = $('<a id="menu-trigger">');
         var $ul = $nav.find('ul');
 
-        $nav.on('click touchend', function(e) {
+        $nav.on('click touchstart', function(e) {
           // prevent menu close on self click
           e.stopPropagation();
         })
@@ -128,7 +128,26 @@
           $nav.addClass('no-transition');
         }
 
-        // funciton to open nested menus
+        // open main menu
+        var openMenu = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          var top = $html.scrollTop() || $body.scrollTop();
+
+          open = true;
+          $body.addClass('open-menu notouchmove');
+
+          if (hasScrollBar()) {
+            $html.addClass('yscroll');
+          }
+
+          if (top) {
+            $body.css('top', -top);
+          }
+        };
+
+        // open nested menus
         var openSubMenu = function(e) {
           e.stopPropagation();
           e.preventDefault();
@@ -150,6 +169,34 @@
           return false;
         };
 
+        // close menu
+        var closeMenu = function() {
+          var top = parseInt($body.css('top'));
+
+          open = false;
+          $html.removeClass('yscroll');
+          $body.removeClass('open-menu notouchmove');
+          $nav.find('li.open').removeClass('open');
+          $nav.find('.submenu-open').removeClass('submenu-open');
+          $nav.removeAttr('style');
+
+          if (top) {
+            $body.css('top', '').scrollTop(-top);
+            $html.scrollTop(-top);
+          }
+        };
+
+        // submenus back
+        var goBack = function(e) {
+          var $this = $(this);
+          var level = $this.parents('li').length - 2;
+
+          e.preventDefault();
+          $this.closest('li.open').removeClass('open');
+          $this.closest('.submenu-open').removeClass('submenu-open');
+          setTransform($nav, level * 40);
+        };
+
         // insert next level links
         $('<span class="next">').click(openSubMenu)
           .appendTo($nav.find('li').filter(function() {
@@ -160,59 +207,23 @@
         $ul.not(':first').prepend('<li class="menu-item back"><a href="#">' + settings.labels.back + '<span></span></a></li>');
         $ul.first().prepend('<li class="menu-item close"><a href="#">' + settings.labels.close + '<span></span></a></li>');
 
-        // funciton to close menu
-        var closeMenu = function() {
-          open = false;
-          $html.removeClass('yscroll');
-          $body.removeClass('open-menu notouchmove');
-          $nav.find('li.open').removeClass('open');
-          $nav.find('.submenu-open').removeClass('submenu-open');
-          $nav.removeAttr('style');
-        };
-
-        // submenus back
-        var goBack = function(e) {
-          var $this = $(this);
-          var level = $(this).parents('li').length - 2;
-
-          e.preventDefault();
-          $this.closest('li.open').removeClass('open');
-          $this.closest('.submenu-open').removeClass('submenu-open');
-
-          setTransform($nav, level * 40);
-        };
-
         // insert menu to body
         $body.prepend($nav);
 
-        // close menu on body click
-        $document.on('click touchend', 'body.open-menu', closeMenu);
-
         // insert menu trigger link
-        $this.after($trigger);
+        $this.addClass('hc-nav').after($trigger);
+
+        // open menu
+        $trigger.on('click', openMenu);
+
+        // close menu on body click
+        $document.on('click touchstart', 'body.open-menu', closeMenu);
 
         // back links
         $nav.find('li.back').children('a').click(goBack);
 
         // when menu links clicked close menu (in case of #anchors)
         $nav.find('li:not(".back")').children('a').click(closeMenu);
-
-        // add class to body when menu is open
-        $trigger.on('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-
-          open = true;
-
-          if (hasScrollBar()) {
-            $html.addClass('yscroll');
-          }
-
-          $body.addClass('open-menu notouchmove');
-        });
-
-        // add our class to regular menus so we can hide them
-        $this.addClass('hc-nav');
 
         // insert style
         var css = '@media screen and (max-width:' + (settings.maxWidth - 1) + 'px) { ' +
