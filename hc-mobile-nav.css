@@ -1,30 +1,31 @@
 #menu-trigger { position: absolute; cursor: pointer; width: 30px; height: 30px; display: none; top: 50%; margin-top: -17px; right: 20px; }
 #menu-trigger::before { position: absolute; top: 4px; left: 0; width: 100%; height: 4px; background: #34495E; box-shadow: 0 4px transparent, 0 9px #34495E, 0 14px transparent, 0 18px #34495E; content: ''; }
 .hc-mobile-nav { position: fixed !important; display: none; }
-.hc-mobile-nav, .hc-mobile-nav .menu-wrap { min-width: 240px; max-width: 100%; height: 100%; float: none; position: absolute; left: 0; top: 0; margin: 0; z-index: 9990; transform: translate(-100%, 0); transition: transform .4s; }
-.hc-mobile-nav .menu-wrap { z-index: 9999; visibility: hidden; transition: visibility 0s .4s, transform .4s; }
-.hc-mobile-nav > .menu-wrap { visibility: visible; transform: translate(0, 0); }
+.hc-mobile-nav, .hc-mobile-nav .menu-wrap { min-width: 240px; max-width: 100%; height: 100%; float: none; position: absolute; left: 0; top: 0; margin: 0; z-index: 9990; -webkit-transform: translate(-100%, 0); -ms-transform: translate(-100%, 0); transform: translate(-100%, 0); -webkit-transition: -webkit-transform .4s; transition: transform .4s; }
+.hc-mobile-nav .menu-wrap { border-right: 1px solid transparent; z-index: 9999; visibility: hidden; -webkit-transition: visibility 0s .4s, -webkit-transform .4s; transition: visibility 0s .4s, transform .4s; }
+.hc-mobile-nav .menu-wrap.submenu-open { border-right-color: rgba(0, 0, 0, 0.1); }
+.hc-mobile-nav > .menu-wrap { visibility: visible; -webkit-transform: translate(0, 0); -ms-transform: translate(0, 0); transform: translate(0, 0); }
 .hc-mobile-nav a:hover { text-decoration: none; background: rgba(0, 0, 0, 0.1); }
 .hc-mobile-nav ul { height: 100%; overflow: scroll; overflow-x: visible; overflow-y: auto; background: #336ca6; }
 .hc-mobile-nav li { position: relative; float: none; width: 100%; box-sizing: border-box; border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
-.hc-mobile-nav li a { position: relative; display: block; width: 100%; color: #fff; padding: 13px 17px; font-size: 15px; box-sizing: border-box; transition: background .3s; }
-.hc-mobile-nav li.open > .menu-wrap { visibility: visible; transform: translate(-40px, 0); transition: transform .4s; }
+.hc-mobile-nav li a { position: relative; display: block; width: 100%; color: #fff; padding: 13px 17px; font-size: 15px; box-sizing: border-box; -webkit-transition: background .3s; transition: background .3s; }
+.hc-mobile-nav li.open > .menu-wrap { visibility: visible; -webkit-transform: translate(-40px, 0); -ms-transform: translate(-40px, 0); transform: translate(-40px, 0); -webkit-transition: -webkit-transform .4s; transition: transform .4s; }
 .hc-mobile-nav li.parent { position: static; }
 .hc-mobile-nav li.close a, .hc-mobile-nav li.back a { padding: 20px 17px; }
-.hc-mobile-nav li.close span, .hc-mobile-nav li.parent span.next, .hc-mobile-nav li.back span { display: block; width: 45px; position: absolute; top: 0; right: 0; bottom: 0; text-align: center; cursor: pointer; transition: background 0.2s ease; }
+.hc-mobile-nav li.close span, .hc-mobile-nav li.parent span.next, .hc-mobile-nav li.back span { display: block; width: 45px; position: absolute; top: 0; right: 0; bottom: 0; text-align: center; cursor: pointer; -webkit-transition: background 0.2s ease; transition: background 0.2s ease; }
 .hc-mobile-nav li.close span::before, .hc-mobile-nav li.close span::after { display: block; content: ''; position: absolute; top: 50%; left: 50%; width: 6px; height: 6px; margin-top: -3px; border-top: 2px solid #fff; border-left: 2px solid #fff; }
-.hc-mobile-nav li.close span::before { margin-left: -9px; transform: rotate(135deg); }
-.hc-mobile-nav li.close span::after { transform: rotate(-45deg); }
+.hc-mobile-nav li.close span::before { margin-left: -9px; -webkit-transform: rotate(135deg); -ms-transform: rotate(135deg); transform: rotate(135deg); }
+.hc-mobile-nav li.close span::after { -webkit-transform: rotate(-45deg); -ms-transform: rotate(-45deg); transform: rotate(-45deg); }
 .hc-mobile-nav span.next { border-left: 1px solid rgba(0, 0, 0, 0.1); }
 .hc-mobile-nav span.next::before, .hc-mobile-nav li.back span::before { display: block; content: ''; position: absolute; top: 50%; left: 50%; width: 8px; height: 8px; margin-left: -8px; margin-top: -5px; border-top: 2px solid #fff; border-left: 2px solid #fff; }
-.hc-mobile-nav span.next::before { transform: rotate(135deg); }
-.hc-mobile-nav li.back span::before { transform: rotate(-45deg); }
+.hc-mobile-nav span.next::before { -webkit-transform: rotate(135deg); -ms-transform: rotate(135deg); transform: rotate(135deg); }
+.hc-mobile-nav li.back span::before { -webkit-transform: rotate(-45deg); -ms-transform: rotate(-45deg); transform: rotate(-45deg); }
 .hc-mobile-nav.no-transition, .hc-mobile-nav.no-transition ul ul { left: -100%; }
 body.hc-nav-open .hc-mobile-nav.no-transition { left: 0; }
 .hc-mobile-nav.no-transition li.open > ul { left: -40px; }
 html.yscroll { overflow-y: scroll; }
 body::after { display: none; position: fixed; }
-body.hc-nav-open .hc-mobile-nav { visibility: visible; transform: translate(0, 0); }
+body.hc-nav-open .hc-mobile-nav { visibility: visible; -webkit-transform: translate(0, 0); -ms-transform: translate(0, 0); transform: translate(0, 0); }
 body.notouchmove { position: fixed; width: 100%; }
-body::after, .hc-mobile-nav .menu-wrap::after { content: ''; position: fixed; z-index: 9980; background: rgba(0, 0, 0, 0.5); top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; visibility: hidden; opacity: 0; transition: visibility 0s ease .4s, opacity .4s ease; }
-body.hc-nav-open::after, .hc-mobile-nav .submenu-open::after { visibility: visible; opacity: 1; transition-delay: .05s; }
+body::after, .hc-mobile-nav .menu-wrap::after { content: ''; position: fixed; z-index: 9980; background: rgba(0, 0, 0, 0.5); top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; visibility: hidden; opacity: 0; -webkit-transition: visibility 0s ease .4s, opacity .4s ease; transition: visibility 0s ease .4s, opacity .4s ease; }
+body.hc-nav-open::after, .hc-mobile-nav .submenu-open::after { visibility: visible; opacity: 1; -webkit-transition-delay: .05s; transition-delay: .05s; }
