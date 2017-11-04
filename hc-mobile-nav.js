@@ -63,7 +63,7 @@
   });
 
   $.fn.extend({
-    'hcMobileNav': function(user_settings) {
+    'hcMobileNav': function(userSettings) {
       if (!this.length) {
         return this;
       }
@@ -86,10 +86,10 @@
               'close': 'Close',
               'back': 'Back'
             }
-          }, user_settings || {});
+          }, userSettings || {});
         }
         else {
-          $.extend(settings, user_settings || {});
+          $.extend(settings, userSettings || {});
         }
 
         // update settings
