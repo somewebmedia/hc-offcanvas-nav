@@ -73,7 +73,7 @@
       var $body = $(document.body);
 
       return this.each(function() {
-        var $this = $(this).addClass('hc-nav');
+        var $this = $(this);
         var settings = $this.data('hc-mobile-nav') || {};
         var $nav;
         var open = false;
@@ -231,7 +231,7 @@
         $body.prepend($nav);
 
         // insert menu trigger link
-        $this.after($trigger);
+        $this.addClass('hc-nav').after($trigger);
 
         // insert style
         var css = '@media screen and (max-width:' + (settings.maxWidth - 1) + 'px) { ' +
