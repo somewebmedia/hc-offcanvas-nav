@@ -1,6 +1,6 @@
 // jQuery HC-MobileNav
 // =============
-// Version: 2.0.2
+// Version: 2.0.3
 // Author: Some Web Media
 // Author URL: http://somewebmedia.com
 // Plugin URL: https://github.com/somewebmedia/hc-mobile-nav
