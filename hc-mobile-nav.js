@@ -77,6 +77,7 @@
         var settings = $this.data('hc-mobile-nav') || {};
         var $nav;
         var open = false;
+        var top = 0;
 
         if ($.isEmptyObject(settings)) {
           $.extend(settings, {
@@ -133,10 +134,9 @@
           e.preventDefault();
           e.stopPropagation();
 
-          var top = $html.scrollTop() || $body.scrollTop();
-
+          top = $html.scrollTop() || $body.scrollTop();
           open = true;
-          $body.addClass('open-menu notouchmove');
+          $body.addClass('hc-nav-open notouchmove');
 
           if (hasScrollBar()) {
             $html.addClass('yscroll');
@@ -170,19 +170,19 @@
         };
 
         // close menu
-        var closeMenu = function() {
-          var top = parseInt($body.css('top'));
-
+        var closeMenu = function(e) {
+          e.preventDefault();
           open = false;
           $html.removeClass('yscroll');
-          $body.removeClass('open-menu notouchmove');
+          $body.removeClass('hc-nav-open notouchmove');
           $nav.find('li.open').removeClass('open');
           $nav.find('.submenu-open').removeClass('submenu-open');
           $nav.removeAttr('style');
 
           if (top) {
-            $body.css('top', '').scrollTop(-top);
-            $html.scrollTop(-top);
+            $body.css('top', '').scrollTop(top);
+            $html.scrollTop(top);
+            top = 0;
           }
         };
 
@@ -217,7 +217,7 @@
         $trigger.on('click', openMenu);
 
         // close menu on body click
-        $document.on('click touchstart', 'body.open-menu', closeMenu);
+        $document.on('click touchstart', 'body.hc-nav-open', closeMenu);
 
         // back links
         $nav.find('li.back').children('a').click(goBack);

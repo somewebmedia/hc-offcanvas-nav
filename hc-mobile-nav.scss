@@ -186,7 +186,7 @@ $hc_mobile_nav_color: #336ca6;
       left: -100%;
     }
 
-    .open-menu & {
+    body.hc-nav-open & {
       left: 0;
     }
 
@@ -206,7 +206,7 @@ body {
     position: fixed;
   }
 
-  &.open-menu {
+  &.hc-nav-open {
     .hc-mobile-nav {
       visibility: visible;
       transform: translate(0, 0);
@@ -220,11 +220,10 @@ body {
 }
 
 body,
-.hc-mobile-nav,
 .hc-mobile-nav .menu-wrap {
   &::after {
     content: '';
-    position: absolute;
+    position: fixed;
     z-index: 9980;
     background: rgba(0, 0, 0, .5);
     top: 0;
@@ -239,8 +238,7 @@ body,
   }
 }
 
-body.open-menu,
-.hc-mobile-nav.submenu-open,
+body.hc-nav-open,
 .hc-mobile-nav .submenu-open {
   &::after {
     visibility: visible;
