@@ -73,7 +73,7 @@
       var $body = $(document.body);
 
       return this.each(function() {
-        var $this = $(this);
+        var $this = $(this).addClass('hc-nav');
         var settings = $this.data('hc-mobile-nav') || {};
         var $nav;
         var open = false;
@@ -109,8 +109,8 @@
           return;
         }
 
-        var $trigger = $('<a id="menu-trigger">');
         var $ul = $nav.find('ul');
+        var $li = $ul.find('li');
 
         $nav.on('click touchstart', function(e) {
           // prevent menu close on self click
@@ -122,7 +122,7 @@
           .find('[id]').removeAttr('id');
 
         // wrap all menus
-        $nav.find('ul').wrap('<div class="menu-wrap"></div>');
+        $ul.wrap('<div class="menu-wrap"></div>');
 
         // check for transition support
         if (!supportTransition) {
@@ -170,20 +170,25 @@
         };
 
         // close menu
-        var closeMenu = function(e) {
-          e.preventDefault();
-          open = false;
-          $html.removeClass('yscroll');
-          $body.removeClass('hc-nav-open notouchmove');
-          $nav.find('li.open').removeClass('open');
-          $nav.find('.submenu-open').removeClass('submenu-open');
-          $nav.removeAttr('style');
+        var closeMenu = function(preventLink) {
+          return function(e) {
+            if (preventLink === true) {
+              e.preventDefault();
+            }
 
-          if (top) {
-            $body.css('top', '').scrollTop(top);
-            $html.scrollTop(top);
-            top = 0;
-          }
+            open = false;
+            $html.removeClass('yscroll');
+            $body.removeClass('hc-nav-open notouchmove');
+            $li.filter('.open').removeClass('open');
+            $nav.find('.submenu-open').removeClass('submenu-open');
+            $nav.removeAttr('style');
+
+            if (top) {
+              $body.css('top', '').scrollTop(top);
+              $html.scrollTop(top);
+              top = 0;
+            }
+          };
         };
 
         // submenus back
@@ -197,33 +202,36 @@
           setTransform($nav, level * 40);
         };
 
+        var $trigger = $('<a id="menu-trigger">').on('click', openMenu);
+
         // insert next level links
-        $('<span class="next">').click(openSubMenu)
+        $('<span class="next">')
+          .click(openSubMenu)
           .appendTo($nav.find('li').filter(function() {
             return $(this).find('ul').length > 0;
           }).addClass('parent').children('a'));
 
-        // insert back and close links
-        $ul.not(':first').prepend('<li class="menu-item back"><a href="#">' + settings.labels.back + '<span></span></a></li>');
-        $ul.first().prepend('<li class="menu-item close"><a href="#">' + settings.labels.close + '<span></span></a></li>');
+        // insert back links
+        $('<li class="menu-item back"><a href="#">' + settings.labels.back + '<span></span></a></li>')
+          .prependTo($ul.not(':first'))
+          .children('a').click(goBack);
+
+        // insert close link
+        $('<li class="menu-item close"><a href="#">' + settings.labels.close + '<span></span></a></li>')
+          .prependTo($ul.first())
+          .children('a').click(closeMenu(true));
+
+        // when menu links clicked close menu (in case of #anchors)
+        $li.children('a').click(closeMenu());
+
+        // close menu on body click
+        $document.on('click touchstart', 'body.hc-nav-open', closeMenu());
 
         // insert menu to body
         $body.prepend($nav);
 
         // insert menu trigger link
-        $this.addClass('hc-nav').after($trigger);
-
-        // open menu
-        $trigger.on('click', openMenu);
-
-        // close menu on body click
-        $document.on('click touchstart', 'body.hc-nav-open', closeMenu);
-
-        // back links
-        $nav.find('li.back').children('a').click(goBack);
-
-        // when menu links clicked close menu (in case of #anchors)
-        $nav.find('li:not(".back")').children('a').click(closeMenu);
+        $this.after($trigger);
 
         // insert style
         var css = '@media screen and (max-width:' + (settings.maxWidth - 1) + 'px) { ' +
