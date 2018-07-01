@@ -1,231 +1,287 @@
-// jQuery HC-MobileNav
-// =============
-// Version: 2.0.4
-// Author: Some Web Media
-// Author URL: http://somewebmedia.com
-// Plugin URL: https://github.com/somewebmedia/hc-mobile-nav
-// Description: jQuery plugin for converting menus to mobile navigations
-// License: MIT
+/*!
+ * jQuery HC-MobileNav
+ * ===================
+ * Version: 2.0.4
+ * Author: Some Web Media
+ * Author URL: http://somewebmedia.com
+ * Plugin URL: https://github.com/somewebmedia/hc-mobile-nav
+ * Description: jQuery plugin for converting menus to mobile navigations
+ * License: MIT
+ */
 
-(function($, window, undefined) {
-  'use strict';
+(function($, window) {
+  "use strict";
 
-  var document = window.document;
+  const document = window.document;
 
-  var supportTransition = (function() {
-    var thisBody = document.body || document.documentElement;
-    var thisStyle = thisBody.style;
-    var support = thisStyle.transition !== undefined
-      || thisStyle.WebkitTransition !== undefined
-      || thisStyle.MozTransition !== undefined
-      || thisStyle.MsTransition !== undefined
-      || thisStyle.OTransition !== undefined;
-
-    return support;
-  })();
-
-  var hasScrollBar = function() {
+  const hasScrollBar = () => {
     return document.body.scrollHeight > document.body.offsetHeight;
   };
 
-  var setTransform = function($el, val) {
-    if (supportTransition) {
-      $el[0].style.WebkitTransform = 'translate3d(' + val + 'px,0,0)';
-      $el[0].style.MozTransform = 'translate3d(' + val + 'px,0,0)';
-      $el[0].style.MsTransform = 'translate3d(' + val + 'px,0,0)';
-      $el[0].style.OTransform = 'translate3d(' + val + 'px,0,0)';
-      $el[0].style.transform = 'translate3d(' + val + 'px,0,0)';
+  const browserPrefix = (prop) => {
+    const prefixes = ['Webkit', 'Moz', 'Ms', 'O'];
+    const thisBody = document.body || document.documentElement;
+    const thisStyle = thisBody.style;
+    const Prop = prop.charAt(0).toUpperCase() + prop.slice(1);
+
+    if (typeof thisStyle[prop] !== 'undefined') {
+      return prop;
     }
-    else {
-      $el.css({
-        'left': val
-      });
+
+    for (let i = 0; i < prefixes.length; i++) {
+      if (typeof thisStyle[prefixes[i] + Prop] !== 'undefined') {
+        return prefixes[i] + Prop;
+      }
     }
+
+    return false;
   };
 
-  $.fn.extend({
-    'hcPrintStyle': function(css, id, prepend) {
-      var $this = $(this);
-      var $style = $this.find('style#' + id);
+  const printStyle = (() => {
+    const $head = $('head');
+
+    return (css, id, prepend) => {
+      const $style = $head.find('style#' + id);
 
       if ($style.length) {
         $style.html(css);
       }
       else {
         if (prepend) {
-          $('<style id="' + id + '">' + css + '</style>').prependTo($this);
+          $('<style id="' + id + '">' + css + '</style>').prependTo($head);
         }
         else {
-          $('<style id="' + id + '">' + css + '</style>').appendTo($this);
+          $('<style id="' + id + '">' + css + '</style>').appendTo($head);
         }
       }
-    }
-  });
+    };
+  })();
 
   $.fn.extend({
-    'hcMobileNav': function(userSettings) {
-      if (!this.length) {
-        return this;
-      }
+    hcMobileNav: function(options) {
+      if (!this.length) return this;
 
-      var $html = $(document.getElementsByTagName('html')[0]);
-      var $document = $(document);
-      var $body = $(document.body);
+      const defaults = {
+        maxWidth: 1024,
+        transition: true,
+        transitionSide: 'left',
+        levelSpacing: 40,
+        labels: {
+          close: 'Close',
+          back: 'Back'
+        }
+      };
+
+      let SETTINGS = $.extend({}, defaults, options);
+
+      const $html = $(document.getElementsByTagName('html')[0]);
+      const $document = $(document);
+      const $body = $(document.body);
+
+      const setTransform = (() => {
+        const transform = browserPrefix('transform');
+
+        return ($el, val) => {
+          if (transform && SETTINGS.transition) {
+            const x = SETTINGS.transitionSide === 'left' ? val : -val;
+            $el[0].style[transform] = `translate3d(${x}px,0,0)`;
+          }
+        };
+      })();
 
       return this.each(function() {
-        var $this = $(this);
-        var settings = $this.data('hc-mobile-nav') || {};
-        var $nav;
-        var open = false;
-        var top = 0;
-
-        if ($.isEmptyObject(settings)) {
-          $.extend(settings, {
-            'maxWidth': 1024,
-            'labels': {
-              'close': 'Close',
-              'back': 'Back'
-            }
-          }, userSettings || {});
-        }
-        else {
-          $.extend(settings, userSettings || {});
-        }
-
-        // update settings
-        $this.data('hc-mobile-nav', settings);
+        const $this = $(this);
+        let $nav;
+        let _open = false;
+        let _top = 0;
 
         // clone menu
         if ($this.is('ul')) {
-          var $tmp_nav = $this.clone();
-
-          $nav = $tmp_nav.wrap('<nav></nav>').parent();
+          $nav = $this.clone().wrap('<nav></nav>').parent();
         }
         else if ($this.is('nav')) {
           $nav = $this.clone();
         }
         else {
-          console.error('HC-MobileNav: Menu element must be <ul> or <nav>');
+          $nav = $this.find('nav, ul').first().clone();
+
+          if (!$nav.length) {
+            console.log('%c! HC MobileNav:' + `%c There is no <nav> or <ul> elements in your menu.`, 'color: red', 'color: black');
+            return;
+          }
+        }
+
+        const $ul = $nav.find('ul');
+
+        if (!$ul.length) {
+          console.log('%c! HC MobileNav:' + `%c Menu must contain <ul> element.`, 'color: red', 'color: black');
           return;
         }
 
-        var $ul = $nav.find('ul');
-        var $li = $ul.find('li');
+        const $li = $ul.find('li');
+        const levels = {};
+        let $wrappers;
 
-        $nav.on('click touchstart', function(e) {
-          // prevent menu close on self click
-          e.stopPropagation();
-        })
-          .removeAttr('id') // remove id's so we don't have duplicates after cloning
-          .removeClass() // remove all classes
-          .addClass('hc-mobile-nav')
-          .find('[id]').removeAttr('id');
+        // Methods
 
-        // wrap all menus
-        $ul.wrap('<div class="menu-wrap"></div>');
-
-        // check for transition support
-        if (!supportTransition) {
-          $nav.addClass('no-transition');
-        }
-
-        // open main menu
-        var openMenu = function(e) {
+        const openMenu = (e) => {
           e.preventDefault();
           e.stopPropagation();
 
-          top = $html.scrollTop() || $body.scrollTop();
-          open = true;
-          $body.addClass('hc-nav-open notouchmove');
+          _open = true;
+          _top = $html.scrollTop() || $body.scrollTop(); // remember the scroll position
+
+          $body.addClass('hc-nav-open');
 
           if (hasScrollBar()) {
-            $html.addClass('yscroll');
+            $html.addClass('hc-yscroll');
           }
 
-          if (top) {
-            $body.css('top', -top);
+          if (_top) {
+            $body.css('top', -_top);
           }
         };
 
-        // open nested menus
-        var openSubMenu = function(e) {
-          e.stopPropagation();
-          e.preventDefault();
-
-          var $this = $(this);
-          var level = $this.parents('li').length;
-          var $wrap = $this.closest('li').addClass('open').closest('.menu-wrap');
-
-          if (level === 1 && !$wrap.length) {
-            // if selected element is <ul>
-            $nav.addClass('submenu-open');
-          }
-          else {
-            $wrap.addClass('submenu-open');
-          }
-
-          setTransform($nav, level * 40);
-
-          return false;
-        };
-
-        // close menu
-        var closeMenu = function(preventLink) {
+        const openSubNav = (l, i) => {
           return function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const $this = $(this);
+            const $wrap = $wrappers.filter(`[data-level=${l}][data-index=${i}]`);
+
+            $this.closest('li').addClass('level-open');
+            $wrap.addClass('sub-level-open').on('click', goBack(l, i));
+
+            setTransform($nav, (l + 1) * SETTINGS.levelSpacing);
+
+            return false;
+          };
+        };
+
+        const closeNav = (preventLink) => {
+          return (e) => {
+            e.stopPropagation();
+
             if (preventLink === true) {
               e.preventDefault();
             }
 
-            open = false;
-            $html.removeClass('yscroll');
-            $body.removeClass('hc-nav-open notouchmove');
-            $li.filter('.open').removeClass('open');
-            $nav.find('.submenu-open').removeClass('submenu-open');
+            _open = false;
+
+            $html.removeClass('hc-yscroll');
+            $body.removeClass('hc-nav-open');
+            $li.filter('.level-open').removeClass('level-open');
+            $nav.find('.sub-level-open').removeClass('sub-level-open');
             $nav.removeAttr('style');
 
-            if (top) {
-              $body.css('top', '').scrollTop(top);
-              $html.scrollTop(top);
-              top = 0;
+            if (_top) {
+              $body.css('top', '').scrollTop(_top);
+              $html.scrollTop(_top);
+
+              _top = 0; // reset top
             }
           };
         };
 
-        // submenus back
-        var goBack = function(e) {
-          var $this = $(this);
-          var level = $this.parents('li').length - 2;
+        const goBack = (l, i) => {
+          return function(e) {
+            e.stopPropagation();
+            e.preventDefault();
 
-          e.preventDefault();
-          $this.closest('li.open').removeClass('open');
-          $this.closest('.submenu-open').removeClass('submenu-open');
-          setTransform($nav, level * 40);
+            const $wrap = $wrappers.filter(`[data-level=${l}]`);
+
+            $wrap.off('click').removeClass('sub-level-open');
+            $wrap.find('.level-open').removeClass('level-open');
+            $wrap.find('.sub-level-open').removeClass('sub-level-open');
+
+            setTransform($nav, l * SETTINGS.levelSpacing);
+          };
         };
 
-        var $trigger = $('<a id="menu-trigger">').on('click', openMenu);
 
-        // insert next level links
-        $('<span class="next">')
-          .click(openSubMenu)
-          .appendTo($nav.find('li').filter(function() {
-            return $(this).find('ul').length > 0;
-          }).addClass('parent').children('a'));
+        // prepare our nav
+        $nav
+          .on('click touchstart', (e) => {
+            // prevent menu close on self click
+            e.stopPropagation();
+          })
+          .removeAttr('id') // remove id's so we don't have duplicates after cloning
+          .removeClass() // remove all classes
+          .addClass('hc-mobile-nav')
+          .find('[id]').removeAttr('id'); // remove all children id's
 
-        // insert back links
-        $('<li class="menu-item back"><a href="#">' + settings.labels.back + '<span></span></a></li>')
-          .prependTo($ul.not(':first'))
-          .children('a').click(goBack);
+        if (SETTINGS.transition) {
+          $nav.addClass(`transform-${SETTINGS.transitionSide}`);
+        }
+
+        // set levels for menus
+        $ul.each(function() {
+          const $menu = $(this);
+          const level = $menu.parents('li').length;
+
+          if (!levels[level]) {
+            levels[level] = $menu;
+          }
+          else {
+            levels[level] = levels[level].add($menu);
+          }
+        });
+
+        for (let l in levels) {
+          const level = Number(l);
+
+          // wrap all menus and submenus
+          if (level === 0) {
+            levels[level].wrapAll('<div class="menu-wrap"></div>');
+          }
+          else {
+            levels[level].wrap('<div class="menu-wrap"></div>');
+          }
+
+          levels[level].each(function(i) {
+            const $menu = $(this);
+            const index = level !== 0 ? i : 0;
+
+            // save some data
+            $menu.parent()
+              .attr('data-level', level)
+              .attr('data-index', index);
+
+            const $li_next = $menu.children('li').filter(function() {
+              return $(this).find('ul').length;
+            });
+
+            // insert next level links
+            $('<span class="next">')
+              .click(openSubNav(level, index))
+              .appendTo($li_next.addClass('has-subnav').children('a'));
+
+            if (level === 0) return;
+
+            // insert back links
+            $('<li class="menu-item back"><a href="#">' + SETTINGS.labels.back + '<span></span></a></li>')
+              .prependTo($menu)
+              .children('a').click(goBack(level - 1, index));
+          });
+        }
+
+        // now save our menu wrappers
+        $wrappers = $nav.find('.menu-wrap');
+
+        const $trigger = $('<a class="hc-menu-trigger"><span></span></a>').on('click', openMenu);
 
         // insert close link
-        $('<li class="menu-item close"><a href="#">' + settings.labels.close + '<span></span></a></li>')
-          .prependTo($ul.first())
-          .children('a').click(closeMenu(true));
+        $('<li class="menu-item close"><a href="#">' + SETTINGS.labels.close + '<span></span></a></li>')
+          .prependTo(levels[0].first())
+          .children('a').click(closeNav(true));
 
         // when menu links clicked close menu (in case of #anchors)
-        $li.children('a').click(closeMenu());
+        $li.children('a').click(closeNav());
 
         // close menu on body click
-        $document.on('click touchstart', 'body.hc-nav-open', closeMenu());
+        const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
+        $document.on(touchEvent, 'body.hc-nav-open', closeNav());
 
         // insert menu to body
         $body.prepend($nav);
@@ -234,13 +290,19 @@
         $this.addClass('hc-nav').after($trigger);
 
         // insert style
-        var css = '@media screen and (max-width:' + (settings.maxWidth - 1) + 'px) { ' +
-          '#menu-trigger, .hc-mobile-nav, body:after { display: block; }' +
-          '.hc-nav { display: none; }' +
-        '}';
+        const css = `@media screen and (max-width: ${SETTINGS.maxWidth - 1}px) {
+          .hc-menu-trigger,
+          .hc-mobile-nav,
+          body:after {
+            display: block;
+          }
+          .hc-nav {
+            display: none;
+          }
+        }`;
 
-        $('head').hcPrintStyle(css, 'hc-mobile-nav-style');
+        printStyle(css, 'hc-mobile-nav-style');
       });
     }
   });
-})(jQuery, this);
+})(jQuery, typeof window !== 'undefined' ? window : this);
