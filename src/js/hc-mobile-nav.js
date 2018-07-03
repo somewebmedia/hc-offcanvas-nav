@@ -65,6 +65,8 @@
         maxWidth: 1024,
         transition: true,
         transitionSide: 'left',
+        disableBody: true,
+        customClass: '',
         levelSpacing: 40,
         labels: {
           close: 'Close',
@@ -120,86 +122,6 @@
 
         const $li = $ul.find('li');
         const levels = {};
-        let $wrappers;
-
-        // Methods
-
-        const openMenu = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-
-          _open = true;
-          _top = $html.scrollTop() || $body.scrollTop(); // remember the scroll position
-
-          $body.addClass('hc-nav-open');
-          $nav.addClass('open');
-
-          if (hasScrollBar()) {
-            $html.addClass('hc-yscroll');
-          }
-
-          if (_top) {
-            $body.css('top', -_top);
-          }
-        };
-
-        const openSubNav = (l, i) => {
-          return function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-
-            const $this = $(this);
-            const $wrap = $wrappers.filter(`[data-level=${l}][data-index=${i}]`);
-
-            $this.closest('li').addClass('level-open');
-            $wrap.addClass('sub-level-open').on('click', goBack(l, i));
-
-            setTransform($nav, (l + 1) * SETTINGS.levelSpacing);
-
-            return false;
-          };
-        };
-
-        const closeNav = (preventLink) => {
-          return (e) => {
-            e.stopPropagation();
-
-            if (preventLink === true) {
-              e.preventDefault();
-            }
-
-            _open = false;
-
-            $html.removeClass('hc-yscroll');
-            $body.removeClass('hc-nav-open');
-            $nav.removeClass('open').removeAttr('style');
-            $li.filter('.level-open').removeClass('level-open');
-            $nav.find('.sub-level-open').removeClass('sub-level-open');
-
-            if (_top) {
-              $body.css('top', '').scrollTop(_top);
-              $html.scrollTop(_top);
-
-              _top = 0; // reset top
-            }
-          };
-        };
-
-        const goBack = (l, i) => {
-          return function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-
-            const $wrap = $wrappers.filter(`[data-level=${l}]`);
-
-            $wrap.off('click').removeClass('sub-level-open');
-            $wrap.find('.level-open').removeClass('level-open');
-            $wrap.find('.sub-level-open').removeClass('sub-level-open');
-
-            setTransform($nav, l * SETTINGS.levelSpacing);
-          };
-        };
-
 
         // prepare our nav
         $nav
@@ -210,6 +132,7 @@
           .removeAttr('id') // remove id's so we don't have duplicates after cloning
           .removeClass() // remove all classes
           .addClass('hc-mobile-nav')
+          .addClass(SETTINGS.customClass)
           .find('[id]').removeAttr('id'); // remove all children id's
 
         if (SETTINGS.transition) {
@@ -268,9 +191,107 @@
         }
 
         // now save our menu wrappers
-        $wrappers = $nav.find('.menu-wrap');
+        const $wrappers = $nav.find('.menu-wrap').on('click', (e) => e.stopPropagation());
+        const $main_wrap = $wrappers.first();
 
-        const $trigger = $('<a class="hc-menu-trigger"><span></span></a>').on('click', openMenu);
+        // Methods
+
+        function openNav(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          _open = true;
+          _top = $html.scrollTop() || $body.scrollTop(); // remember the scroll position
+
+          $nav.addClass('nav-open');
+
+          if (SETTINGS.disableBody) {
+            $body.addClass('hc-nav-open');
+
+            if (hasScrollBar()) {
+              $html.addClass('hc-yscroll');
+            }
+          }
+
+          if (_top) {
+            $body.css('top', -_top);
+          }
+        }
+
+        function openSubNav(l, i) {
+          return function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const $this = $(this);
+            const $wrap = $wrappers.filter(`[data-level=${l}][data-index=${i}]`);
+
+            $this.closest('li').addClass('level-open');
+            $wrap.addClass('sub-level-open').on('click', goBack(l, i));
+
+            setTransform($main_wrap, (l + 1) * SETTINGS.levelSpacing);
+
+            return false;
+          };
+        }
+
+        function closeNav(preventLink) {
+          return (e) => {
+            e.stopPropagation();
+
+            if (preventLink === true) {
+              e.preventDefault();
+            }
+
+            _open = false;
+
+            $html.removeClass('hc-yscroll');
+            $nav.removeClass('nav-open');
+            $main_wrap.removeAttr('style');
+            $li.filter('.level-open').removeClass('level-open');
+            $nav.find('.sub-level-open').removeClass('sub-level-open');
+
+            if (SETTINGS.disableBody) {
+              $body.removeClass('hc-nav-open');
+            }
+
+            if (_top) {
+              $body.css('top', '').scrollTop(_top);
+              $html.scrollTop(_top);
+
+              _top = 0; // reset top
+            }
+          };
+        }
+
+        function goBack(l, i) {
+          return function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+
+            const $wrap = $wrappers.filter(`[data-level=${l}]`);
+
+            $wrap.off('click').removeClass('sub-level-open');
+            $wrap.find('.level-open').removeClass('level-open');
+            $wrap.find('.sub-level-open').removeClass('sub-level-open');
+
+            setTransform($main_wrap, l * SETTINGS.levelSpacing);
+          };
+        }
+
+        function toggleNav(e) {
+          if (_open) {
+            closeNav()(e);
+          }
+          else {
+            openNav(e);
+          }
+        }
+
+
+        // do the rest
+
+        const $trigger = $('<a class="hc-menu-trigger"><span></span></a>').on('click', toggleNav);
 
         // insert close link
         $('<li class="menu-item close"><a href="#">' + SETTINGS.labels.close + '<span></span></a></li>')
@@ -281,8 +302,10 @@
         $li.children('a').click(closeNav());
 
         // close menu on body click
-        const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
-        $document.on(touchEvent, 'body.hc-nav-open', closeNav());
+        if (SETTINGS.disableBody) {
+          const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
+          $nav.on(touchEvent, closeNav());
+        }
 
         // insert menu to body
         $body.prepend($nav);
