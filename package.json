@@ -24,7 +24,8 @@
     "gulp-sass": "^3.2.1",
     "gulp-uglify": "^3.0.0",
     "yargs": "^6.6.0",
-    "uglify-save-license": "^0.4.1"
+    "uglify-save-license": "^0.4.1",
+    "vinyl-fs": "^3.0.2"
   },
   "keywords": [
     "navigation",

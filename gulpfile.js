@@ -5,6 +5,7 @@ const uglify = require('gulp-uglify');
 const saveLicense = require('uglify-save-license');
 const babel = require('gulp-babel');
 const through = require('through2');
+const vinylfs = require('vinyl-fs');
 const argv = require('yargs').argv;
 
 gulp.task('js', () => {
@@ -25,7 +26,7 @@ gulp.task('js', () => {
 });
 
 gulp.task('scss', () => {
-  return gulp.src(['./src/scss/*.scss'])
+  return vinylfs.src(['./src/scss/*.scss', '!./src/scss/demo.scss'])
     .pipe(sass({
       'outputStyle': argv.dev ? 'development' : 'compressed'
     }).on('error', sass.logError))
@@ -33,9 +34,18 @@ gulp.task('scss', () => {
     .pipe(gulp.dest('./dist/'));
 });
 
-gulp.task('default', ['js', 'scss'], () => {});
+gulp.task('demo', () => {
+  return gulp.src(['./src/scss/demo.scss'])
+    .pipe(sass({
+      'outputStyle': argv.dev ? 'development' : 'compressed'
+    }).on('error', sass.logError))
+    .pipe(autoprefixer())
+    .pipe(gulp.dest('./demo/'));
+});
+
+gulp.task('default', ['js', 'scss', 'demo'], () => {});
 
 gulp.task('watch', ['default'], () => {
   gulp.watch(['./src/js/*.js'], ['js']);
-  gulp.watch(['./src/scss/*.scss'], ['scss']);
+  gulp.watch(['./src/scss/*.scss'], ['scss', 'demo']);
 });
