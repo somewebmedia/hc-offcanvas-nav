@@ -1,0 +1,40 @@
+{
+  "name": "hc-mobile-nav",
+  "version": "2.0.4",
+  "description": "Responsive mobile menu plugin for jQuery",
+  "homepage": "http://somewebmedia.com/hc-mobile-nav",
+  "main": "dist/hc-mobile-nav.js",
+  "sass": "src/hc-mobile-nav.scss",
+  "author": {
+    "name": "Some Web Media",
+    "url": "http://somewebmedia.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/somewebmedia/hc-mobile-nav.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-babel": "^7.0.0",
+    "gulp-sass": "^3.2.1",
+    "gulp-uglify": "^3.0.0",
+    "yargs": "^6.6.0",
+    "uglify-save-license": "^0.4.1"
+  },
+  "keywords": [
+    "navigation",
+    "menu",
+    "mobile",
+    "mobile-nav",
+    "hamburger",
+    "jquery",
+    "plugin",
+    "scss",
+    "responsive"
+  ]
+}
