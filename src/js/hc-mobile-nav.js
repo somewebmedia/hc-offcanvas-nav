@@ -132,6 +132,7 @@
           _top = $html.scrollTop() || $body.scrollTop(); // remember the scroll position
 
           $body.addClass('hc-nav-open');
+          $nav.addClass('open');
 
           if (hasScrollBar()) {
             $html.addClass('hc-yscroll');
@@ -171,9 +172,9 @@
 
             $html.removeClass('hc-yscroll');
             $body.removeClass('hc-nav-open');
+            $nav.removeClass('open').removeAttr('style');
             $li.filter('.level-open').removeClass('level-open');
             $nav.find('.sub-level-open').removeClass('sub-level-open');
-            $nav.removeAttr('style');
 
             if (_top) {
               $body.css('top', '').scrollTop(_top);
