@@ -57,6 +57,8 @@
     };
   })();
 
+  let navCount = 0;
+
   $.fn.extend({
     hcMobileNav: function(options) {
       if (!this.length) return this;
@@ -120,8 +122,12 @@
           return;
         }
 
+        // count our nav
+        navCount++;
+
         const $li = $ul.find('li');
         const levels = {};
+        const uniqClass = 'hc-nav-' + navCount;
 
         // prepare our nav
         $nav
@@ -131,8 +137,7 @@
           })
           .removeAttr('id') // remove id's so we don't have duplicates after cloning
           .removeClass() // remove all classes
-          .addClass('hc-mobile-nav')
-          .addClass(SETTINGS.customClass)
+          .addClass(`hc-mobile-nav ${uniqClass} ${SETTINGS.customClass}`)
           .find('[id]').removeAttr('id'); // remove all children id's
 
         if (SETTINGS.transition) {
@@ -291,7 +296,7 @@
 
         // do the rest
 
-        const $trigger = $('<a class="hc-menu-trigger"><span></span></a>').on('click', toggleNav);
+        const $trigger = $(`<a class="hc-menu-trigger ${uniqClass}"><span></span></a>`).on('click', toggleNav);
 
         // insert close link
         $('<li class="menu-item close"><a href="#">' + SETTINGS.labels.close + '<span></span></a></li>')
@@ -311,16 +316,15 @@
         $body.prepend($nav);
 
         // insert menu trigger link
-        $this.addClass('hc-nav').after($trigger);
+        $this.addClass(`hc-nav ${uniqClass}`).after($trigger);
 
         // insert style
         const css = `@media screen and (max-width: ${SETTINGS.maxWidth - 1}px) {
-          .hc-menu-trigger,
-          .hc-mobile-nav,
-          body:after {
+          .hc-menu-trigger.${uniqClass},
+          .hc-mobile-nav.${uniqClass} {
             display: block;
           }
-          .hc-nav {
+          .hc-nav.${uniqClass} {
             display: none;
           }
         }`;
