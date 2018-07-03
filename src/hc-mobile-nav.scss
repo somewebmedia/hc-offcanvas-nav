@@ -21,7 +21,7 @@ $hcmn-border-color: rgba(0, 0, 0, .1) !default;
 
   span {
     top: 50%;
-    margin-top: -2px;
+    transform: transformY(-50%);
     transform-origin: 50% 50%;
     transition: transform $transform-speed ease, background ($transform-speed / 2) ease;
 
