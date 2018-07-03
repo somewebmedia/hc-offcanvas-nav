@@ -3,7 +3,8 @@ $hcmn-trigger-height: 24px !default;
 $hcmn-trigger-line-width: 4px !default;
 $hcmn-trigger-color: #34495E !default;
 $hcmn-trigger-transform-speed: .2s !default;
-$hcmn-bg-color: #336ca6 !default;
+$hcmn-background-color: #336ca6 !default;
+$hcmn-text-color: #fff !default;
 $hcmn-border-color: rgba(0, 0, 0, .1) !default;
 
 @mixin hc-hamburger($type: 'default', $width: $hcmn-trigger-width, $height: $hcmn-trigger-height, $line-width: $hcmn-trigger-line-width, $color: $hcmn-trigger-color, $transform-speed: $hcmn-trigger-transform-speed) {
@@ -131,7 +132,7 @@ html.hc-yscroll {
 
   .menu-wrap {
     position: absolute;
-    background: $hcmn-bg-color;
+    background: $hcmn-background-color;
     z-index: 9999;
     box-shadow: 1px 0 2px rgba(0, 0, 0, .2);
     visibility: hidden;
@@ -144,6 +145,8 @@ html.hc-yscroll {
   }
 
   a {
+    color: $hcmn-text-color;
+
     &:hover {
       text-decoration: none;
       background: rgba(0, 0, 0, .05);
@@ -170,7 +173,6 @@ html.hc-yscroll {
       position: relative;
       display: block;
       width: 100%;
-      color: #fff;
       padding: 13px 17px;
       font-size: 15px;
       box-sizing: border-box;
