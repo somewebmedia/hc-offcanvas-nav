@@ -1,0 +1,155 @@
+html.hc-yscroll {
+  overflow-y: scroll;
+}
+
+.hc-mobile-nav {
+  z-index: 9998;
+  display: none;
+  overscroll-behavior: none;
+
+  &.transform-left {
+    left: 0;
+    transform: translate3d(-100%, 0, 0);
+
+    li {
+
+      .menu-wrap {
+        left: 0;
+        transform: translate3d(-100%, 0, 0);
+      }
+
+      &.level-open {
+        & > .menu-wrap {
+          transform: translate3d(-40px, 0, 0);
+        }
+      }
+    }
+  }
+
+  &.transform-right {
+    right: 0;
+    transform: translate3d(100%, 0, 0);
+
+    li {
+      .menu-wrap {
+        right: 0;
+        transform: translate3d(100%, 0, 0);
+      }
+
+      &.level-open {
+        & > .menu-wrap {
+          transform: translate3d(40px, 0, 0);
+        }
+      }
+    }
+  }
+
+  &,
+  .menu-wrap {
+    position: absolute;
+    top: 0;
+    min-width: 240px;
+    max-width: 100%;
+    height: 100%;
+    float: none;
+    margin: 0;
+    transition: transform .4s ease;
+  }
+
+  .menu-wrap {
+    position: absolute;
+    z-index: 9999;
+    visibility: hidden;
+    transition: visibility 0s ease .4s, transform .4s ease;
+  }
+
+  & > .menu-wrap {
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+  }
+
+  a {
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: scroll;
+    overflow-x: visible;
+    overflow-y: auto;
+  }
+
+  li {
+    position: relative;
+    float: none;
+    width: 100%;
+    box-sizing: border-box;
+
+    a {
+      position: relative;
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    &.level-open {
+      & > .menu-wrap {
+        visibility: visible;
+        transition: transform .4s ease;
+      }
+    }
+
+    &.has-subnav {
+      position: static;
+    }
+  }
+}
+
+body {
+  &::after {
+    display: none;
+    position: fixed;
+  }
+
+  &.hc-nav-open {
+    position: fixed;
+    width: 100%;
+
+    .hc-mobile-nav {
+      visibility: visible;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+}
+
+body,
+.hc-mobile-nav .menu-wrap {
+  &::after {
+    content: '';
+    position: fixed;
+    z-index: 9980;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    overscroll-behavior: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s ease .4s, opacity .4s ease;
+  }
+}
+
+body.hc-nav-open,
+.hc-mobile-nav .sub-level-open {
+  &::after {
+    visibility: visible;
+    opacity: 1;
+    transition-delay: .05s;
+  }
+}

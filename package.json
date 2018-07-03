@@ -4,7 +4,7 @@
   "description": "Responsive mobile menu plugin for jQuery",
   "homepage": "http://somewebmedia.com/hc-mobile-nav",
   "main": "dist/hc-mobile-nav.js",
-  "sass": "src/hc-mobile-nav.scss",
+  "sass": "src/scss/hc-mobile-nav.scss",
   "author": {
     "name": "Some Web Media",
     "url": "http://somewebmedia.com"

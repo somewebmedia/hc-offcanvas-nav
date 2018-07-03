@@ -1,0 +1,60 @@
+@mixin hc-hamburger($type: 'default', $width: $hcmn-trigger-width, $height: $hcmn-trigger-height, $line-width: $hcmn-trigger-line-width, $color: $hcmn-trigger-color, $transform-speed: $hcmn-trigger-transform-speed) {
+  position: absolute;
+  cursor: pointer;
+  display: none;
+  top: 50%;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  width: $width;
+  height: $height;
+
+  $line-offset: ($height - $line-width) / 2;
+
+  span {
+    top: 50%;
+    transform: translateY(-50%);
+    transform-origin: 50% 50%;
+    transition: transform $transform-speed ease, background ($transform-speed / 2) ease;
+
+    &,
+    &::before,
+    &::after {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: $line-width;
+      background: $color;
+    }
+
+    &::before,
+    &::after {
+      content: '';
+      transition: transform $transform-speed ease;
+    }
+
+    &::before {
+      top: -$line-offset;
+    }
+
+    &::after {
+      bottom: -$line-offset;
+    }
+  }
+
+  body.hc-nav-open & {
+
+    span {
+      background: rgba(0, 0, 0, 0);
+      transform: rotate(45deg);
+
+      &::before {
+        transform: translate3d(0, $line-offset, 0);
+      }
+
+      &::after {
+        transform: rotate(-90deg) translate3d($line-offset, 0, 0);
+      }
+    }
+  }
+}

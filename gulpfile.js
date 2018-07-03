@@ -8,7 +8,7 @@ const through = require('through2');
 const argv = require('yargs').argv;
 
 gulp.task('js', () => {
-  return gulp.src(['./src/*.js'])
+  return gulp.src(['./src/js/*.js'])
     .pipe(babel({
       presets: [
         ['env', {
@@ -25,7 +25,7 @@ gulp.task('js', () => {
 });
 
 gulp.task('scss', () => {
-  return gulp.src(['./src/*.scss'])
+  return gulp.src(['./src/scss/*.scss'])
     .pipe(sass({
       'outputStyle': argv.dev ? 'development' : 'compressed'
     }).on('error', sass.logError))
@@ -36,6 +36,6 @@ gulp.task('scss', () => {
 gulp.task('default', ['js', 'scss'], () => {});
 
 gulp.task('watch', ['default'], () => {
-  gulp.watch(['./src/*.js'], ['js']);
-  gulp.watch(['./src/*.scss'], ['scss']);
+  gulp.watch(['./src/js/*.js'], ['js']);
+  gulp.watch(['./src/scss/*.scss'], ['scss']);
 });
