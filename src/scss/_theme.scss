@@ -14,13 +14,13 @@ $hcmn-border-color:               rgba(0, 0, 0, .1) !default;
 .hc-mobile-nav {
 
   &,
-  .menu-wrap {
+  .nav-wrapper {
     &::after {
       background: rgba(0, 0, 0, .3);
     }
   }
 
-  .menu-wrap {
+  .nav-wrapper {
     background: $hcmn-background-color;
     box-shadow: 1px 0 2px rgba(0, 0, 0, .2);
   }
@@ -42,8 +42,8 @@ $hcmn-border-color:               rgba(0, 0, 0, .1) !default;
       transition: background .3s ease;
     }
 
-    &.close,
-    &.back {
+    &.nav-close,
+    &.nav-back {
       background: rgba(0, 0, 0, .05);
 
       a {
@@ -51,9 +51,9 @@ $hcmn-border-color:               rgba(0, 0, 0, .1) !default;
       }
     }
 
-    &.close span,
+    &.nav-close span,
     &.has-subnav span.next,
-    &.back span {
+    &.nav-back span {
       width: 45px;
       position: absolute;
       top: 0;
@@ -64,7 +64,7 @@ $hcmn-border-color:               rgba(0, 0, 0, .1) !default;
       transition: background 0.2s ease;
     }
 
-    &.close {
+    &.nav-close {
       span {
         &::before,
         &::after {
@@ -97,7 +97,7 @@ $hcmn-border-color:               rgba(0, 0, 0, .1) !default;
   }
 
   span.next,
-  li.back span {
+  li.nav-back span {
     &::before {
       display: block;
       content: '';
@@ -119,7 +119,7 @@ $hcmn-border-color:               rgba(0, 0, 0, .1) !default;
     }
   }
 
-  li.back {
+  li.nav-back {
     span {
       &::before {
         transform: rotate(-45deg);

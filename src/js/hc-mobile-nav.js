@@ -41,17 +41,17 @@
     const $head = $('head');
 
     return (css, id, prepend) => {
-      const $style = $head.find('style#' + id);
+      const $style = $head.find(`style#${id}`);
 
       if ($style.length) {
         $style.html(css);
       }
       else {
         if (prepend) {
-          $('<style id="' + id + '">' + css + '</style>').prependTo($head);
+          $(`<style id="${id}">${css}</style>`).prependTo($head);
         }
         else {
-          $('<style id="' + id + '">' + css + '</style>').appendTo($head);
+          $(`<style id="${id}">${css}</style>`).appendTo($head);
         }
       }
     };
@@ -65,10 +65,12 @@
 
       const defaults = {
         maxWidth: 1024,
-        transition: true,
+        animate: true,
         transitionSide: 'left',
         disableBody: true,
-        customClass: '',
+        closeOnNavClick: true,
+        customToggle: null,
+        navClass: '',
         levelSpacing: 40,
         labels: {
           close: 'Close',
@@ -86,7 +88,7 @@
         const transform = browserPrefix('transform');
 
         return ($el, val) => {
-          if (transform && SETTINGS.transition) {
+          if (transform && SETTINGS.animate) {
             const x = SETTINGS.transitionSide === 'left' ? val : -val;
             $el[0].style[transform] = `translate3d(${x}px,0,0)`;
           }
@@ -155,10 +157,10 @@
           })
           .removeAttr('id') // remove id's so we don't have duplicates after cloning
           .removeClass() // remove all classes
-          .addClass(`hc-mobile-nav ${uniqClass} ${SETTINGS.customClass}`)
+          .addClass(`hc-mobile-nav ${uniqClass} ${SETTINGS.navClass}`)
           .find('[id]').removeAttr('id'); // remove all children id's
 
-        if (SETTINGS.transition) {
+        if (SETTINGS.animate) {
           $nav.addClass(`transform-${SETTINGS.transitionSide}`);
         }
 
@@ -180,10 +182,10 @@
 
           // wrap all menus and submenus
           if (level === 0) {
-            levels[level].wrapAll('<div class="menu-wrap"></div>');
+            levels[level].wrapAll('<div class="nav-wrapper"></div>');
           }
           else {
-            levels[level].wrap('<div class="menu-wrap"></div>');
+            levels[level].wrap('<div class="nav-wrapper"></div>');
           }
 
           levels[level].each(function(i) {
@@ -207,14 +209,14 @@
             if (level === 0) return;
 
             // insert back links
-            $('<li class="menu-item back"><a href="#">' + SETTINGS.labels.back + '<span></span></a></li>')
+            $(`<li class="nav-back"><a href="#">${SETTINGS.labels.back || ''}<span></span></a></li>`)
               .prependTo($menu)
               .children('a').click(goBack(level - 1, index));
           });
         }
 
         // now save our menu wrappers
-        const $wrappers = $nav.find('.menu-wrap').on('click', (e) => e.stopPropagation());
+        const $wrappers = $nav.find('.nav-wrapper').on('click', (e) => e.stopPropagation());
         const $main_wrap = $wrappers.first();
 
         // Methods
@@ -311,18 +313,15 @@
           }
         }
 
-
-        // do the rest
-
-        const $trigger = $(`<a class="hc-nav-trigger ${uniqClass}"><span></span></a>`).on('click', toggleNav);
-
         // insert close link
-        $('<li class="menu-item close"><a href="#">' + SETTINGS.labels.close + '<span></span></a></li>')
+        $(`<li class="nav-close"><a href="#">${SETTINGS.labels.close || ''}<span></span></a></li>`)
           .prependTo(levels[0].first())
           .children('a').click(closeNav(true));
 
         // when menu links clicked close menu (in case of #anchors)
-        $li.children('a').click(closeNav());
+        if (SETTINGS.closeOnNavClick) {
+          $li.children('a').click(closeNav());
+        }
 
         // close menu on body click
         if (SETTINGS.disableBody) {
@@ -333,8 +332,15 @@
         // insert menu to body
         $body.prepend($nav);
 
-        // insert menu trigger link
-        $this.addClass(`hc-nav ${uniqClass}`).after($trigger);
+        if (!SETTINGS.customToggle) {
+          // insert menu trigger link
+          const $toggle = $(`<a class="hc-nav-trigger ${uniqClass}"><span></span></a>`).on('click', toggleNav);
+
+          $this.addClass(`hc-nav ${uniqClass}`).after($toggle);
+        }
+        else {
+          $(SETTINGS.customToggle).addClass(uniqClass).on('click', toggleNav);
+        }
       });
     }
   });

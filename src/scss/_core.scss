@@ -16,19 +16,19 @@ body.hc-nav-open {
   &.transform-left {
     left: 0;
 
-    & > .menu-wrap {
+    & > .nav-wrapper {
       transform: translate3d(-100%, 0, 0);
     }
 
     li {
 
-      .menu-wrap {
+      .nav-wrapper {
         left: 0;
         transform: translate3d(-100%, 0, 0);
       }
 
       &.level-open {
-        & > .menu-wrap {
+        & > .nav-wrapper {
           transform: translate3d(-40px, 0, 0);
         }
       }
@@ -38,18 +38,18 @@ body.hc-nav-open {
   &.transform-right {
     right: 0;
 
-    & > .menu-wrap {
+    & > .nav-wrapper {
       transform: translate3d(100%, 0, 0);
     }
 
     li {
-      .menu-wrap {
+      .nav-wrapper {
         right: 0;
         transform: translate3d(100%, 0, 0);
       }
 
       &.level-open {
-        & > .menu-wrap {
+        & > .nav-wrapper {
           transform: translate3d(40px, 0, 0);
         }
       }
@@ -57,7 +57,7 @@ body.hc-nav-open {
   }
 
   &,
-  .menu-wrap {
+  .nav-wrapper {
     position: absolute;
     top: 0;
     height: 100%;
@@ -82,7 +82,7 @@ body.hc-nav-open {
     }
   }
 
-  .menu-wrap {
+  .nav-wrapper {
     min-width: 240px;
     max-width: 100%;
     z-index: 9999;
@@ -90,7 +90,7 @@ body.hc-nav-open {
     transition: visibility 0s ease .4s, transform .4s ease;
   }
 
-  & > .menu-wrap {
+  & > .nav-wrapper {
     visibility: visible;
     transform: translate3d(0, 0, 0);
   }
@@ -102,13 +102,13 @@ body.hc-nav-open {
   }
 
   &.nav-open {
-    & > .menu-wrap {
+    & > .nav-wrapper {
       transform: translate3d(0, 0, 0);
     }
   }
 
   li.level-open {
-    & > .menu-wrap {
+    & > .nav-wrapper {
       visibility: visible;
       transition: transform .4s ease;
     }
