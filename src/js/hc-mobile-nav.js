@@ -129,6 +129,24 @@
         const levels = {};
         const uniqClass = 'hc-nav-' + navCount;
 
+        // insert styles
+        let css = `
+          .hc-nav-trigger.${uniqClass},
+          .hc-mobile-nav.${uniqClass} {
+            display: block;
+          }
+          .hc-nav.${uniqClass} {
+            display: none;
+          }`
+
+        if (SETTINGS.maxWidth) {
+          css = `@media screen and (max-width: ${SETTINGS.maxWidth - 1}px) {
+            ${css}
+          }`;
+        }
+
+        printStyle(css, 'hc-mobile-nav-style');
+
         // prepare our nav
         $nav
           .on('click touchstart', (e) => {
@@ -296,7 +314,7 @@
 
         // do the rest
 
-        const $trigger = $(`<a class="hc-menu-trigger ${uniqClass}"><span></span></a>`).on('click', toggleNav);
+        const $trigger = $(`<a class="hc-nav-trigger ${uniqClass}"><span></span></a>`).on('click', toggleNav);
 
         // insert close link
         $('<li class="menu-item close"><a href="#">' + SETTINGS.labels.close + '<span></span></a></li>')
@@ -317,19 +335,6 @@
 
         // insert menu trigger link
         $this.addClass(`hc-nav ${uniqClass}`).after($trigger);
-
-        // insert style
-        const css = `@media screen and (max-width: ${SETTINGS.maxWidth - 1}px) {
-          .hc-menu-trigger.${uniqClass},
-          .hc-mobile-nav.${uniqClass} {
-            display: block;
-          }
-          .hc-nav.${uniqClass} {
-            display: none;
-          }
-        }`;
-
-        printStyle(css, 'hc-mobile-nav-style');
       });
     }
   });

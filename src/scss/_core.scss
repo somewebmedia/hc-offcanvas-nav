@@ -9,7 +9,7 @@ body.hc-nav-open {
 }
 
 .hc-mobile-nav {
-  z-index: 9998;
+  z-index: 9990;
   display: none;
   overscroll-behavior: none;
 
@@ -68,7 +68,7 @@ body.hc-nav-open {
     &::after {
       content: '';
       position: fixed;
-      z-index: 9980;
+      z-index: 9998;
       top: 0;
       left: 0;
       right: 0;
