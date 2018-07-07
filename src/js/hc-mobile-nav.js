@@ -207,9 +207,11 @@
             if (level === 0) return;
 
             // insert back links
-            $(`<li class="nav-back"><a href="#">${SETTINGS.labels.back || ''}<span></span></a></li>`)
-              .prependTo($menu)
-              .children('a').click(goBack(level - 1, index));
+            if (SETTINGS.labels.back !== false) {
+              $(`<li class="nav-back"><a href="#">${SETTINGS.labels.back || ''}<span></span></a></li>`)
+                .prependTo($menu)
+                .children('a').click(goBack(level - 1, index));
+            }
           });
         }
 
@@ -312,9 +314,11 @@
         }
 
         // insert close link
-        $(`<li class="nav-close"><a href="#">${SETTINGS.labels.close || ''}<span></span></a></li>`)
-          .prependTo(levels[0].first())
-          .children('a').click(closeNav(true));
+        if (SETTINGS.labels.close !== false) {
+          $(`<li class="nav-close"><a href="#">${SETTINGS.labels.close || ''}<span></span></a></li>`)
+            .prependTo(levels[0].first())
+            .children('a').click(closeNav(true));
+        }
 
         // when menu links clicked close menu (in case of #anchors)
         if (SETTINGS.closeOnNavClick) {
