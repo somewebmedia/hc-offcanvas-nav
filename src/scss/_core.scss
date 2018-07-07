@@ -13,6 +13,28 @@ body.hc-nav-open {
   display: none;
   overscroll-behavior: none;
 
+  &,
+  .nav-wrapper {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    float: none;
+    margin: 0;
+  }
+
+  .nav-wrapper {
+    min-width: 240px;
+    max-width: 100%;
+    z-index: 9999;
+    visibility: hidden;
+  }
+
+  & > .nav-wrapper {
+    visibility: visible;
+    transform: translate3d(0, 0, 0);
+  }
+
+  // Open: Left
   &.transform-left {
     left: 0;
 
@@ -21,20 +43,24 @@ body.hc-nav-open {
     }
 
     li {
-
       .nav-wrapper {
         left: 0;
         transform: translate3d(-100%, 0, 0);
       }
+    }
 
-      &.level-open {
-        & > .nav-wrapper {
-          transform: translate3d(-40px, 0, 0);
+    &.animate-nav {
+      li {
+        &.level-open {
+          & > .nav-wrapper {
+            transform: translate3d(-40px, 0, 0);
+          }
         }
       }
     }
   }
 
+  // Open: Right
   &.transform-right {
     right: 0;
 
@@ -47,53 +73,60 @@ body.hc-nav-open {
         right: 0;
         transform: translate3d(100%, 0, 0);
       }
+    }
 
-      &.level-open {
-        & > .nav-wrapper {
-          transform: translate3d(40px, 0, 0);
+    &.animate-nav {
+      li {
+        &.level-open {
+          & > .nav-wrapper {
+            transform: translate3d(40px, 0, 0);
+          }
         }
       }
     }
   }
 
-  &,
-  .nav-wrapper {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    float: none;
-    margin: 0;
-    transition: transform .4s ease;
+  // Background overlay
+  &.disable-body {
 
-    &::after {
-      content: '';
-      position: fixed;
-      z-index: 9998;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-      overscroll-behavior: none;
-      visibility: hidden;
-      opacity: 0;
-      transition: visibility 0s ease .4s, opacity .4s ease;
+    &,
+    .nav-wrapper {
+
+      &::after {
+        content: '';
+        position: fixed;
+        z-index: 9998;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        overscroll-behavior: none;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s ease .4s, opacity .4s ease;
+      }
+    }
+
+    &.nav-open,
+    .sub-level-open {
+      &::after {
+        visibility: visible;
+        opacity: 1;
+        transition-delay: .05s;
+      }
     }
   }
 
-  .nav-wrapper {
-    min-width: 240px;
-    max-width: 100%;
-    z-index: 9999;
-    visibility: hidden;
-    transition: visibility 0s ease .4s, transform .4s ease;
+  // Transitions
+  &.animate-nav {
+
+    .nav-wrapper {
+      transition: visibility 0s ease .4s, transform .4s ease;
+    }
   }
 
-  & > .nav-wrapper {
-    visibility: visible;
-    transform: translate3d(0, 0, 0);
-  }
 
   &:not(.nav-open) {
     &::after {
@@ -111,15 +144,6 @@ body.hc-nav-open {
     & > .nav-wrapper {
       visibility: visible;
       transition: transform .4s ease;
-    }
-  }
-
-  &.nav-open,
-  .sub-level-open {
-    &::after {
-      visibility: visible;
-      opacity: 1;
-      transition-delay: .05s;
     }
   }
 

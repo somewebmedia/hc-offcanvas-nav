@@ -157,12 +157,10 @@
           })
           .removeAttr('id') // remove id's so we don't have duplicates after cloning
           .removeClass() // remove all classes
-          .addClass(`hc-mobile-nav ${uniqClass} ${SETTINGS.navClass}`)
+          .addClass(`hc-mobile-nav ${uniqClass} ${SETTINGS.navClass} ${SETTINGS.animate ? 'animate-nav' : ''} ${SETTINGS.disableBody ? 'disable-body' : ''}`)
           .find('[id]').removeAttr('id'); // remove all children id's
 
-        if (SETTINGS.animate) {
-          $nav.addClass(`transform-${SETTINGS.transitionSide}`);
-        }
+        $nav.addClass(`transform-${SETTINGS.transitionSide}`);
 
         // set levels for menus
         $ul.each(function() {
