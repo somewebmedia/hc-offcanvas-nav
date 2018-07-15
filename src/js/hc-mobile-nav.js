@@ -18,6 +18,15 @@
     return document.body.scrollHeight > document.body.offsetHeight;
   };
 
+  const stopPropagation = (e) => e.stopPropagation();
+  const preventClick = (preventDefault, stopPropagation, cb) => {
+    return (e) => {
+      if (preventDefault) e.preventDefault();
+      if (stopPropagation) e.stopPropagation();
+      if (typeof cb === 'function') cb();
+    };
+  };
+
   const browserPrefix = (prop) => {
     const prefixes = ['Webkit', 'Moz', 'Ms', 'O'];
     const thisBody = document.body || document.documentElement;
@@ -39,20 +48,16 @@
 
   const printStyle = (() => {
     const $head = $('head');
+    const id = 'hc-mobile-nav-style';
 
-    return (css, id, prepend) => {
+    return (css) => {
       const $style = $head.find(`style#${id}`);
 
       if ($style.length) {
         $style.html(css);
       }
       else {
-        if (prepend) {
-          $(`<style id="${id}">${css}</style>`).prependTo($head);
-        }
-        else {
-          $(`<style id="${id}">${css}</style>`).appendTo($head);
-        }
+        $(`<style id="${id}">${css}</style>`).appendTo($head);
       }
     };
   })();
@@ -64,17 +69,17 @@
       if (!this.length) return this;
 
       const defaults = {
-        maxWidth: 1024,
-        animate: true,
-        transitionSide: 'left',
-        disableBody: true,
-        closeOnNavClick: true,
-        customToggle: null,
-        navClass: '',
-        levelSpacing: 40,
+        maxWidth:         1024,
+        transitionSide:   'left',
+        levelType:        'transform', // inline/transform/none
+        levelSpacing:     40,
+        disableBody:      true,
+        closeOnNavClick:  true,
+        customToggle:     null,
+        navClass:         '',
         labels: {
-          close: 'Close',
-          back: 'Back'
+          close:          'Close',
+          back:           'Back'
         }
       };
 
@@ -83,14 +88,18 @@
       const $html = $(document.getElementsByTagName('html')[0]);
       const $document = $(document);
       const $body = $(document.body);
+      const touchHandler = 'ontouchstart' in window ? 'touchstart' : 'click';
 
       const setTransform = (() => {
         const transform = browserPrefix('transform');
 
         return ($el, val) => {
-          if (transform && SETTINGS.animate) {
+          if (transform) {
             const x = SETTINGS.transitionSide === 'left' ? val : -val;
-            $el[0].style[transform] = `translate3d(${x}px,0,0)`;
+            $el.css(transform, `translate3d(${x}px,0,0)`);
+          }
+          else {
+            $el.css(SETTINGS.transitionSide, val);
           }
         };
       })();
@@ -103,7 +112,7 @@
 
         // clone menu
         if ($this.is('ul')) {
-          $nav = $this.clone().wrap('<nav></nav>').parent();
+          $nav = $this.clone().wrap('<nav>').parent();
         }
         else if ($this.is('nav')) {
           $nav = $this.clone();
@@ -127,9 +136,11 @@
         // count our nav
         navCount++;
 
-        const $li = $ul.find('li');
-        const levels = {};
+        let Levels = {};
         const uniqClass = 'hc-nav-' + navCount;
+
+        // wrap first level
+        const $main_wrap = $nav.children('ul').wrapAll('<div class="nav-wrapper">').parent().on('click', stopPropagation);
 
         // insert styles
         let css = `
@@ -139,7 +150,7 @@
           }
           .hc-nav.${uniqClass} {
             display: none;
-          }`
+          }`;
 
         if (SETTINGS.maxWidth) {
           css = `@media screen and (max-width: ${SETTINGS.maxWidth - 1}px) {
@@ -151,134 +162,132 @@
 
         // prepare our nav
         $nav
-          .on('click touchstart', (e) => {
-            // prevent menu close on self click
-            e.stopPropagation();
-          })
+          .on(touchHandler, stopPropagation) // prevent menu close on self click
           .removeAttr('id') // remove id's so we don't have duplicates after cloning
           .removeClass() // remove all classes
-          .addClass(`hc-mobile-nav ${uniqClass} ${SETTINGS.navClass} ${SETTINGS.animate ? 'animate-nav' : ''} ${SETTINGS.disableBody ? 'disable-body' : ''}`)
+          .addClass(`hc-mobile-nav ${uniqClass} ${SETTINGS.navClass || ''} nav-levels-${SETTINGS.levelType} transform-${SETTINGS.transitionSide} ${SETTINGS.disableBody ? 'disable-body' : ''}`)
           .find('[id]').removeAttr('id'); // remove all children id's
 
-        $nav.addClass(`transform-${SETTINGS.transitionSide}`);
+        // close menu on body click
+        if (SETTINGS.disableBody) {
+          $nav.on(touchHandler, closeNav);
+        }
 
-        // set levels for menus
+        // close menu on item click
+        if (SETTINGS.closeOnNavClick) {
+          $ul.find('li').children('a').on('click', closeNav);
+        }
+
+        // insert close link
+        if (SETTINGS.labels.close !== false) {
+          $(`<li class="nav-close"><a href="#">${SETTINGS.labels.close || ''}<span></span></a></li>`)
+            .prependTo($ul.first())
+            .children('a').on('click', preventClick(true, true, closeNav));
+        }
+
+        // get levels for submenus
         $ul.each(function() {
           const $menu = $(this);
           const level = $menu.parents('li').length;
 
-          if (!levels[level]) {
-            levels[level] = $menu;
-          }
-          else {
-            levels[level] = levels[level].add($menu);
+          if (level !== 0) {
+            const $li = $menu.parent().addClass('nav-parent');
+            const $a = $li.children('a');
+
+            // create new level
+            if (!Levels[level]) {
+              Levels[level] = [];
+            }
+
+            // add elements to this level
+            Levels[level].push({
+              nav: $menu
+            });
+
+            // what's the submenu index
+            const index = Levels[level].length - 1;
+
+            // save parent wrapper
+            Levels[level][index]['wrapper'] = $menu.closest('.nav-wrapper');
+
+            // wrap submenus
+            $menu.wrap('<div class="nav-wrapper">').parent().on('click', stopPropagation);
+
+            const $next_span = $('<span class="nav-next">').appendTo($a);
+            const $next_label = $(`<label for="${uniqClass}-${level}-${index}">`).on('click', stopPropagation);
+
+            const $checkbox = $(`<input type="checkbox" id="${uniqClass}-${level}-${index}">`)
+              .attr('data-level', level)
+              .attr('data-index', index)
+              .on('change', checkboxChange);
+
+            // add checkboxes to our levels list
+            Levels[level][index]['checkbox'] = $checkbox;
+
+            $li.prepend($checkbox);
+
+            if (!$a.attr('href') || $a.attr('href') === '#') {
+              $a.on('click', preventClick(true, true)).prepend($next_label);
+            }
+            else {
+              $next_span.append($next_label);
+            }
+
+            // insert back links
+            if (SETTINGS.labels.back !== false && SETTINGS.levelType !== 'inline') {
+              $(`<li class="nav-back"><a href="#">${SETTINGS.labels.back || ''}<span></span></a></li>`)
+                .prependTo($menu)
+                .children('a').on('click', preventClick(true, true, () => closeLevel(level, index)));
+            }
           }
         });
 
-        for (let l in levels) {
-          const level = Number(l);
+        function checkboxChange() {
+          const $checkbox = $(this);
+          const l = Number($checkbox.attr('data-level'));
+          const i = Number($checkbox.attr('data-index'));
 
-          // wrap all menus and submenus
-          if (level === 0) {
-            levels[level].wrapAll('<div class="nav-wrapper"></div>');
+          if ($checkbox.prop('checked')) {
+            openLevel(l, i);
           }
           else {
-            levels[level].wrap('<div class="nav-wrapper"></div>');
+            closeLevel(l, i);
           }
-
-          levels[level].each(function(i) {
-            const $menu = $(this);
-            const index = level !== 0 ? i : 0;
-
-            // save some data
-            $menu.parent()
-              .attr('data-level', level)
-              .attr('data-index', index);
-
-            const $li_next = $menu.children('li').filter(function() {
-              return $(this).find('ul').length;
-            });
-
-            // insert next level links
-            $('<span class="next">')
-              .click(openSubNav(level, index))
-              .appendTo($li_next.addClass('has-subnav').children('a'));
-
-            if (level === 0) return;
-
-            // insert back links
-            if (SETTINGS.labels.back !== false) {
-              $(`<li class="nav-back"><a href="#">${SETTINGS.labels.back || ''}<span></span></a></li>`)
-                .prependTo($menu)
-                .children('a').click(goBack(level - 1, index));
-            }
-          });
         }
-
-        // now save our menu wrappers
-        const $wrappers = $nav.find('.nav-wrapper').on('click', (e) => e.stopPropagation());
-        const $main_wrap = $wrappers.first();
 
         // Methods
 
-        function openNav(e) {
-          e.preventDefault();
-          e.stopPropagation();
-
+        function openNav() {
           _open = true;
-          _top = $html.scrollTop() || $body.scrollTop(); // remember the scroll position
 
           $nav.addClass('nav-open');
 
           if (SETTINGS.disableBody) {
+            _top = $html.scrollTop() || $body.scrollTop(); // remember the scroll position
+
             $body.addClass('hc-nav-open');
+
+            if (_top) {
+              $body.css('top', -_top);
+            }
 
             if (hasScrollBar()) {
               $html.addClass('hc-yscroll');
             }
           }
-
-          if (_top) {
-            $body.css('top', -_top);
-          }
         }
 
-        function openSubNav(l, i) {
-          return function(e) {
-            e.stopPropagation();
-            e.preventDefault();
+        function closeNav() {
+          _open = false;
 
-            const $this = $(this);
-            const $wrap = $wrappers.filter(`[data-level=${l}][data-index=${i}]`);
+          $nav.removeClass('nav-open');
+          $main_wrap.removeAttr('style');
 
-            $this.closest('li').addClass('level-open');
-            $wrap.addClass('sub-level-open').on('click', goBack(l, i));
+          closeLevel(0);
 
-            setTransform($main_wrap, (l + 1) * SETTINGS.levelSpacing);
-
-            return false;
-          };
-        }
-
-        function closeNav(preventLink) {
-          return (e) => {
-            e.stopPropagation();
-
-            if (preventLink === true) {
-              e.preventDefault();
-            }
-
-            _open = false;
-
+          if (SETTINGS.disableBody) {
+            $body.removeClass('hc-nav-open');
             $html.removeClass('hc-yscroll');
-            $nav.removeClass('nav-open');
-            $main_wrap.removeAttr('style');
-            $li.filter('.level-open').removeClass('level-open');
-            $nav.find('.sub-level-open').removeClass('sub-level-open');
-
-            if (SETTINGS.disableBody) {
-              $body.removeClass('hc-nav-open');
-            }
 
             if (_top) {
               $body.css('top', '').scrollTop(_top);
@@ -286,49 +295,73 @@
 
               _top = 0; // reset top
             }
-          };
-        }
-
-        function goBack(l, i) {
-          return function(e) {
-            e.stopPropagation();
-            e.preventDefault();
-
-            const $wrap = $wrappers.filter(`[data-level=${l}]`);
-
-            $wrap.off('click').removeClass('sub-level-open');
-            $wrap.find('.level-open').removeClass('level-open');
-            $wrap.find('.sub-level-open').removeClass('sub-level-open');
-
-            setTransform($main_wrap, l * SETTINGS.levelSpacing);
-          };
+          }
         }
 
         function toggleNav(e) {
-          if (_open) {
-            closeNav()(e);
+          e.preventDefault();
+          e.stopPropagation();
+
+          if (_open) closeNav();
+          else openNav();
+        }
+
+        function openLevel(l, i) {
+          const $checkbox = Levels[l][i].checkbox;
+          const $li = $checkbox.parent('li');
+          const $wrap = l === 1 ? $main_wrap : Levels[l][i].wrapper;
+
+          $wrap.addClass('sub-level-open');
+          $li.addClass('level-open');
+
+          if (SETTINGS.levelType === 'transform') {
+            $wrap.on('click', () => closeLevel(l, i))
+            setTransform($main_wrap, l * SETTINGS.levelSpacing);
           }
-          else {
-            openNav(e);
+        }
+
+        var _closeLevel = (l, i) => {
+          if (!Levels[l] || !Levels[l][i]) return;
+
+          let $checkbox = Levels[l][i].checkbox;
+          let $li = $checkbox.parent('li');
+          let $wrap = l === 1 ? $main_wrap : Levels[l][i].wrapper;
+
+          $checkbox.prop('checked', false);
+          $wrap.removeClass('sub-level-open');
+          $li.removeClass('level-open');
+        };
+
+        function closeLevel(l, i) {
+          // also close ol sub sub levels
+          for (let level = l; level <= Object.keys(Levels).length; level++) {
+            if (level !== 0) {
+              if (level == l && typeof i !== 'undefined') {
+                _closeLevel(level, i);
+
+                if (SETTINGS.levelType === 'transform') {
+                  let $wrap = l === 1 ? $main_wrap : Levels[level][i].wrapper;
+                  $wrap.off('click').on('click', stopPropagation);
+                  setTransform($main_wrap, (level - 1) * SETTINGS.levelSpacing);
+                }
+              }
+              else {
+                for (let index in Levels[level]) {
+                  _closeLevel(level, index);
+
+                  if (SETTINGS.levelType === 'transform') {
+                    let $wrap = l === 1 ? $main_wrap : Levels[level][index].wrapper;
+
+                    $wrap.off('click').on('click', stopPropagation);
+
+                    if (level == l) {
+                      setTransform($main_wrap, (level - 1) * SETTINGS.levelSpacing);
+                    }
+                  }
+                }
+              }
+            }
           }
-        }
-
-        // insert close link
-        if (SETTINGS.labels.close !== false) {
-          $(`<li class="nav-close"><a href="#">${SETTINGS.labels.close || ''}<span></span></a></li>`)
-            .prependTo(levels[0].first())
-            .children('a').click(closeNav(true));
-        }
-
-        // when menu links clicked close menu (in case of #anchors)
-        if (SETTINGS.closeOnNavClick) {
-          $li.children('a').click(closeNav());
-        }
-
-        // close menu on body click
-        if (SETTINGS.disableBody) {
-          const touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
-          $nav.on(touchEvent, closeNav());
         }
 
         // insert menu to body

@@ -11,20 +11,18 @@ body.hc-nav-open {
 .hc-mobile-nav {
   z-index: 9990;
   display: none;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  margin: 0;
   overscroll-behavior: none;
 
-  &,
   .nav-wrapper {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    float: none;
-    margin: 0;
-  }
-
-  .nav-wrapper {
+    display: flex;
+    flex-direction: column;
     min-width: 240px;
     max-width: 100%;
+    box-sizing: border-box;
     z-index: 9999;
     visibility: hidden;
   }
@@ -42,19 +40,19 @@ body.hc-nav-open {
       transform: translate3d(-100%, 0, 0);
     }
 
-    li {
-      .nav-wrapper {
-        left: 0;
-        transform: translate3d(-100%, 0, 0);
-      }
-    }
+    &.nav-levels-transform {
 
-    &.animate-nav {
       li {
+
         &.level-open {
           & > .nav-wrapper {
             transform: translate3d(-40px, 0, 0);
           }
+        }
+
+        .nav-wrapper {
+          left: 0;
+          transform: translate3d(-100%, 0, 0);
         }
       }
     }
@@ -68,19 +66,19 @@ body.hc-nav-open {
       transform: translate3d(100%, 0, 0);
     }
 
-    li {
-      .nav-wrapper {
-        right: 0;
-        transform: translate3d(100%, 0, 0);
-      }
-    }
+    &.nav-levels-transform {
 
-    &.animate-nav {
       li {
+
         &.level-open {
           & > .nav-wrapper {
             transform: translate3d(40px, 0, 0);
           }
+        }
+
+        .nav-wrapper {
+          right: 0;
+          transform: translate3d(100%, 0, 0);
         }
       }
     }
@@ -119,11 +117,48 @@ body.hc-nav-open {
     }
   }
 
-  // Transitions
-  &.animate-nav {
+  // Levels
+  &.nav-levels-transform {
 
     .nav-wrapper {
+      position: absolute;
+      top: 0;
+      height: 100%;
       transition: visibility 0s ease .4s, transform .4s ease;
+    }
+
+    ul {
+      overflow: scroll;
+      overflow-x: visible;
+      overflow-y: auto;
+    }
+  }
+
+  &.nav-levels-inline {
+
+    .nav-wrapper {
+      max-height: 0;
+      transition: height 0s ease .4s;
+
+      &::after {
+        display: none;
+      }
+    }
+
+    & > .nav-wrapper {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      max-height: none;
+      overflow: scroll;
+      overflow-x: visible;
+      overflow-y: auto;
+    }
+
+    .level-open {
+      & > .nav-wrapper {
+        max-height: none;
+      }
     }
   }
 
@@ -147,7 +182,26 @@ body.hc-nav-open {
     }
   }
 
+  input[type="checkbox"] {
+    display: none;
+  }
+
+  label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    cursor: pointer;
+  }
+
   a {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    cursor: pointer;
+
     &,
     &:hover {
       text-decoration: none;
@@ -155,29 +209,18 @@ body.hc-nav-open {
   }
 
   ul {
+    flex: 0 0 auto;
     list-style: none;
     margin: 0;
     padding: 0;
-    overflow: scroll;
-    overflow-x: visible;
-    overflow-y: auto;
+
+    &:last-child {
+      flex: 1 1 auto;
+    }
   }
 
   li {
     position: relative;
-    float: none;
-    width: 100%;
-    box-sizing: border-box;
-
-    &.has-subnav {
-      position: static;
-    }
-
-    a {
-      position: relative;
-      display: block;
-      width: 100%;
-      box-sizing: border-box;
-    }
+    display: block;
   }
 }
