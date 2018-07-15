@@ -11,7 +11,7 @@ body.hc-nav-open {
 .hc-mobile-nav {
   z-index: 9990;
   display: none;
-  position: absolute;
+  position: fixed;
   top: 0;
   height: 100%;
   margin: 0;
