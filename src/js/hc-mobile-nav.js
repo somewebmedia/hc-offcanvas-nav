@@ -70,17 +70,21 @@
 
       const defaults = {
         maxWidth:         1024,
-        transitionSide:   'left',
-        levelType:        'transform', // inline/transform/none
+        offCanvas:        true,
+        directionFrom:    'left',
+
+        levelEffect:      'transform', // inline/transform/none
         levelSpacing:     40,
+
         disableBody:      true,
         closeOnNavClick:  true,
         customToggle:     null,
         navClass:         '',
-        labels: {
-          close:          'Close',
-          back:           'Back'
-        }
+
+        insertClose:      true,
+        insertBack:      true,
+        labelClose:       'Close',
+        labelBack:        'Back'
       };
 
       let SETTINGS = $.extend({}, defaults, options);
@@ -95,11 +99,11 @@
 
         return ($el, val) => {
           if (transform) {
-            const x = SETTINGS.transitionSide === 'left' ? val : -val;
+            const x = SETTINGS.directionFrom === 'left' ? val : -val;
             $el.css(transform, `translate3d(${x}px,0,0)`);
           }
           else {
-            $el.css(SETTINGS.transitionSide, val);
+            $el.css(SETTINGS.directionFrom, val);
           }
         };
       })();
@@ -140,7 +144,7 @@
         const uniqClass = 'hc-nav-' + navCount;
 
         // wrap first level
-        const $main_wrap = $nav.children('ul').wrapAll('<div class="nav-wrapper">').parent().on('click', stopPropagation);
+        const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper">').parent().on('click', stopPropagation).wrap('<div class="nav-container">').parent();
 
         // insert styles
         let css = `
@@ -165,7 +169,7 @@
           .on(touchHandler, stopPropagation) // prevent menu close on self click
           .removeAttr('id') // remove id's so we don't have duplicates after cloning
           .removeClass() // remove all classes
-          .addClass(`hc-mobile-nav ${uniqClass} ${SETTINGS.navClass || ''} nav-levels-${SETTINGS.levelType} transform-${SETTINGS.transitionSide} ${SETTINGS.disableBody ? 'disable-body' : ''}`)
+          .addClass(`hc-mobile-nav ${uniqClass} ${SETTINGS.navClass || ''} nav-levels-${SETTINGS.levelEffect} direction-from-${SETTINGS.directionFrom} ${SETTINGS.offCanvas ? 'off-canvas' : ''} ${SETTINGS.disableBody ? 'disable-body' : ''}`)
           .find('[id]').removeAttr('id'); // remove all children id's
 
         // close menu on body click
@@ -179,8 +183,8 @@
         }
 
         // insert close link
-        if (SETTINGS.labels.close !== false) {
-          $(`<li class="nav-close"><a href="#">${SETTINGS.labels.close || ''}<span></span></a></li>`)
+        if (SETTINGS.insertClose !== false) {
+          $(`<li class="nav-close"><a href="#">${SETTINGS.labelClose || ''}<span></span></a></li>`)
             .prependTo($ul.first())
             .children('a').on('click', preventClick(true, true, closeNav));
         }
@@ -213,6 +217,11 @@
             // wrap submenus
             $menu.wrap('<div class="nav-wrapper">').parent().on('click', stopPropagation);
 
+            if (SETTINGS.levelEffect === 'none') {
+              // stop here
+              return;
+            }
+
             const $next_span = $('<span class="nav-next">').appendTo($a);
             const $next_label = $(`<label for="${uniqClass}-${level}-${index}">`).on('click', stopPropagation);
 
@@ -234,8 +243,8 @@
             }
 
             // insert back links
-            if (SETTINGS.labels.back !== false && SETTINGS.levelType !== 'inline') {
-              $(`<li class="nav-back"><a href="#">${SETTINGS.labels.back || ''}<span></span></a></li>`)
+            if (SETTINGS.insertBack !== false && SETTINGS.levelEffect === 'transform') {
+              $(`<li class="nav-back"><a href="#">${SETTINGS.labelBack || ''}<span></span></a></li>`)
                 .prependTo($menu)
                 .children('a').on('click', preventClick(true, true, () => closeLevel(level, index)));
             }
@@ -281,7 +290,7 @@
           _open = false;
 
           $nav.removeClass('nav-open');
-          $main_wrap.removeAttr('style');
+          $container.removeAttr('style');
 
           closeLevel(0);
 
@@ -309,14 +318,14 @@
         function openLevel(l, i) {
           const $checkbox = Levels[l][i].checkbox;
           const $li = $checkbox.parent('li');
-          const $wrap = l === 1 ? $main_wrap : Levels[l][i].wrapper;
+          const $wrap = Levels[l][i].wrapper;
 
           $wrap.addClass('sub-level-open');
           $li.addClass('level-open');
 
-          if (SETTINGS.levelType === 'transform') {
+          if (SETTINGS.levelEffect === 'transform') {
             $wrap.on('click', () => closeLevel(l, i))
-            setTransform($main_wrap, l * SETTINGS.levelSpacing);
+            setTransform($container, l * SETTINGS.levelSpacing);
           }
         }
 
@@ -325,7 +334,7 @@
 
           let $checkbox = Levels[l][i].checkbox;
           let $li = $checkbox.parent('li');
-          let $wrap = l === 1 ? $main_wrap : Levels[l][i].wrapper;
+          let $wrap = Levels[l][i].wrapper;
 
           $checkbox.prop('checked', false);
           $wrap.removeClass('sub-level-open');
@@ -339,23 +348,23 @@
               if (level == l && typeof i !== 'undefined') {
                 _closeLevel(level, i);
 
-                if (SETTINGS.levelType === 'transform') {
-                  let $wrap = l === 1 ? $main_wrap : Levels[level][i].wrapper;
+                if (SETTINGS.levelEffect === 'transform') {
+                  let $wrap = l === 1 ? $container : Levels[level][i].wrapper;
                   $wrap.off('click').on('click', stopPropagation);
-                  setTransform($main_wrap, (level - 1) * SETTINGS.levelSpacing);
+                  setTransform($container, (level - 1) * SETTINGS.levelSpacing);
                 }
               }
               else {
                 for (let index in Levels[level]) {
                   _closeLevel(level, index);
 
-                  if (SETTINGS.levelType === 'transform') {
-                    let $wrap = l === 1 ? $main_wrap : Levels[level][index].wrapper;
+                  if (SETTINGS.levelEffect === 'transform') {
+                    let $wrap = l === 1 ? $container : Levels[level][index].wrapper;
 
                     $wrap.off('click').on('click', stopPropagation);
 
                     if (level == l) {
-                      setTransform($main_wrap, (level - 1) * SETTINGS.levelSpacing);
+                      setTransform($container, (level - 1) * SETTINGS.levelSpacing);
                     }
                   }
                 }
