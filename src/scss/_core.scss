@@ -1,3 +1,6 @@
+$hcmn-transition-duration: .4s !default;
+$hcmn-container-width: 240px !default;
+
 html.hc-yscroll {
   overflow-y: scroll;
 }
@@ -12,10 +15,6 @@ body.hc-nav-open {
   z-index: 9999;
   display: none;
   overscroll-behavior: none;
-
-  .nav-container {
-    max-width: 100%;
-  }
 
   ul {
     list-style: none;
@@ -85,7 +84,7 @@ body.hc-nav-open {
         overscroll-behavior: none;
         visibility: hidden;
         opacity: 0;
-        transition: visibility 0s ease .4s, opacity .4s ease;
+        transition: visibility 0s ease $hcmn-transition-duration, opacity $hcmn-transition-duration ease;
       }
     }
 
@@ -113,7 +112,7 @@ body.hc-nav-open {
         min-width: 0;
         max-height: 0;
         overflow: hidden;
-        transition: height 0s ease .4s;
+        transition: height 0s ease $hcmn-transition-duration;
       }
     }
 
@@ -134,9 +133,10 @@ body.hc-nav-open {
       position: fixed;
       z-index: 9998;
       top: 0;
-      min-width: 240px;
+      width: $hcmn-container-width;
+      max-width: 100%;
       height: 100%;
-      transition: transform .4s ease;
+      transition: transform $hcmn-transition-duration ease;
     }
 
     .nav-wrapper {
@@ -162,7 +162,7 @@ body.hc-nav-open {
           top: 0;
           height: 100%;
           visibility: hidden;
-          transition: visibility 0s ease .4s, transform .4s ease;
+          transition: visibility 0s ease $hcmn-transition-duration, transform $hcmn-transition-duration ease;
         }
 
         ul {
@@ -181,7 +181,7 @@ body.hc-nav-open {
           &.level-open {
             & > .nav-wrapper {
               visibility: visible;
-              transition: transform .4s ease;
+              transition: transform $hcmn-transition-duration ease;
             }
           }
         }
