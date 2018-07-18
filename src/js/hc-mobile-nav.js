@@ -77,12 +77,12 @@
         levelSpacing:     40,
 
         disableBody:      true,
-        closeOnNavClick:  true,
+        closeOnClick:     true,
         customToggle:     null,
         navClass:         '',
 
         insertClose:      true,
-        insertBack:      true,
+        insertBack:       true,
         labelClose:       'Close',
         labelBack:        'Back'
       };
@@ -144,7 +144,7 @@
         const uniqClass = 'hc-nav-' + navCount;
 
         // wrap first level
-        const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper">').parent().on('click', stopPropagation).wrap('<div class="nav-container">').parent();
+        const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper nav-wrapper-1">').parent().on('click', stopPropagation).wrap('<div class="nav-container">').parent();
 
         // insert styles
         let css = `
@@ -178,7 +178,7 @@
         }
 
         // close menu on item click
-        if (SETTINGS.closeOnNavClick) {
+        if (SETTINGS.closeOnClick) {
           $ul.find('li').children('a').on('click', closeNav);
         }
 
@@ -215,7 +215,7 @@
             Levels[level][index]['wrapper'] = $menu.closest('.nav-wrapper');
 
             // wrap submenus
-            $menu.wrap('<div class="nav-wrapper">').parent().on('click', stopPropagation);
+            $menu.wrap(`<div class="nav-wrapper nav-wrapper-${level+1}">`).parent().on('click', stopPropagation);
 
             if (SETTINGS.levelEffect === 'none') {
               // stop here
