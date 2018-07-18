@@ -13,10 +13,8 @@ body.hc-nav-open {
   display: none;
   overscroll-behavior: none;
 
-  .nav-wrapper {
-    min-width: 240px;
+  .nav-container {
     max-width: 100%;
-    box-sizing: border-box;
   }
 
   ul {
@@ -133,13 +131,18 @@ body.hc-nav-open {
     height: 100%;
 
     .nav-container {
-      position: absolute;
+      position: fixed;
       z-index: 9998;
       top: 0;
+      min-width: 240px;
       height: 100%;
       transition: transform .4s ease;
+    }
 
-      & > .nav-wrapper {
+    .nav-wrapper {
+      width: 100%;
+
+      &.nav-wrapper-1 {
         position: static;
         height: 100%;
         overflow: scroll;

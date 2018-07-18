@@ -113,7 +113,7 @@ $hcmn-text-color:                 #fff !default;
     }
   }
 
-  a:not([href="#"]):not([href=""]) > span.nav-next {
+  a[href]:not([href="#"]) > span.nav-next {
     border-left: 1px solid darken($hcmn-background-color, 5%);
   }
 
