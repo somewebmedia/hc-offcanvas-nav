@@ -144,7 +144,7 @@
         const uniqClass = 'hc-nav-' + navCount;
 
         // wrap first level
-        const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper nav-wrapper-1">').parent().on('click', stopPropagation).wrap('<div class="nav-container">').parent();
+        const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper nav-wrapper-1">').parent().on(touchHandler, stopPropagation).wrap('<div class="nav-container">').parent();
 
         // insert styles
         let css = `
@@ -179,14 +179,14 @@
 
         // close menu on item click
         if (SETTINGS.closeOnClick) {
-          $ul.find('li').children('a').on('click', closeNav);
+          $ul.find('li').children('a').on(touchHandler, closeNav);
         }
 
         // insert close link
         if (SETTINGS.insertClose !== false) {
           $(`<li class="nav-close"><a href="#">${SETTINGS.labelClose || ''}<span></span></a></li>`)
             .prependTo($ul.first())
-            .children('a').on('click', preventClick(true, true, closeNav));
+            .children('a').on(touchHandler, preventClick(true, true, closeNav));
         }
 
         // get levels for submenus
@@ -215,7 +215,7 @@
             Levels[level][index]['wrapper'] = $menu.closest('.nav-wrapper');
 
             // wrap submenus
-            $menu.wrap(`<div class="nav-wrapper nav-wrapper-${level+1}">`).parent().on('click', stopPropagation);
+            $menu.wrap(`<div class="nav-wrapper nav-wrapper-${level+1}">`).parent().on(touchHandler, stopPropagation);
 
             if (SETTINGS.levelEffect === 'none') {
               // stop here
@@ -223,7 +223,7 @@
             }
 
             const $next_span = $('<span class="nav-next">').appendTo($a);
-            const $next_label = $(`<label for="${uniqClass}-${level}-${index}">`).on('click', stopPropagation);
+            const $next_label = $(`<label for="${uniqClass}-${level}-${index}">`).on(touchHandler, stopPropagation);
 
             const $checkbox = $(`<input type="checkbox" id="${uniqClass}-${level}-${index}">`)
               .attr('data-level', level)
@@ -236,7 +236,7 @@
             $li.prepend($checkbox);
 
             if (!$a.attr('href') || $a.attr('href') === '#') {
-              $a.on('click', preventClick(true, true)).prepend($next_label);
+              $a.on(touchHandler, preventClick(true, true)).prepend($next_label);
             }
             else {
               $next_span.append($next_label);
@@ -246,7 +246,7 @@
             if (SETTINGS.insertBack !== false && SETTINGS.levelEffect === 'transform') {
               $(`<li class="nav-back"><a href="#">${SETTINGS.labelBack || ''}<span></span></a></li>`)
                 .prependTo($menu)
-                .children('a').on('click', preventClick(true, true, () => closeLevel(level, index)));
+                .children('a').on(touchHandler, preventClick(true, true, () => closeLevel(level, index)));
             }
           }
         });
@@ -324,7 +324,7 @@
           $li.addClass('level-open');
 
           if (SETTINGS.levelEffect === 'transform') {
-            $wrap.on('click', () => closeLevel(l, i))
+            $wrap.on(touchHandler, () => closeLevel(l, i))
             setTransform($container, l * SETTINGS.levelSpacing);
           }
         }
@@ -350,7 +350,7 @@
 
                 if (SETTINGS.levelEffect === 'transform') {
                   let $wrap = l === 1 ? $container : Levels[level][i].wrapper;
-                  $wrap.off('click').on('click', stopPropagation);
+                  $wrap.off(touchHandler).on(touchHandler, stopPropagation);
                   setTransform($container, (level - 1) * SETTINGS.levelSpacing);
                 }
               }
@@ -361,7 +361,7 @@
                   if (SETTINGS.levelEffect === 'transform') {
                     let $wrap = l === 1 ? $container : Levels[level][index].wrapper;
 
-                    $wrap.off('click').on('click', stopPropagation);
+                    $wrap.off(touchHandler).on(touchHandler, stopPropagation);
 
                     if (level == l) {
                       setTransform($container, (level - 1) * SETTINGS.levelSpacing);
