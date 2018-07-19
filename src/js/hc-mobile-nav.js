@@ -18,6 +18,10 @@
     return document.body.scrollHeight > document.body.offsetHeight;
   };
 
+  const isIos = (() => {
+    return ((/iPad|iPhone|iPod/.test(navigator.userAgent)) || (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))) && !window.MSStream;
+  })();
+
   const stopPropagation = (e) => e.stopPropagation();
   const preventClick = (preventDefault, stopPropagation, cb) => {
     return (e) => {
@@ -92,7 +96,6 @@
       const $html = $(document.getElementsByTagName('html')[0]);
       const $document = $(document);
       const $body = $(document.body);
-      const touchHandler = 'ontouchstart' in window ? 'touchstart' : 'click';
 
       const setTransform = (() => {
         const transform = browserPrefix('transform');
@@ -144,7 +147,7 @@
         const uniqClass = 'hc-nav-' + navCount;
 
         // wrap first level
-        const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper nav-wrapper-1">').parent().on(touchHandler, stopPropagation).wrap('<div class="nav-container">').parent();
+        const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper nav-wrapper-1">').parent().on('click', stopPropagation).wrap('<div class="nav-container">').parent();
 
         // insert styles
         let css = `
@@ -166,27 +169,36 @@
 
         // prepare our nav
         $nav
-          .on(touchHandler, stopPropagation) // prevent menu close on self click
+          .on('click', stopPropagation) // prevent menu close on self click
           .removeAttr('id') // remove id's so we don't have duplicates after cloning
           .removeClass() // remove all classes
-          .addClass(`hc-mobile-nav ${uniqClass} ${SETTINGS.navClass || ''} nav-levels-${SETTINGS.levelEffect} direction-from-${SETTINGS.directionFrom} ${SETTINGS.offCanvas ? 'off-canvas' : ''} ${SETTINGS.disableBody ? 'disable-body' : ''}`)
+          .addClass(`
+            hc-mobile-nav
+            ${uniqClass}
+            ${SETTINGS.navClass || ''}
+            nav-levels-${SETTINGS.levelEffect}
+            direction-from-${SETTINGS.directionFrom}
+            ${SETTINGS.offCanvas ? 'off-canvas' : ''}
+            ${SETTINGS.disableBody ? 'disable-body' : ''}
+            ${isIos ? 'is-ios' : ''}
+          `)
           .find('[id]').removeAttr('id'); // remove all children id's
 
         // close menu on body click
         if (SETTINGS.disableBody) {
-          $nav.on(touchHandler, closeNav);
+          $nav.on('click', closeNav);
         }
 
         // close menu on item click
         if (SETTINGS.closeOnClick) {
-          $ul.find('li').children('a').on(touchHandler, closeNav);
+          $ul.find('li').children('a').on('click', closeNav);
         }
 
         // insert close link
         if (SETTINGS.insertClose !== false) {
           $(`<li class="nav-close"><a href="#">${SETTINGS.labelClose || ''}<span></span></a></li>`)
             .prependTo($ul.first())
-            .children('a').on(touchHandler, preventClick(true, true, closeNav));
+            .children('a').on('click', preventClick(true, true, closeNav));
         }
 
         // get levels for submenus
@@ -215,7 +227,7 @@
             Levels[level][index]['wrapper'] = $menu.closest('.nav-wrapper');
 
             // wrap submenus
-            $menu.wrap(`<div class="nav-wrapper nav-wrapper-${level+1}">`).parent().on(touchHandler, stopPropagation);
+            $menu.wrap(`<div class="nav-wrapper nav-wrapper-${level+1}">`).parent().on('click', stopPropagation);
 
             if (SETTINGS.levelEffect === 'none') {
               // stop here
@@ -223,7 +235,7 @@
             }
 
             const $next_span = $('<span class="nav-next">').appendTo($a);
-            const $next_label = $(`<label for="${uniqClass}-${level}-${index}">`).on(touchHandler, stopPropagation);
+            const $next_label = $(`<label for="${uniqClass}-${level}-${index}">`).on('click', stopPropagation);
 
             const $checkbox = $(`<input type="checkbox" id="${uniqClass}-${level}-${index}">`)
               .attr('data-level', level)
@@ -236,7 +248,7 @@
             $li.prepend($checkbox);
 
             if (!$a.attr('href') || $a.attr('href') === '#') {
-              $a.on(touchHandler, preventClick(true, true)).prepend($next_label);
+              $a.on('click', preventClick(true, true)).prepend($next_label);
             }
             else {
               $next_span.append($next_label);
@@ -246,7 +258,7 @@
             if (SETTINGS.insertBack !== false && SETTINGS.levelEffect === 'transform') {
               $(`<li class="nav-back"><a href="#">${SETTINGS.labelBack || ''}<span></span></a></li>`)
                 .prependTo($menu)
-                .children('a').on(touchHandler, preventClick(true, true, () => closeLevel(level, index)));
+                .children('a').on('click', preventClick(true, true, () => closeLevel(level, index)));
             }
           }
         });
@@ -324,7 +336,7 @@
           $li.addClass('level-open');
 
           if (SETTINGS.levelEffect === 'transform') {
-            $wrap.on(touchHandler, () => closeLevel(l, i))
+            $wrap.on('click', () => closeLevel(l, i))
             setTransform($container, l * SETTINGS.levelSpacing);
           }
         }
@@ -350,7 +362,7 @@
 
                 if (SETTINGS.levelEffect === 'transform') {
                   let $wrap = l === 1 ? $container : Levels[level][i].wrapper;
-                  $wrap.off(touchHandler).on(touchHandler, stopPropagation);
+                  $wrap.off('click').on('click', stopPropagation);
                   setTransform($container, (level - 1) * SETTINGS.levelSpacing);
                 }
               }
@@ -361,7 +373,7 @@
                   if (SETTINGS.levelEffect === 'transform') {
                     let $wrap = l === 1 ? $container : Levels[level][index].wrapper;
 
-                    $wrap.off(touchHandler).on(touchHandler, stopPropagation);
+                    $wrap.off('click').on('click', stopPropagation);
 
                     if (level == l) {
                       setTransform($container, (level - 1) * SETTINGS.levelSpacing);
