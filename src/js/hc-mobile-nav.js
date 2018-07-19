@@ -361,7 +361,7 @@
                 _closeLevel(level, i);
 
                 if (SETTINGS.levelEffect === 'transform') {
-                  let $wrap = l === 1 ? $container : Levels[level][i].wrapper;
+                  let $wrap = Levels[level][i].wrapper;
                   $wrap.off('click').on('click', stopPropagation);
                   setTransform($container, (level - 1) * SETTINGS.levelSpacing);
                 }
@@ -371,7 +371,7 @@
                   _closeLevel(level, index);
 
                   if (SETTINGS.levelEffect === 'transform') {
-                    let $wrap = l === 1 ? $container : Levels[level][index].wrapper;
+                    let $wrap = Levels[level][index].wrapper;
 
                     $wrap.off('click').on('click', stopPropagation);
 
