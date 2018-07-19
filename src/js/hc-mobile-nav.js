@@ -245,6 +245,7 @@
             const $checkbox = $(`<input type="checkbox" id="${uniqClass}-${level}-${index}">`)
               .attr('data-level', level)
               .attr('data-index', index)
+              .on('click', stopPropagation)
               .on('change', checkboxChange);
 
             // add checkboxes to our levels list
