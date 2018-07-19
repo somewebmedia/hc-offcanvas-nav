@@ -22,6 +22,10 @@
     return ((/iPad|iPhone|iPod/.test(navigator.userAgent)) || (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))) && !window.MSStream;
   })();
 
+  const isTouchDevice = (() => {
+    return 'ontouchstart' in window || navigator.maxTouchPoints || (window.DocumentTouch && document instanceof DocumentTouch);
+  })();
+
   const stopPropagation = (e) => e.stopPropagation();
   const preventClick = (preventDefault, stopPropagation, cb) => {
     return (e) => {
@@ -181,6 +185,7 @@
             ${SETTINGS.offCanvas ? 'off-canvas' : ''}
             ${SETTINGS.disableBody ? 'disable-body' : ''}
             ${isIos ? 'is-ios' : ''}
+            ${isTouchDevice ? 'touch-device' : ''}
           `)
           .find('[id]').removeAttr('id'); // remove all children id's
 
@@ -344,9 +349,9 @@
         var _closeLevel = (l, i) => {
           if (!Levels[l] || !Levels[l][i]) return;
 
-          let $checkbox = Levels[l][i].checkbox;
-          let $li = $checkbox.parent('li');
-          let $wrap = Levels[l][i].wrapper;
+          const $checkbox = Levels[l][i].checkbox;
+          const $li = $checkbox.parent('li');
+          const $wrap = Levels[l][i].wrapper;
 
           $checkbox.prop('checked', false);
           $wrap.removeClass('sub-level-open');

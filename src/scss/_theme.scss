@@ -47,10 +47,15 @@ $hcmn-text-color:                 #fff !default;
       border-bottom: 1px solid darken($hcmn-background-color, 3%);
       transition: background .3s ease;
     }
+  }
 
-    &:hover {
-      &::before {
-        background: darken($hcmn-background-color, 2%);
+  &:not(.touch-device) {
+
+    a {
+      &:hover {
+        &::before {
+          background: darken($hcmn-background-color, 2%);
+        }
       }
     }
   }
