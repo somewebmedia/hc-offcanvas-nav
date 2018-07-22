@@ -64,10 +64,13 @@ $hcmn-text-color:                 #fff !default;
 
     &.nav-close,
     &.nav-back {
-      background: darken($hcmn-background-color, 4%);
-
       a {
         padding: 20px 17px;
+        background: darken($hcmn-background-color, 4%);
+
+        &::before {
+          display: none;
+        }
       }
     }
 

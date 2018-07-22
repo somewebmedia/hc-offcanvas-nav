@@ -13,7 +13,6 @@
     top: 50%;
     transform: translateY(-50%);
     transform-origin: 50% 50%;
-    transition: transform $transform-speed ease, background ($transform-speed / 2) ease;
 
     &,
     &::before,
@@ -23,12 +22,12 @@
       width: 100%;
       height: $line-width;
       background: $color;
+      transition: transform $transform-speed ease, background ($transform-speed / 2) ease;
     }
 
     &::before,
     &::after {
       content: '';
-      transition: transform $transform-speed ease;
     }
 
     &::before {
@@ -40,7 +39,7 @@
     }
   }
 
-  body.hc-nav-open & {
+  &.open {
 
     span {
       background: rgba(0, 0, 0, 0);

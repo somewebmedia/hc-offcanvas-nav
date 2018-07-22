@@ -148,7 +148,20 @@
         navCount++;
 
         let Levels = {};
+        let $toggle;
         const uniqClass = 'hc-nav-' + navCount;
+
+        // add class to the default menu
+        $this.addClass(`hc-nav ${uniqClass}`);
+
+        // toggle
+        if (!SETTINGS.customToggle) {
+          $toggle = $(`<a class="hc-nav-trigger ${uniqClass}"><span></span></a>`).on('click', toggleNav);
+          $this.after($toggle);
+        }
+        else {
+          $toggle = $(SETTINGS.customToggle).addClass(uniqClass).on('click', toggleNav);
+        }
 
         // wrap first level
         const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper nav-wrapper-1">').parent().on('click', stopPropagation).wrap('<div class="nav-container">').parent();
@@ -156,6 +169,7 @@
         // insert styles
         let css = `
           .hc-nav-trigger.${uniqClass},
+          ${SETTINGS.customToggle}.${uniqClass},
           .hc-mobile-nav.${uniqClass} {
             display: block;
           }
@@ -288,6 +302,7 @@
           _open = true;
 
           $nav.addClass('nav-open');
+          $toggle.addClass('open');
 
           if (SETTINGS.disableBody) {
             _top = $html.scrollTop() || $body.scrollTop(); // remember the scroll position
@@ -309,6 +324,7 @@
 
           $nav.removeClass('nav-open');
           $container.removeAttr('style');
+          $toggle.removeClass('open');
 
           closeLevel(0);
 
@@ -393,16 +409,6 @@
 
         // insert menu to body
         $body.prepend($nav);
-
-        if (!SETTINGS.customToggle) {
-          // insert menu trigger link
-          const $toggle = $(`<a class="hc-nav-trigger ${uniqClass}"><span></span></a>`).on('click', toggleNav);
-
-          $this.addClass(`hc-nav ${uniqClass}`).after($toggle);
-        }
-        else {
-          $(SETTINGS.customToggle).addClass(uniqClass).on('click', toggleNav);
-        }
       });
     }
   });
