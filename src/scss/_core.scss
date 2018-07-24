@@ -158,7 +158,7 @@ body.hc-nav-open {
     }
 
     // Transform Levels
-    &.nav-levels-transform {
+    &.nav-levels-overlap {
 
       ul {
 
@@ -195,7 +195,7 @@ body.hc-nav-open {
     }
 
     // Left
-    &.direction-from-left {
+    &.side-left {
       left: 0;
 
       .nav-container {
@@ -203,7 +203,7 @@ body.hc-nav-open {
         transform: translate3d(-100%, 0, 0);
       }
 
-      &.nav-levels-transform {
+      &.nav-levels-overlap {
 
         li {
 
@@ -222,7 +222,7 @@ body.hc-nav-open {
     }
 
     // Right
-    &.direction-from-right {
+    &.side-right {
       right: 0;
 
       .nav-container {
@@ -230,7 +230,7 @@ body.hc-nav-open {
         transform: translate3d(100%, 0, 0);
       }
 
-      &.nav-levels-transform {
+      &.nav-levels-overlap {
 
         li {
 

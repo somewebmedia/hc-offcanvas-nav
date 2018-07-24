@@ -5,7 +5,7 @@
  * Author: Some Web Media
  * Author URL: http://somewebmedia.com
  * Plugin URL: https://github.com/somewebmedia/hc-mobile-nav
- * Description: jQuery plugin for converting menus to mobile navigations
+ * Description: jQuery plugin for creating toggled navigation for small screens
  * License: MIT
  */
 
@@ -78,10 +78,12 @@
 
       const defaults = {
         maxWidth:         1024,
+        appendTo:         'body',
+        clone:            true,
         offCanvas:        true,
-        directionFrom:    'left',
+        side:             'left',
 
-        levelEffect:      'transform', // inline/transform/none
+        levelOpen:        'overlap', // overlap / expand / none
         levelSpacing:     40,
 
         disableBody:      true,
@@ -106,11 +108,11 @@
 
         return ($el, val) => {
           if (transform) {
-            const x = SETTINGS.directionFrom === 'left' ? val : -val;
+            const x = SETTINGS.side === 'left' ? val : -val;
             $el.css(transform, `translate3d(${x}px,0,0)`);
           }
           else {
-            $el.css(SETTINGS.directionFrom, val);
+            $el.css(SETTINGS.side, val);
           }
         };
       })();
@@ -168,10 +170,12 @@
 
         // insert styles
         let css = `
-          .hc-nav-trigger.${uniqClass},
-          ${SETTINGS.customToggle}.${uniqClass},
           .hc-mobile-nav.${uniqClass} {
             display: block;
+          }
+          .hc-nav-trigger.${uniqClass},
+          ${SETTINGS.customToggle}.${uniqClass} {
+            display: ${$toggle.css('display') || 'block'}
           }
           .hc-nav.${uniqClass} {
             display: none;
@@ -194,8 +198,8 @@
             hc-mobile-nav
             ${uniqClass}
             ${SETTINGS.navClass || ''}
-            nav-levels-${SETTINGS.levelEffect}
-            direction-from-${SETTINGS.directionFrom}
+            nav-levels-${SETTINGS.levelOpen}
+            side-${SETTINGS.side}
             ${SETTINGS.offCanvas ? 'off-canvas' : ''}
             ${SETTINGS.disableBody ? 'disable-body' : ''}
             ${isIos ? 'is-ios' : ''}
@@ -248,7 +252,7 @@
             // wrap submenus
             $menu.wrap(`<div class="nav-wrapper nav-wrapper-${level+1}">`).parent().on('click', stopPropagation);
 
-            if (SETTINGS.levelEffect === 'none') {
+            if (SETTINGS.levelOpen === 'none') {
               // stop here
               return;
             }
@@ -275,7 +279,7 @@
             }
 
             // insert back links
-            if (SETTINGS.insertBack !== false && SETTINGS.levelEffect === 'transform') {
+            if (SETTINGS.insertBack !== false && SETTINGS.levelOpen === 'overlap') {
               $(`<li class="nav-back"><a href="#">${SETTINGS.labelBack || ''}<span></span></a></li>`)
                 .prependTo($menu)
                 .children('a').on('click', preventClick(true, true, () => closeLevel(level, index)));
@@ -283,6 +287,15 @@
           }
         });
 
+        if (SETTINGS.clone) {
+          // insert menu to DOM
+          $(SETTINGS.appendTo).append($nav);
+        }
+        else {
+          $this.replaceWith($nav);
+        }
+
+        // checkbox event
         function checkboxChange() {
           const $checkbox = $(this);
           const l = Number($checkbox.attr('data-level'));
@@ -302,7 +315,7 @@
           _open = true;
 
           $nav.addClass('nav-open');
-          $toggle.addClass('open');
+          $toggle.addClass('toggle-open');
 
           if (SETTINGS.disableBody) {
             _top = $html.scrollTop() || $body.scrollTop(); // remember the scroll position
@@ -324,7 +337,7 @@
 
           $nav.removeClass('nav-open');
           $container.removeAttr('style');
-          $toggle.removeClass('open');
+          $toggle.removeClass('toggle-open');
 
           closeLevel(0);
 
@@ -357,13 +370,13 @@
           $wrap.addClass('sub-level-open');
           $li.addClass('level-open');
 
-          if (SETTINGS.levelEffect === 'transform') {
+          if (SETTINGS.levelOpen === 'overlap') {
             $wrap.on('click', () => closeLevel(l, i))
             setTransform($container, l * SETTINGS.levelSpacing);
           }
         }
 
-        var _closeLevel = (l, i) => {
+        const _closeLevel = (l, i) => {
           if (!Levels[l] || !Levels[l][i]) return;
 
           const $checkbox = Levels[l][i].checkbox;
@@ -382,7 +395,7 @@
               if (level == l && typeof i !== 'undefined') {
                 _closeLevel(level, i);
 
-                if (SETTINGS.levelEffect === 'transform') {
+                if (SETTINGS.levelOpen === 'overlap') {
                   let $wrap = Levels[level][i].wrapper;
                   $wrap.off('click').on('click', stopPropagation);
                   setTransform($container, (level - 1) * SETTINGS.levelSpacing);
@@ -392,7 +405,7 @@
                 for (let index in Levels[level]) {
                   _closeLevel(level, index);
 
-                  if (SETTINGS.levelEffect === 'transform') {
+                  if (SETTINGS.levelOpen === 'overlap') {
                     let $wrap = Levels[level][index].wrapper;
 
                     $wrap.off('click').on('click', stopPropagation);
@@ -406,9 +419,6 @@
             }
           }
         }
-
-        // insert menu to body
-        $body.prepend($nav);
       });
     }
   });

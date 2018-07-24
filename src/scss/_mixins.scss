@@ -4,12 +4,12 @@
   display: none;
   top: 20px;
   z-index: 9980;
-  width: $width;
-  height: $height;
+  min-height: $height;
 
   $line-offset: ($height - $line-width) / 2;
 
   span {
+    width: $width;
     top: 50%;
     transform: translateY(-50%);
     transform-origin: 50% 50%;
@@ -19,7 +19,6 @@
     &::after {
       position: absolute;
       left: 0;
-      width: 100%;
       height: $line-width;
       background: $color;
       transition: transform $transform-speed ease, background ($transform-speed / 2) ease;
@@ -28,6 +27,7 @@
     &::before,
     &::after {
       content: '';
+      width: 100%;
     }
 
     &::before {
@@ -39,7 +39,7 @@
     }
   }
 
-  &.open {
+  &.toggle-open {
 
     span {
       background: rgba(0, 0, 0, 0);
