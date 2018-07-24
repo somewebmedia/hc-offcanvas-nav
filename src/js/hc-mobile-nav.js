@@ -26,6 +26,10 @@
     return 'ontouchstart' in window || navigator.maxTouchPoints || (window.DocumentTouch && document instanceof DocumentTouch);
   })();
 
+  const isNumeric = (n) => {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  };
+
   const stopPropagation = (e) => e.stopPropagation();
   const preventClick = (preventDefault, stopPropagation, cb) => {
     return (e) => {
@@ -70,6 +74,20 @@
     };
   })();
 
+  const insertAt = ($insert, n, $parent) => {
+    const $children = $parent.children('li');
+    const count = $children.length;
+    const i = n > -1
+      ? Math.max(0, Math.min(n - 1, count))
+      : Math.max(0, Math.min(count + n + 1, count));
+
+    if (i === 0) {
+      $parent.prepend($insert);
+    } else {
+      $children.eq(i - 1).after($insert);
+    }
+  };
+
   let navCount = 0;
 
   $.fn.extend({
@@ -86,10 +104,11 @@
         levelOpen:        'overlap', // overlap / expand / none
         levelSpacing:     40,
 
+        navClass:         '',
         disableBody:      true,
         closeOnClick:     true,
         customToggle:     null,
-        navClass:         '',
+        responsive:       null,
 
         insertClose:      true,
         insertBack:       true,
@@ -219,9 +238,16 @@
 
         // insert close link
         if (SETTINGS.insertClose !== false) {
-          $(`<li class="nav-close"><a href="#">${SETTINGS.labelClose || ''}<span></span></a></li>`)
-            .prependTo($ul.first())
-            .children('a').on('click', preventClick(true, true, closeNav));
+          const $close = $(`<li class="nav-close"><a href="#">${SETTINGS.labelClose || ''}<span></span></a></li>`);
+
+          $close.children('a').on('click', preventClick(true, true, closeNav));
+
+          if (SETTINGS.insertClose === true) {
+            $ul.first().prepend($close);
+          }
+          else if (isNumeric(SETTINGS.insertClose)) {
+            insertAt($close, SETTINGS.insertClose, $ul.first().add($ul.siblings('ul')));
+          }
         }
 
         // get levels for submenus
@@ -280,9 +306,16 @@
 
             // insert back links
             if (SETTINGS.insertBack !== false && SETTINGS.levelOpen === 'overlap') {
-              $(`<li class="nav-back"><a href="#">${SETTINGS.labelBack || ''}<span></span></a></li>`)
-                .prependTo($menu)
-                .children('a').on('click', preventClick(true, true, () => closeLevel(level, index)));
+              let $back = $(`<li class="nav-back"><a href="#">${SETTINGS.labelBack || ''}<span></span></a></li>`);
+
+              $back.children('a').on('click', preventClick(true, true, () => closeLevel(level, index)));
+
+              if (SETTINGS.insertBack === true) {
+                $menu.prepend($back);
+              }
+              else if (isNumeric(SETTINGS.insertBack)) {
+                insertAt($back, SETTINGS.insertBack, $menu);
+              }
             }
           }
         });
