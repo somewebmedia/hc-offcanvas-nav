@@ -32,6 +32,7 @@ $hcmn-text-color:                 #fff !default;
   a {
     padding: 13px 17px;
     font-size: 15px;
+    text-align: left;
     color: $hcmn-text-color;
     z-index: 1;
 
@@ -177,7 +178,7 @@ $hcmn-text-color:                 #fff !default;
     }
   }
 
-  &.nav-levels-inline {
+  &.nav-levels-expand {
 
     .nav-container {
 
@@ -209,7 +210,7 @@ $hcmn-text-color:                 #fff !default;
         &.level-open {
 
           &::before {
-            background: darken($hcmn-background-color, 2%);
+            background: darken($hcmn-background-color, 4%);
           }
 
           a {

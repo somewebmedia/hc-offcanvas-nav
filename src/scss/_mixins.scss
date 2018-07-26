@@ -21,7 +21,7 @@
       left: 0;
       height: $line-width;
       background: $color;
-      transition: transform $transform-speed ease, background ($transform-speed / 2) ease;
+      transition: all $transform-speed ease;
     }
 
     &::before,

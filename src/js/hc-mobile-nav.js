@@ -217,7 +217,7 @@
             hc-mobile-nav
             ${uniqClass}
             ${SETTINGS.navClass || ''}
-            nav-levels-${SETTINGS.levelOpen}
+            nav-levels-${SETTINGS.levelOpen || 'none'}
             side-${SETTINGS.side}
             ${SETTINGS.offCanvas ? 'off-canvas' : ''}
             ${SETTINGS.disableBody ? 'disable-body' : ''}
@@ -278,7 +278,7 @@
             // wrap submenus
             $menu.wrap(`<div class="nav-wrapper nav-wrapper-${level+1}">`).parent().on('click', stopPropagation);
 
-            if (SETTINGS.levelOpen === 'none') {
+            if (SETTINGS.levelOpen === false || SETTINGS.levelOpen === 'none') {
               // stop here
               return;
             }
@@ -372,7 +372,9 @@
           $container.removeAttr('style');
           $toggle.removeClass('toggle-open');
 
-          closeLevel(0);
+          if (SETTINGS.levelOpen !== false && SETTINGS.levelOpen !== 'none') {
+            closeLevel(0);
+          }
 
           if (SETTINGS.disableBody) {
             $body.removeClass('hc-nav-open');
