@@ -103,7 +103,9 @@
 
         levelOpen:        'overlap', // overlap / expand / none
         levelSpacing:     40,
+        levelTitles:      false,
 
+        navTitle:         null,
         navClass:         '',
         disableBody:      true,
         closeOnClick:     true,
@@ -172,7 +174,7 @@
         let $toggle;
         const uniqClass = 'hc-nav-' + navCount;
 
-        // add class to the default menu
+        // add class to default menu
         $this.addClass(`hc-nav ${uniqClass}`);
 
         // toggle
@@ -186,6 +188,11 @@
 
         // wrap first level
         const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper nav-wrapper-1">').parent().on('click', stopPropagation).wrap('<div class="nav-container">').parent();
+
+        // first level title
+        if (SETTINGS.navTitle) {
+          $container.children().prepend(`<h2>${SETTINGS.navTitle}</h2>`);
+        }
 
         // insert styles
         let css = `
@@ -206,7 +213,7 @@
           }`;
         }
 
-        printStyle(css, 'hc-mobile-nav-style');
+        printStyle(css);
 
         // prepare our nav
         $nav
@@ -276,11 +283,20 @@
             Levels[level][index]['wrapper'] = $menu.closest('.nav-wrapper');
 
             // wrap submenus
-            $menu.wrap(`<div class="nav-wrapper nav-wrapper-${level+1}">`).parent().on('click', stopPropagation);
+            let $wrap = $menu.wrap(`<div class="nav-wrapper nav-wrapper-${level+1}">`).parent().on('click', stopPropagation);
+
+            if (SETTINGS.levelSpacing && (SETTINGS.levelOpen === 'expand' || (SETTINGS.levelOpen === false || SETTINGS.levelOpen === 'none'))) {
+              $menu.css('text-indent', `${SETTINGS.levelSpacing * level}px`);
+            }
 
             if (SETTINGS.levelOpen === false || SETTINGS.levelOpen === 'none') {
               // stop here
               return;
+            }
+
+            // sublevel titles
+            if (SETTINGS.levelTitles === true) {
+              $wrap.prepend(`<h2>${$a.text()}</h2>`);
             }
 
             const $next_span = $('<span class="nav-next">').appendTo($a);
