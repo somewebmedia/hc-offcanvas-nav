@@ -1,11 +1,11 @@
 /*!
  * jQuery HC-MobileNav
  * ===================
- * Version: 2.0.4
+ * Version: 3.0.0
  * Author: Some Web Media
  * Author URL: http://somewebmedia.com
  * Plugin URL: https://github.com/somewebmedia/hc-mobile-nav
- * Description: jQuery plugin for creating toggled navigation for small screens
+ * Description: jQuery plugin for creating toggled mobile multi-level navigations
  * License: MIT
  */
 
