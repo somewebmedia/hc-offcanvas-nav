@@ -219,7 +219,7 @@ footer {
 
 main {
   flex: 1 0 auto;
-  padding-bottom: 50px;
+  padding-bottom: 30px;
   text-align: left;
 
   .content {
@@ -239,17 +239,23 @@ main {
   }
 
   .actions {
-    display: flex;
-    flex-wrap: wrap;
     margin: 0 -15px;
     text-align: center;
 
     div {
-      float: left;
-      flex: 1 1 33.33%;
-      max-width: 33.33%;
       padding: 0 15px 20px;
       box-sizing: border-box;
+    }
+
+    @media screen and (min-width: 800px) {
+      display: flex;
+      flex-wrap: wrap;
+
+      div {
+        float: left;
+        flex: 1 1 33.33%;
+        max-width: 33.33%;
+      }
     }
   }
 
