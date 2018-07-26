@@ -1,3 +1,33 @@
+@import './hc-mobile-nav';
+@import './mixins';
+
+$background: #243949;
+$white: #fffce1;
+
+@mixin mi {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  text-indent: 0;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'liga';
+  display: inline-block;
+  width: 19px;
+  height: 19px;
+  margin-right: 15px;
+  font-size: 19px;
+  vertical-align: top;
+}
+
 html, body, div, span, header, ul, li, a {
   margin: 0;
   padding: 0;
@@ -5,13 +35,310 @@ html, body, div, span, header, ul, li, a {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
-  font-family: 'Open Sans', sans-serif;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  font-family: 'Raleway', sans-serif;
+  text-align: center;
+  color: $white;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+em {
+  font-style: italic;
+}
+
+strong {
+  font-weight: 600;
 }
 
 ol, ul {
   list-style: none;
 }
 
-.hc-nav-trigger {
-  left: 20px;
+.cf {
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    height: 0;
+    overflow: hidden;
+  }
+
+  &::after {
+    clear: both;
+  }
+}
+
+#container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100%;
+  background: linear-gradient(-134deg, #517FA4 0%, $background 100%);
+}
+
+.wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+#main-nav {
+  display: none;
+}
+
+header {
+  position: relative;
+  padding: 50px 0 20px;
+
+  h1 {
+    font-size: 50px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 5px;
+    padding-bottom: 8px;
+  }
+
+  h2 {
+    max-width: 680px;
+    margin: auto;
+    font-size: 20px;
+    font-weight: 200;
+    line-height: 1.4;
+    text-align: center;
+    letter-spacing: 1px;
+    padding-bottom: 30px;
+  }
+
+  .git {
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    border-radius: 4px;
+    padding: 4px 10px 4px 0;
+    font-size: 15px;
+    font-weight: 400;
+    color: $white;
+    background: #54b9cb;
+    transition: background .15s ease-in-out;
+
+    &:hover {
+      background: #4CA8B9;
+
+      svg {
+        border-color: #54b9cb;
+      }
+    }
+
+    svg {
+      width: 15px;
+      height: 15px;
+      fill: $white;
+      position: relative;
+      top: 2px;
+      padding: 0 10px;
+      margin-right: 10px;
+      border-right: 1px solid #4daabb;
+      transition: border-color .15s ease-in-out;
+    }
+  }
+
+  .toggle {
+    @include hc-hamburger('default', 35px, 24px, 4px, darken($background, 7%), .1s);
+    position: relative;
+    top: auto;
+    left: auto;
+    float: left;
+    display: block;
+    cursor: pointer;
+    box-sizing: content-box;
+    font-size: 20px;
+    padding-left: 55px;
+    line-height: 24px;
+    margin-top: 55px;
+
+    &:hover {
+      span {
+        &,
+        &::before,
+        &::after {
+          background: #dab977;
+        }
+      }
+    }
+
+    div {
+      display: inline-block;
+      margin-right: 15px;
+    }
+  }
+
+}
+
+footer {
+  padding-bottom: 40px;
+
+  .swm {
+    display: inline-block;
+    padding: 0 15px;
+
+    svg {
+      display: block;
+      width: auto;
+      height: 17px;
+      margin-top: 22px;
+
+      path {
+        transition: fill .1s ease;
+      }
+    }
+
+    &:not(:hover) {
+      svg {
+        .l-1 {
+          fill: lighten($background, 20%);
+        }
+        .l-2 {
+          fill: lighten($background, 50%);
+        }
+        .l-3 {
+          fill: lighten($background, 30%);
+        }
+      }
+    }
+  }
+}
+
+main {
+  flex: 1 0 auto;
+  padding-bottom: 50px;
+  text-align: left;
+
+  .content {
+    border-top: 1px solid rgba(255, 255, 255, .1);
+  }
+
+  h4 {
+    font-size: 15px;
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 20px 0;
+
+    &:first-child {
+      margin-top: 30px;
+    }
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -15px;
+    text-align: center;
+
+    div {
+      float: left;
+      flex: 1 1 33.33%;
+      max-width: 33.33%;
+      padding: 0 15px 20px;
+      box-sizing: border-box;
+    }
+  }
+
+  .button {
+    position: relative;
+    display: block;
+    padding: 18px 30px 16px;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: $background;
+    cursor: pointer;
+    background: $white;
+    border-radius: 30px/80px;
+    transition: all .1s ease-out;
+
+    &:not(.active):hover {
+      color: darken(#dab977, 5%);
+    }
+
+    &.active {
+      background: #dab977;
+    }
+  }
+}
+
+.hc-mobile-nav {
+
+  .nav-container {
+    width: 280px;
+  }
+
+  h2 {
+    font-weight: 400;
+  }
+
+  a {
+    font-size: 16px;
+  }
+
+  li {
+
+    &.cryptocurrency > a::before {
+      @include mi;
+      content: 'local_atm';
+    }
+
+    &.devices > a::before {
+      @include mi;
+      content: 'devices';
+    }
+
+    &.mobile > a::before {
+      @include mi;
+      content: 'phone_android';
+    }
+
+    &.television > a::before {
+      @include mi;
+      content: 'desktop_windows';
+    }
+
+    &.camera > a::before {
+      @include mi;
+      content: 'camera_alt';
+    }
+
+    &.magazines > a::before {
+      @include mi;
+      content: 'import_contacts';
+    }
+
+    &.store > a::before {
+      @include mi;
+      content: 'store';
+    }
+
+    &.collections > a::before {
+      @include mi;
+      content: 'collections';
+    }
+
+    &.credits > a::before {
+      @include mi;
+      content: 'credit_card';
+    }
+  }
 }

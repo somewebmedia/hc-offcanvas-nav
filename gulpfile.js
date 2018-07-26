@@ -22,6 +22,7 @@ gulp.task('js', () => {
         comments: saveLicense
       }
     }))
+    .pipe(gulp.dest('./demo/'))
     .pipe(gulp.dest('./dist/'));
 });
 
