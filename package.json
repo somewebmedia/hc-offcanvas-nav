@@ -1,7 +1,7 @@
 {
   "name": "hc-mobile-nav",
   "version": "2.0.4",
-  "description": "Responsive mobile menu plugin for jQuery",
+  "description": "jQuery plugin for creating toggled mobile navigations",
   "homepage": "http://somewebmedia.com/hc-mobile-nav",
   "main": "dist/hc-mobile-nav.js",
   "sass": "src/scss/hc-mobile-nav.scss",
@@ -22,10 +22,9 @@
     "gulp-autoprefixer": "^3.1.0",
     "gulp-babel": "^7.0.0",
     "gulp-sass": "^3.2.1",
-    "gulp-uglify": "^3.0.0",
-    "yargs": "^6.6.0",
+    "gulp-uglify": "^3.0.1",
     "uglify-save-license": "^0.4.1",
-    "vinyl-fs": "^3.0.2"
+    "yargs": "^6.6.0"
   },
   "keywords": [
     "navigation",

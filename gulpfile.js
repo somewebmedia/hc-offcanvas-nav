@@ -5,7 +5,7 @@ const uglify = require('gulp-uglify');
 const saveLicense = require('uglify-save-license');
 const babel = require('gulp-babel');
 const through = require('through2');
-const vinylfs = require('vinyl-fs');
+const path = require('path');
 const argv = require('yargs').argv;
 
 gulp.task('js', () => {
@@ -26,8 +26,9 @@ gulp.task('js', () => {
 });
 
 gulp.task('scss', () => {
-  return vinylfs.src(['./src/scss/*.scss', '!./src/scss/demo.scss'])
+  return gulp.src(['./src/scss/*.scss', '!./src/scss/demo.scss'])
     .pipe(sass({
+      'includePaths': ['node_modules'],
       'outputStyle': argv.dev ? 'development' : 'compressed'
     }).on('error', sass.logError))
     .pipe(autoprefixer())
@@ -37,6 +38,7 @@ gulp.task('scss', () => {
 gulp.task('demo', () => {
   return gulp.src(['./src/scss/demo.scss'])
     .pipe(sass({
+      'includePaths': ['node_modules'],
       'outputStyle': argv.dev ? 'development' : 'compressed'
     }).on('error', sass.logError))
     .pipe(autoprefixer())
