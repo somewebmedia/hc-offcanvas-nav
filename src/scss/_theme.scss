@@ -215,11 +215,19 @@ $hcmn-text-color:                 #fff !default;
           & > a {
 
             .nav-next {
-              &::after {
-                transform: translate(-50%, -50%) rotate(-135deg);
+              &::before {
+                margin-top: 2px;
+                transform: translate(-50%, -50%) rotate(45deg);
               }
             }
           }
+        }
+      }
+
+      span.nav-next {
+        &::before {
+          margin-top: -2px;
+          transform: translate(-50%, -50%) rotate(225deg);
         }
       }
     }
