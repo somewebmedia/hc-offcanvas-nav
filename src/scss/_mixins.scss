@@ -1,6 +1,7 @@
 @mixin hc-hamburger($type: 'default', $width: $hcmn-trigger-width, $height: $hcmn-trigger-height, $line-width: $hcmn-trigger-line-width, $color: $hcmn-trigger-color, $transform-speed: $hcmn-trigger-transform-speed) {
   position: absolute;
   cursor: pointer;
+  user-select: none;
   display: none;
   top: 20px;
   z-index: 9980;

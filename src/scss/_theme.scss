@@ -23,12 +23,6 @@ $hcmn-text-color:                 #fff !default;
     background: $hcmn-background-color;
   }
 
-  &.nav-open {
-    .nav-wrapper {
-      box-shadow: 1px 0 2px rgba(0, 0, 0, .2);
-    }
-  }
-
   h2 {
     font-size: 19px;
     font-weight: normal;
@@ -153,7 +147,21 @@ $hcmn-text-color:                 #fff !default;
     }
   }
 
+  &.side-left {
+    &.nav-open {
+      .nav-wrapper {
+        box-shadow: 1px 0 2px rgba(0, 0, 0, .2);
+      }
+    }
+  }
+
   &.side-right {
+
+    &.nav-open {
+      .nav-wrapper {
+        box-shadow: -1px 0 2px rgba(0, 0, 0, .2);
+      }
+    }
 
     span.nav-next {
       &::before {
