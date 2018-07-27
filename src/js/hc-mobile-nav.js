@@ -10,12 +10,12 @@
  */
 
 (function($, window) {
-  "use strict";
+  'use strict';
 
   const document = window.document;
 
   const hasScrollBar = () => {
-    return document.body.scrollHeight > document.body.offsetHeight;
+    return document.documentElement.scrollHeight > document.documentElement.offsetHeight;
   };
 
   const isIos = (() => {
@@ -30,7 +30,12 @@
     return !isNaN(parseFloat(n)) && isFinite(n);
   };
 
+  const toMs = (s) => {
+    return parseFloat(s) * (/\ds$/.test(s) ? 1000 : 1);
+  };
+
   const stopPropagation = (e) => e.stopPropagation();
+
   const preventClick = (preventDefault, stopPropagation, cb) => {
     return (e) => {
       if (preventDefault) e.preventDefault();
@@ -58,6 +63,16 @@
     return false;
   };
 
+  const getElementCssTag = (el) => {
+    return typeof el === 'string'
+      ? el
+      : el.attr('id')
+        ? '#' + el.attr('id')
+        : el.attr('class')
+          ? el.prop('tagName').toLowerCase() + '.' + el.attr('class').replace(/\s+/g, '.')
+          : getElementCssTag(el.parent()) + ' ' + el.prop('tagName').toLowerCase();
+  };
+
   const printStyle = (() => {
     const $head = $('head');
     const id = 'hc-mobile-nav-style';
@@ -66,7 +81,7 @@
       const $style = $head.find(`style#${id}`);
 
       if ($style.length) {
-        $style.html(css);
+        $style.html($style.html() + css);
       }
       else {
         $(`<style id="${id}">${css}</style>`).appendTo($head);
@@ -96,9 +111,7 @@
 
       const defaults = {
         maxWidth:         1024,
-        appendTo:         'body',
-        clone:            true,
-        offCanvas:        true,
+        pushContent:      false,
         side:             'left',
 
         levelOpen:        'overlap', // overlap / expand / none
@@ -141,8 +154,6 @@
       return this.each(function() {
         const $this = $(this);
         let $nav;
-        let _open = false;
-        let _top = 0;
 
         // clone menu
         if ($this.is('ul')) {
@@ -170,9 +181,18 @@
         // count our nav
         navCount++;
 
-        let Levels = {};
-        let $toggle;
         const uniqClass = 'hc-nav-' + navCount;
+
+        let Levels = {};
+
+        let _open = false;
+        let _top = 0;
+        let _containerWidth = 0;
+        let _transitionDuration;
+        let _closeLevelsTimeout = null;
+
+        let $toggle;
+        let $content;
 
         // add class to default menu
         $this.addClass(`hc-nav ${uniqClass}`);
@@ -189,28 +209,29 @@
         // wrap first level
         const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper nav-wrapper-1">').parent().on('click', stopPropagation).wrap('<div class="nav-container">').parent();
 
-        // first level title
-        if (SETTINGS.navTitle) {
-          $container.children().prepend(`<h2>${SETTINGS.navTitle}</h2>`);
-        }
-
         // insert styles
         let css = `
           .hc-mobile-nav.${uniqClass} {
             display: block;
           }
           .hc-nav-trigger.${uniqClass},
-          ${SETTINGS.customToggle}.${uniqClass} {
+          ${getElementCssTag(SETTINGS.customToggle)} {
             display: ${$toggle.css('display') || 'block'}
           }
           .hc-nav.${uniqClass} {
             display: none;
-          }`;
+          }
+          `;
 
         if (SETTINGS.maxWidth) {
           css = `@media screen and (max-width: ${SETTINGS.maxWidth - 1}px) {
             ${css}
           }`;
+        }
+
+        // first level title
+        if (SETTINGS.navTitle) {
+          $container.children().prepend(`<h2>${SETTINGS.navTitle}</h2>`);
         }
 
         printStyle(css);
@@ -226,14 +247,29 @@
             ${SETTINGS.navClass || ''}
             nav-levels-${SETTINGS.levelOpen || 'none'}
             side-${SETTINGS.side}
-            ${SETTINGS.offCanvas ? 'off-canvas' : ''}
             ${SETTINGS.disableBody ? 'disable-body' : ''}
             ${isIos ? 'is-ios' : ''}
             ${isTouchDevice ? 'touch-device' : ''}
           `)
           .find('[id]').removeAttr('id'); // remove all children id's
 
-        // close menu on body click
+        // get some computed data
+        setTimeout(() => {
+          _containerWidth = $container.width();
+          _transitionDuration = toMs($container.css('transition-duration'));
+
+          if (typeof SETTINGS.pushContent !== 'boolean') {
+            $content = $(SETTINGS.pushContent);
+
+            if ($content.length) {
+              printStyle(`${getElementCssTag(SETTINGS.pushContent)} {
+                transition: ${$container.css('transition-property')} ${$container.css('transition-duration')} ${$container.css('transition-timing-function')};
+              }`);
+            }
+          }
+        }, 1);
+
+        // close menu on body click (nav::after)
         if (SETTINGS.disableBody) {
           $nav.on('click', closeNav);
         }
@@ -336,13 +372,8 @@
           }
         });
 
-        if (SETTINGS.clone) {
-          // insert menu to DOM
-          $(SETTINGS.appendTo).append($nav);
-        }
-        else {
-          $this.replaceWith($nav);
-        }
+        // insert menu to DOM
+        $body.append($nav);
 
         // checkbox event
         function checkboxChange() {
@@ -366,35 +397,49 @@
           $nav.addClass('nav-open');
           $toggle.addClass('toggle-open');
 
+          if (SETTINGS.levelOpen === 'expand' && _closeLevelsTimeout) {
+            clearTimeout(_closeLevelsTimeout);
+          }
+
           if (SETTINGS.disableBody) {
             _top = $html.scrollTop() || $body.scrollTop(); // remember the scroll position
+
+            if (hasScrollBar()) {
+              $html.addClass('hc-nav-yscroll');
+            }
 
             $body.addClass('hc-nav-open');
 
             if (_top) {
               $body.css('top', -_top);
             }
+          }
 
-            if (hasScrollBar()) {
-              $html.addClass('hc-yscroll');
-            }
+          if ($content && $content.length) {
+            setTransform($content, _containerWidth);
           }
         }
 
         function closeNav() {
           _open = false;
 
+          if ($content && $content.length) {
+            setTransform($content, 0);
+          }
+
           $nav.removeClass('nav-open');
           $container.removeAttr('style');
           $toggle.removeClass('toggle-open');
 
           if (SETTINGS.levelOpen !== false && SETTINGS.levelOpen !== 'none') {
-            closeLevel(0);
+            _closeLevelsTimeout = setTimeout(() => {
+              closeLevel(0);
+            }, SETTINGS.levelOpen === 'expand' ? _transitionDuration : 0);
           }
 
           if (SETTINGS.disableBody) {
             $body.removeClass('hc-nav-open');
-            $html.removeClass('hc-yscroll');
+            $html.removeClass('hc-nav-yscroll');
 
             if (_top) {
               $body.css('top', '').scrollTop(_top);
@@ -424,6 +469,10 @@
           if (SETTINGS.levelOpen === 'overlap') {
             $wrap.on('click', () => closeLevel(l, i))
             setTransform($container, l * SETTINGS.levelSpacing);
+
+            if ($content && $content.length) {
+              setTransform($content, _containerWidth + l * SETTINGS.levelSpacing);
+            }
           }
         }
 
@@ -450,6 +499,10 @@
                   let $wrap = Levels[level][i].wrapper;
                   $wrap.off('click').on('click', stopPropagation);
                   setTransform($container, (level - 1) * SETTINGS.levelSpacing);
+
+                  if ($content && $content.length) {
+                    setTransform($content, _containerWidth + (level - 1) * SETTINGS.levelSpacing);
+                  }
                 }
               }
               else {
@@ -463,6 +516,10 @@
 
                     if (level == l) {
                       setTransform($container, (level - 1) * SETTINGS.levelSpacing);
+
+                      if ($content && $content.length) {
+                        setTransform($content, _containerWidth + (level - 1) * SETTINGS.levelSpacing);
+                      }
                     }
                   }
                 }
