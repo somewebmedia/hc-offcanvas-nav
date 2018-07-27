@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="demo.css">
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="hc-mobile-nav.js"></script>
+    <script src="hc-offcanvas-nav.js"></script>
   </head>
 
   <body>
@@ -201,36 +201,40 @@
         (function($) {
           var $nav = $('#main-nav');
           var $toggle = $('.toggle');
+          var data = {};
           var defaultData = {
             maxWidth: false,
             customToggle: $toggle,
             navTitle: 'All Categories',
-            levelTitles: true
+            levelTitles: true,
+            //pushContent: '#container',
+            //disableBody: false
           };
-
-          // we'll store our temp stuff here
-          var $clone = null;
-          var data = {};
 
           // calling like this only for demo purposes
 
           const initNav = function(conf) {
-            if ($clone) {
-              // clear previous instance
-              $clone.remove();
+            var $old = $('.hc-mobile-nav');
+
+            setTimeout(function() {
+              if ($old.length) {
+                // clear previous instance
+                $old.remove();
+              }
+            }, $toggle.hasClass('toggle-open') ? 420 : 0);
+
+            if ($toggle.hasClass('toggle-open')) {
+              $toggle.click();
             }
 
             // remove old toggle click event
             $toggle.off('click');
 
-            // make new copy
-            $clone = $nav.clone();
-
             // remember data
             $.extend(data, conf)
 
             // call the plugin
-            $clone.hcMobileNav($.extend({}, defaultData, data));
+            $nav.clone().hcOffcanvasNav($.extend({}, defaultData, data));
           }
 
           // run first demo
