@@ -1,8 +1,9 @@
-@import './hc-mobile-nav';
-@import './mixins';
-
+$hc-offcanvas-nav-container-width: 280px;
 $background: #243949;
 $white: #fffce1;
+
+@import './hc-offcanvas-nav';
+@import './mixins';
 
 @mixin mi {
   font-family: 'Material Icons';
@@ -286,11 +287,7 @@ main {
   }
 }
 
-.hc-mobile-nav {
-
-  .nav-container {
-    width: 280px;
-  }
+.hc-offcanvas-nav {
 
   h2 {
     font-weight: 400;

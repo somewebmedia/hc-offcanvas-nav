@@ -1,16 +1,16 @@
-$hcmn-trigger-width:              30px !default;
-$hcmn-trigger-height:             24px !default;
-$hcmn-trigger-line-width:         4px !default;
-$hcmn-trigger-color:              #34495E !default;
-$hcmn-trigger-transform-speed:    .2s !default;
-$hcmn-background-color:           #336ca6 !default;
-$hcmn-text-color:                 #fff !default;
+$hc-offcanvas-nav-trigger-width:              30px !default;
+$hc-offcanvas-nav-trigger-height:             24px !default;
+$hc-offcanvas-nav-trigger-line-width:         4px !default;
+$hc-offcanvas-nav-trigger-color:              #34495E !default;
+$hc-offcanvas-nav-trigger-transform-speed:    .2s !default;
+$hc-offcanvas-nav-background-color:           #336ca6 !default;
+$hc-offcanvas-nav-text-color:                 #fff !default;
 
 .hc-nav-trigger {
   @include hc-hamburger;
 }
 
-.hc-mobile-nav {
+.hc-offcanvas-nav {
 
   &,
   .nav-wrapper {
@@ -20,7 +20,7 @@ $hcmn-text-color:                 #fff !default;
   }
 
   .nav-wrapper {
-    background: $hcmn-background-color;
+    background: $hc-offcanvas-nav-background-color;
   }
 
   h2 {
@@ -28,23 +28,23 @@ $hcmn-text-color:                 #fff !default;
     font-weight: normal;
     text-align: left;
     padding: 20px 17px;
-    color: darken($hcmn-background-color, 20%);
+    color: darken($hc-offcanvas-nav-background-color, 20%);
   }
 
   a {
     padding: 14px 17px;
     font-size: 15px;
-    color: $hcmn-text-color;
+    color: $hc-offcanvas-nav-text-color;
     z-index: 1;
     background: rgba(0, 0, 0, 0);
-    border-bottom: 1px solid darken($hcmn-background-color, 6%);
+    border-bottom: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
   }
 
   &:not(.touch-device) {
 
     a {
       &:hover {
-        background: darken($hcmn-background-color, 2%);
+        background: darken($hc-offcanvas-nav-background-color, 2%);
       }
     }
   }
@@ -55,12 +55,12 @@ $hcmn-text-color:                 #fff !default;
     &.nav-close,
     &.nav-back {
       a {
-        background: darken($hcmn-background-color, 6%);
-        border-top: 1px solid darken($hcmn-background-color, 8%);
-        border-bottom: 1px solid darken($hcmn-background-color, 8%);
+        background: darken($hc-offcanvas-nav-background-color, 6%);
+        border-top: 1px solid darken($hc-offcanvas-nav-background-color, 8%);
+        border-bottom: 1px solid darken($hc-offcanvas-nav-background-color, 8%);
 
         &:hover {
-          background: darken($hcmn-background-color, 6.5%);
+          background: darken($hc-offcanvas-nav-background-color, 6.5%);
         }
       }
     }
@@ -113,7 +113,7 @@ $hcmn-text-color:                 #fff !default;
   }
 
   a[href]:not([href="#"]) > span.nav-next {
-    border-left: 1px solid darken($hcmn-background-color, 6%);
+    border-left: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
   }
 
   span.nav-next,
@@ -210,13 +210,13 @@ $hcmn-text-color:                 #fff !default;
         transition: background .3s ease;
 
         &.level-open {
-          background: darken($hcmn-background-color, 4%);
+          background: darken($hc-offcanvas-nav-background-color, 4%);
 
           a {
-            border-bottom: 1px solid darken($hcmn-background-color, 8%);
+            border-bottom: 1px solid darken($hc-offcanvas-nav-background-color, 8%);
 
             &:hover {
-              background: darken($hcmn-background-color, 3%);
+              background: darken($hc-offcanvas-nav-background-color, 3%);
             }
           }
 

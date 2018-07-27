@@ -1,11 +1,11 @@
 /*!
- * jQuery HC-MobileNav
+ * HC Off-Canvas Nav
  * ===================
  * Version: 3.0.0
  * Author: Some Web Media
  * Author URL: http://somewebmedia.com
- * Plugin URL: https://github.com/somewebmedia/hc-mobile-nav
- * Description: jQuery plugin for creating toggled mobile multi-level navigations
+ * Plugin URL: https://github.com/somewebmedia/hc-offcanvas-nav
+ * Description: jQuery plugin for creating off-canvas multi-level navigations
  * License: MIT
  */
 
@@ -75,7 +75,7 @@
 
   const printStyle = (() => {
     const $head = $('head');
-    const id = 'hc-mobile-nav-style';
+    const id = 'hc-offcanvas-nav-style';
 
     return (css) => {
       const $style = $head.find(`style#${id}`);
@@ -106,7 +106,7 @@
   let navCount = 0;
 
   $.fn.extend({
-    hcMobileNav: function(options) {
+    hcOffcanvasNav: function(options) {
       if (!this.length) return this;
 
       const defaults = {
@@ -166,7 +166,7 @@
           $nav = $this.find('nav, ul').first().clone();
 
           if (!$nav.length) {
-            console.log('%c! HC MobileNav:' + `%c There is no <nav> or <ul> elements in your menu.`, 'color: red', 'color: black');
+            console.log('%c! HC Offcanvas Nav:' + `%c There is no <nav> or <ul> elements in your menu.`, 'color: red', 'color: black');
             return;
           }
         }
@@ -174,7 +174,7 @@
         const $ul = $nav.find('ul');
 
         if (!$ul.length) {
-          console.log('%c! HC MobileNav:' + `%c Menu must contain <ul> element.`, 'color: red', 'color: black');
+          console.log('%c! HC Offcanvas Nav:' + `%c Menu must contain <ul> element.`, 'color: red', 'color: black');
           return;
         }
 
@@ -211,7 +211,7 @@
 
         // insert styles
         let css = `
-          .hc-mobile-nav.${uniqClass} {
+          .hc-offcanvas-nav.${uniqClass} {
             display: block;
           }
           .hc-nav-trigger.${uniqClass},
@@ -242,7 +242,7 @@
           .removeAttr('id') // remove id's so we don't have duplicates after cloning
           .removeClass() // remove all classes
           .addClass(`
-            hc-mobile-nav
+            hc-offcanvas-nav
             ${uniqClass}
             ${SETTINGS.navClass || ''}
             nav-levels-${SETTINGS.levelOpen || 'none'}

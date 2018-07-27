@@ -1,6 +1,6 @@
-$hcmn-transition-duration: .4s !default;
-$hcmn-transition-timing-function: ease !default;
-$hcmn-container-width: 240px !default;
+$hc-offcanvas-nav-transition-duration: .4s !default;
+$hc-offcanvas-nav-transition-timing-function: ease !default;
+$hc-offcanvas-nav-container-width: 240px !default;
 
 html.hc-nav-yscroll {
   overflow-y: scroll;
@@ -12,7 +12,7 @@ body.hc-nav-open {
   min-height: 100%;
 }
 
-.hc-mobile-nav {
+.hc-offcanvas-nav {
   display: none;
   position: fixed;
   top: 0;
@@ -29,10 +29,10 @@ body.hc-nav-open {
     position: fixed;
     z-index: 9998;
     top: 0;
-    width: $hcmn-container-width;
+    width: $hc-offcanvas-nav-container-width;
     max-width: 100%;
     height: 100%;
-    transition: transform $hcmn-transition-duration $hcmn-transition-timing-function;
+    transition: transform $hc-offcanvas-nav-transition-duration $hc-offcanvas-nav-transition-timing-function;
   }
 
   .nav-wrapper {
@@ -108,7 +108,7 @@ body.hc-nav-open {
       overscroll-behavior: none;
       visibility: hidden;
       opacity: 0;
-      transition: visibility 0s ease $hcmn-transition-duration, opacity $hcmn-transition-duration ease;
+      transition: visibility 0s ease $hc-offcanvas-nav-transition-duration, opacity $hc-offcanvas-nav-transition-duration ease;
     }
   }
 
@@ -141,7 +141,7 @@ body.hc-nav-open {
         min-width: 0;
         max-height: 0;
         overflow: hidden;
-        transition: height 0s ease $hcmn-transition-duration;
+        transition: height 0s ease $hc-offcanvas-nav-transition-duration;
       }
     }
 
@@ -163,7 +163,7 @@ body.hc-nav-open {
         top: 0;
         height: 100%;
         visibility: hidden;
-        transition: visibility 0s ease $hcmn-transition-duration, transform $hcmn-transition-duration $hcmn-transition-timing-function;
+        transition: visibility 0s ease $hc-offcanvas-nav-transition-duration, transform $hc-offcanvas-nav-transition-duration $hc-offcanvas-nav-transition-timing-function;
       }
 
       ul {
@@ -182,7 +182,7 @@ body.hc-nav-open {
         &.level-open {
           & > .nav-wrapper {
             visibility: visible;
-            transition: transform $hcmn-transition-duration $hcmn-transition-timing-function;
+            transition: transform $hc-offcanvas-nav-transition-duration $hc-offcanvas-nav-transition-timing-function;
           }
         }
       }
@@ -195,7 +195,7 @@ body.hc-nav-open {
 
     .nav-container {
       left: 0;
-      transform: translate3d(-$hcmn-container-width, 0, 0);
+      transform: translate3d(-$hc-offcanvas-nav-container-width, 0, 0);
     }
 
     &.nav-levels-overlap {
@@ -222,7 +222,7 @@ body.hc-nav-open {
 
     .nav-container {
       right: 0;
-      transform: translate3d($hcmn-container-width, 0, 0);
+      transform: translate3d($hc-offcanvas-nav-container-width, 0, 0);
     }
 
     &.nav-levels-overlap {

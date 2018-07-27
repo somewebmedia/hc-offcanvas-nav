@@ -1,4 +1,4 @@
-@mixin hc-hamburger($type: 'default', $width: $hcmn-trigger-width, $height: $hcmn-trigger-height, $line-width: $hcmn-trigger-line-width, $color: $hcmn-trigger-color, $transform-speed: $hcmn-trigger-transform-speed) {
+@mixin hc-hamburger($type: 'default', $width: $hc-offcanvas-nav-trigger-width, $height: $hc-offcanvas-nav-trigger-height, $line-width: $hc-offcanvas-nav-trigger-line-width, $color: $hc-offcanvas-nav-trigger-color, $transform-speed: $hc-offcanvas-nav-trigger-transform-speed) {
   position: absolute;
   cursor: pointer;
   user-select: none;

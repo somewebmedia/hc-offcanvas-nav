@@ -1,10 +1,10 @@
 {
-  "name": "hc-mobile-nav",
+  "name": "hc-offcanvas-nav",
   "version": "3.0.0",
-  "description": "jQuery plugin for creating toggled mobile multi-level navigations",
-  "homepage": "http://somewebmedia.com/hc-mobile-nav",
-  "main": "dist/hc-mobile-nav.js",
-  "sass": "src/scss/hc-mobile-nav.scss",
+  "description": "jQuery plugin for creating off-canvas multi-level navigations",
+  "homepage": "http://somewebmedia.com/hc-offcanvas-nav",
+  "main": "dist/hc-offcanvas-nav.js",
+  "sass": "src/scss/hc-offcanvas-nav.scss",
   "author": {
     "name": "Some Web Media",
     "url": "http://somewebmedia.com"
@@ -12,7 +12,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/somewebmedia/hc-mobile-nav.git"
+    "url": "git+https://github.com/somewebmedia/hc-offcanvas-nav.git"
   },
   "dependencies": {},
   "devDependencies": {
