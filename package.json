@@ -27,14 +27,15 @@
     "yargs": "^6.6.0"
   },
   "keywords": [
+    "nav",
     "navigation",
     "menu",
     "mobile",
     "mobile-nav",
     "hamburger",
+    "hamburger-menu",
     "jquery",
     "plugin",
-    "scss",
-    "responsive"
+    "jquery-plugin"
   ]
 }
