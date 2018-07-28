@@ -10,7 +10,7 @@ Check out the [demo](http://somewebmedia.com/hc-offcanvas-nav).
 
 This package can be installed with:
 
-- [npm](https://www.npmjs.com/package/hc-sticky): `npm install --save hc-sticky`
+- [npm](https://www.npmjs.com/package/hc-sticky): `npm install --save hc-offcanvas-nav`
 
 Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-nav/releases).
 
