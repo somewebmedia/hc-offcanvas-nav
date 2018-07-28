@@ -1,5 +1,5 @@
 /*!
- * HC Off-Canvas Nav
+ * HC Off-canvas Nav
  * ===================
  * Version: 3.0.0
  * Author: Some Web Media
@@ -123,7 +123,6 @@
         disableBody:      true,
         closeOnClick:     true,
         customToggle:     null,
-        responsive:       null,
 
         insertClose:      true,
         insertBack:       true,

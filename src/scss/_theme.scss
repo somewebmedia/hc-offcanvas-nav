@@ -49,6 +49,18 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     }
   }
 
+  ul {
+    &:first-of-type:not(:first-child) {
+      & > li {
+        &:first-child:not(.nav-back):not(.nav-close) {
+          & > a {
+            border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+          }
+        }
+      }
+    }
+  }
+
   li {
     text-align: left;
 
@@ -88,7 +100,6 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
       span {
         &::before,
         &::after {
-          display: block;
           content: '';
           position: absolute;
           top: 50%;
