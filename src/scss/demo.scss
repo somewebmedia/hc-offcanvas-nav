@@ -153,7 +153,7 @@ header {
   }
 
   .toggle {
-    @include hc-hamburger('default', 35px, 24px, 4px, darken($background, 7%), .1s);
+    @include hc-hamburger('default', 35px, 24px, 4px, darken($background, 7%), .25s);
     position: relative;
     top: auto;
     left: auto;
@@ -243,6 +243,53 @@ main {
     margin: 0 -15px;
     text-align: center;
 
+    &.checkboxes {
+      text-align: left;
+      padding-top: 8px;
+
+      label {
+        font-size: 14px;
+        text-transform: uppercase;
+        cursor: pointer;
+
+        input {
+          display: none;
+
+          &:checked {
+
+            & ~ span {
+              background: #dab977;
+
+              &::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -1px;
+                border: solid $background;
+                border-width: 0 3px 3px 0;
+                display: inline-block;
+                padding: 5px 2px;
+                transform: translate(-50%, -50%) rotate(45deg);
+              }
+            }
+          }
+        }
+
+        span {
+          display: inline-block;
+          position: relative;
+          top: -1px;
+          width: 22px;
+          height: 22px;
+          background: $white;
+          margin-right: 12px;
+          vertical-align: top;
+          transition: all .1s ease;
+        }
+      }
+    }
+
     div {
       padding: 0 15px 20px;
       box-sizing: border-box;
@@ -275,7 +322,7 @@ main {
     cursor: pointer;
     background: $white;
     border-radius: 30px/80px;
-    transition: all .1s ease-out;
+    transition: all .1s ease;
 
     &:not(.active):hover {
       color: darken(#dab977, 5%);
