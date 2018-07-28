@@ -41,7 +41,6 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
   }
 
   &:not(.touch-device) {
-
     a {
       &:hover {
         background: darken($hc-offcanvas-nav-background-color, 2%);
@@ -49,12 +48,14 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     }
   }
 
-  ul {
-    &:first-of-type:not(:first-child) {
-      & > li {
-        &:first-child:not(.nav-back):not(.nav-close) {
-          & > a {
-            border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+  .nav-wrapper-1 {
+    & > ul {
+      &:first-of-type:not(:first-child) {
+        & > li {
+          &:first-child:not(.nav-back):not(.nav-close) {
+            & > a {
+              border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+            }
           }
         }
       }
