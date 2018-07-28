@@ -75,8 +75,8 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | *`customToggle`* | null | string / element object | Custom navigation toggle element. |
 | *`insertClose`* | true | bool | Insert navigation close button. |
 | *`insertBack`* | true | bool | Insert back buttons to submenus. |
-| *`labelClose`* | '' | string | Label for the close button. |
-| *`labelBack`* | '' | string | Label for the back buttons. |
+| *`labelClose`* | 'Close' | string | Label for the close button. |
+| *`labelBack`* | 'Back' | string | Label for the back buttons. |
 
 
 ## License
