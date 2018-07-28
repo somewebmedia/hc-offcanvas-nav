@@ -64,8 +64,8 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 |-----------|---------|-------|-------------|
 | *`maxWidth`* | 1024 | int | Resolution below which to display the mobile menu, and hide the regular. |
 | *`pushContent`* | false | false / string / element object | Content element (string selector or jQuery object) that will be pushed when the navigation is open, or false to disable this option. |
-| *`side`* | 'left' | string | Side on which the menu will open. Available options: 'left' and 'right'. |
-| *`levelOpen`* | 'overlap' | string | Submenu levels open effect. Available options: 'overlap', 'expand', 'none' or false. |
+| *`side`* | 'left' | string | Side on which the menu will open. Available options: `'left'` and `'right'`. |
+| *`levelOpen`* | 'overlap' | string | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
 | *`levelSpacing`* | 40 | int | If levels are overlaped, this is the spacing between them, if they are expanding, this is the text indent of the submenus. |
 | *`levelTitles`* | false | bool | Show titles for submenus, which is the parent item name. Works only for overlaped levels. |
 | *`navTitle`* | null | string | Main navigation (first level) title. |
