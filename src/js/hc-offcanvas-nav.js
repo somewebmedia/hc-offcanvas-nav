@@ -202,7 +202,7 @@
           $this.after($toggle);
         }
         else {
-          $toggle = $(SETTINGS.customToggle).addClass(uniqClass).on('click', toggleNav);
+          $toggle = $(SETTINGS.customToggle).addClass(`hc-nav-trigger ${uniqClass}`).on('click', toggleNav);
         }
 
         // wrap first level
@@ -213,8 +213,7 @@
           .hc-offcanvas-nav.${uniqClass} {
             display: block;
           }
-          .hc-nav-trigger.${uniqClass},
-          ${getElementCssTag(SETTINGS.customToggle)} {
+          .hc-nav-trigger.${uniqClass} {
             display: ${$toggle.css('display') || 'block'}
           }
           .hc-nav.${uniqClass} {
