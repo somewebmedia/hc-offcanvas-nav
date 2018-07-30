@@ -155,6 +155,7 @@ header {
   .toggle {
     @include hc-hamburger('default', 35px, 24px, 4px, darken($background, 7%), .25s);
     position: relative;
+    width: auto;
     top: auto;
     left: auto;
     float: left;

@@ -5,6 +5,7 @@
   display: none;
   top: 20px;
   z-index: 9980;
+  width: $width;
   min-height: $height;
 
   $line-offset: ($height - $line-width) / 2;
@@ -18,6 +19,7 @@
     &,
     &::before,
     &::after {
+      display: block;
       position: absolute;
       left: 0;
       height: $line-width;
