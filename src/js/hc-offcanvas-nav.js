@@ -205,8 +205,7 @@
           $toggle = $(SETTINGS.customToggle).addClass(`hc-nav-trigger ${uniqClass}`).on('click', toggleNav);
         }
 
-        // wrap first level
-        const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper nav-wrapper-1">').parent().on('click', stopPropagation).wrap('<div class="nav-container">').parent();
+        const toggleDisplay = $toggle.css('display');
 
         // insert styles
         let css = `
@@ -214,7 +213,7 @@
             display: block;
           }
           .hc-nav-trigger.${uniqClass} {
-            display: ${$toggle.css('display') || 'block'}
+            display: ${toggleDisplay && toggleDisplay !== 'none' ? toggleDisplay : 'block'}
           }
           .hc-nav.${uniqClass} {
             display: none;
@@ -227,12 +226,15 @@
           }`;
         }
 
+        printStyle(css);
+
+        // wrap first level
+        const $container = $nav.children('ul').wrapAll('<div class="nav-wrapper nav-wrapper-1">').parent().on('click', stopPropagation).wrap('<div class="nav-container">').parent();
+
         // first level title
         if (SETTINGS.navTitle) {
           $container.children().prepend(`<h2>${SETTINGS.navTitle}</h2>`);
         }
-
-        printStyle(css);
 
         // prepare our nav
         $nav
