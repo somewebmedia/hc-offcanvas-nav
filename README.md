@@ -1,4 +1,4 @@
-HC-MobileNav
+HC Off-canvas Nav
 ===============
 
 jQuery plugin for creating off-canvas multi-level navigations.
@@ -20,9 +20,9 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 #### Call the plugin
 
 ```html
-<link rel="stylesheet" href="/path/to/hc-mobile-nav.css">
+<link rel="stylesheet" href="/path/to/hc-offcanvas-nav.css">
 <script src="/path/to/jquery.js"></script>
-<script src="/path/to/hc-mobile-nav.js"></script>
+<script src="/path/to/hc-offcanvas-nav.js"></script>
 <script>
   jQuery(document).ready(function($) {
     $('#main-nav').hcOffcanvasNav({
