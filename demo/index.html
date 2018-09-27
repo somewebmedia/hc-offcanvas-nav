@@ -79,7 +79,13 @@
                   <li><a href="#">The Spectator</a></li>
                   <li><a href="#">The Rambler</a></li>
                   <li><a href="#">Physics World</a></li>
-                  <li><a href="#">The New Scientist</a></li>
+                  <li><a href="#">Popular Science</a></li>
+                  <li><a href="#">Popular Mechanics</a></li>
+                  <li><a href="#">Sky & Telescope</a></li>
+                  <li><a href="#">Discover</a></li>
+                  <li><a href="#">New Scientist</a></li>
+                  <li><a href="#">Psychology Today</a></li>
+                  <li><a href="#">Wired</a></li>
                 </ul>
               </li>
               <li class="store">
@@ -247,7 +253,7 @@
             $.extend(data, conf)
 
             // call the plugin
-            $nav.clone().hcOffcanvasNav($.extend({}, defaultData, data));
+            $nav.clone(true, true).hcOffcanvasNav($.extend({}, defaultData, data));
           }
 
           // run first demo
