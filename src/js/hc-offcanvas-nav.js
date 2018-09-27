@@ -156,13 +156,13 @@
 
         // clone menu
         if ($this.is('ul')) {
-          $nav = $this.clone().wrap('<nav>').parent();
+          $nav = $this.clone(true, true).wrap('<nav>').parent();
         }
         else if ($this.is('nav')) {
-          $nav = $this.clone();
+          $nav = $this.clone(true, true);
         }
         else {
-          $nav = $this.find('nav, ul').first().clone();
+          $nav = $this.find('nav, ul').first().clone(true, true);
 
           if (!$nav.length) {
             console.log('%c! HC Offcanvas Nav:' + `%c There is no <nav> or <ul> elements in your menu.`, 'color: red', 'color: black');
@@ -276,7 +276,21 @@
 
         // close menu on item click
         if (SETTINGS.closeOnClick) {
-          $ul.find('li').children('a').on('click', closeNav);
+          let $items_a = $ul.find('li').children('a');
+
+          if (SETTINGS.levelOpen === false || SETTINGS.levelOpen === 'none') {
+            // do nothing, every item should close the nav
+          }
+          else {
+            // only items without children,
+            // or with children but with valid hrefs
+            $items_a = $items_a.filter(function() {
+              const $this = $(this);
+              return !$this.siblings().length || ($this.attr('href') && $this.attr('href').charAt(0) !== '#');
+            });
+          }
+
+          $items_a.on('click', closeNav);
         }
 
         // insert close link
@@ -293,8 +307,7 @@
           }
         }
 
-        // get levels for submenus
-        $ul.each(function() {
+        const createLevel = function() {
           const $menu = $(this);
           const level = $menu.parents('li').length;
 
@@ -336,7 +349,7 @@
             }
 
             const $next_span = $('<span class="nav-next">').appendTo($a);
-            const $next_label = $(`<label for="${uniqClass}-${level}-${index}">`).on('click', stopPropagation);
+            const $next_label = $(`<label for="${uniqClass}-${level}-${index}">`);
 
             const $checkbox = $(`<input type="checkbox" id="${uniqClass}-${level}-${index}">`)
               .attr('data-level', level)
@@ -344,16 +357,16 @@
               .on('click', stopPropagation)
               .on('change', checkboxChange);
 
-            // add checkboxes to our levels list
+            // add checkbox to our levels list
             Levels[level][index]['checkbox'] = $checkbox;
 
             $li.prepend($checkbox);
 
-            if (!$a.attr('href') || $a.attr('href') === '#') {
-              $a.on('click', preventClick(true, true)).prepend($next_label);
+            if (!$a.attr('href') || $a.attr('href').charAt(0) === '#') {
+              $a.on('click', preventClick(false, true)).prepend($next_label);
             }
             else {
-              $next_span.append($next_label);
+              $next_span.append($next_label.on('click', stopPropagation));
             }
 
             // insert back links
@@ -370,7 +383,10 @@
               }
             }
           }
-        });
+        };
+
+        // get levels for submenus
+        $ul.each(createLevel);
 
         // insert menu to DOM
         $body.append($nav);
