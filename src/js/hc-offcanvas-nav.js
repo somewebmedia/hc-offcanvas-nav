@@ -391,6 +391,9 @@
         // get levels for submenus
         $ul.each(createLevel);
 
+        // create content elements
+        $nav.find('.nav-wrapper').wrapInner('<div class="nav-content">');
+
         // insert menu to DOM
         $body.append($nav);
 
