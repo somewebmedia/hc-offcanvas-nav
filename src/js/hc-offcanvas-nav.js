@@ -349,7 +349,7 @@
             }
 
             const $next_span = $('<span class="nav-next">').appendTo($a);
-            const $next_label = $(`<label for="${uniqClass}-${level}-${index}">`);
+            const $next_label = $(`<label for="${uniqClass}-${level}-${index}">`).on('click', stopPropagation);
 
             const $checkbox = $(`<input type="checkbox" id="${uniqClass}-${level}-${index}">`)
               .attr('data-level', level)
@@ -363,10 +363,13 @@
             $li.prepend($checkbox);
 
             if (!$a.attr('href') || $a.attr('href').charAt(0) === '#') {
-              $a.on('click', preventClick(false, true)).prepend($next_label);
+              $a.on('click', preventClick(false, true)).prepend($next_label.on('click', function() {
+                // trigger parent click in case it has custom click events
+                $(this).parent().trigger('click');
+              }));
             }
             else {
-              $next_span.append($next_label.on('click', stopPropagation));
+              $next_span.append($next_label);
             }
 
             // insert back links
