@@ -1,7 +1,7 @@
 /*!
  * HC Off-canvas Nav
  * ===================
- * Version: 3.1.3
+ * Version: 3.1.4
  * Author: Some Web Media
  * Author URL: http://somewebmedia.com
  * Plugin URL: https://github.com/somewebmedia/hc-offcanvas-nav
