@@ -48,14 +48,13 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     }
   }
 
-  .nav-wrapper-1 {
-    & > ul {
-      &:first-of-type:not(:first-child) {
-        & > li {
-          &:first-child:not(.nav-back):not(.nav-close) {
-            & > a {
-              border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
-            }
+  ul {
+    &:first-of-type:not(:first-child) {
+      & > li {
+        &:first-child:not(.nav-back):not(.nav-close) {
+          & > a {
+            border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+            margin-top: -1px;
           }
         }
       }
