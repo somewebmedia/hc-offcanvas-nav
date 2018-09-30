@@ -374,6 +374,21 @@
               }
             }
           }
+
+          // insert close link
+          if (level === 0 && SETTINGS.insertClose !== false) {
+            const $nav_ul = $content.children('ul');
+            const $close = $(`<li class="nav-close"><a href="#">${SETTINGS.labelClose || ''}<span></span></a></li>`);
+
+            $close.children('a').on('click', preventClick(true, true, closeNav));
+
+            if (SETTINGS.insertClose === true) {
+              $nav_ul.first().prepend($close);
+            }
+            else if (isNumeric(SETTINGS.insertClose)) {
+              insertAt($close, SETTINGS.insertClose, $nav_ul.first().add($nav_ul.first().siblings('ul')));
+            }
+          }
         };
 
         // create view from model
@@ -398,21 +413,6 @@
         // close menu on body click (nav::after)
         if (SETTINGS.disableBody) {
           $nav.on('click', closeNav);
-        }
-
-        // insert close link
-        if (SETTINGS.insertClose !== false) {
-          const $nav_ul = $nav.find('ul');
-          const $close = $(`<li class="nav-close"><a href="#">${SETTINGS.labelClose || ''}<span></span></a></li>`);
-
-          $close.children('a').on('click', preventClick(true, true, closeNav));
-
-          if (SETTINGS.insertClose === true) {
-            $nav_ul.first().prepend($close);
-          }
-          else if (isNumeric(SETTINGS.insertClose)) {
-            insertAt($close, SETTINGS.insertClose, $nav_ul.first().add($nav_ul.first().siblings('ul')));
-          }
         }
 
         // insert nav to DOM
