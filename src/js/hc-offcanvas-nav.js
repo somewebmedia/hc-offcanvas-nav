@@ -241,7 +241,7 @@
 
             $ul.children('li').each(function() {
               const $li = $(this);
-              const $content = $li.children(':not(ul)');
+              const $content = $li.children(':not(ul):not(div)');
               const $nested_navs = $li.find('ul');
               const $subnav = $nested_navs.first().add($nested_navs.first().siblings('ul'));
 
