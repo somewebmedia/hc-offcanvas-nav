@@ -115,7 +115,7 @@
     return ($el, val, side) => {
       if (transform) {
         const x = side === 'left' ? val : -val;
-        $el.css(transform, `translate3d(${x}px,0,0)`);
+        $el.css(transform, x ? `translate3d(${x}px,0,0)` : '');
       }
       else {
         $el.css(side, val);
