@@ -79,6 +79,52 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | *`labelBack`* | 'Back' | string | Label for the back buttons. |
 
 
+### Methods
+
+Methods are used to control the plugin after initialization.
+
+| Method | Accepts | Description |
+|---------|---------|--------------|
+| *`update`* | object, boolean | Updates the settings with the new ones, and/or updates the internal state of the plugin making the DOM changes based on the original nav. |
+
+```js
+var Nav = $('#main-nav').hcOffcanvasNav({
+  maxWidth: 980
+});
+
+// update the settings
+Nav.update({
+  maxWidth: 1024,
+  navTitle: 'All pages'
+});
+
+// update the nav DOM
+Nav.update(true);
+
+// update the settings and the DOM
+Nav.update({
+  maxWidth: 1024,
+  navTitle: 'All pages'
+}, true);
+```
+
+### Events
+
+| Event | Description |
+|---------|---------|--------------|
+| *`close`* | Triggers when the nav is closed. Returns Event object, and the plugin Settings object. |
+
+```js
+var Nav = $('#main-nav').hcOffcanvasNav();
+
+// change nav open side after each close
+Nav.on('close', function(event, settings) {
+  Nav.update({
+    side: settings.side === 'left' ? 'right' : 'left'
+  });
+});
+```
+
 ## License
 
 The code and the documentation are released under the MIT License.
