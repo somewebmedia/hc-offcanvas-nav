@@ -111,7 +111,7 @@ Nav.update({
 ### Events
 
 | Event | Description |
-|---------|---------|--------------|
+|---------|--------------|
 | *`close`* | Triggers when the nav is closed. Returns Event object, and the plugin Settings object. |
 
 ```js
