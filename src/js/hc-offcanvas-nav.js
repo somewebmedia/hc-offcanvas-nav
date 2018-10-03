@@ -42,10 +42,10 @@
 
   const stopPropagation = (e) => e.stopPropagation();
 
-  const preventClick = (preventDefault, stopPropagation, cb) => {
+  const preventClick = (cb) => {
     return (e) => {
-      if (preventDefault) e.preventDefault();
-      if (stopPropagation) e.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
       if (typeof cb === 'function') cb();
     };
   };
@@ -157,6 +157,8 @@
 
       let Settings = $.extend({}, defaults, options);
 
+      const navOpenClass = 'nav-open';
+
       const Plugin = function() {
         const $this = $(this);
 
@@ -226,6 +228,8 @@
           // remove transition from the nav container so we can update the nav without flickering
           $nav_container.css('transition', 'none');
 
+          const wasOpen = $nav.hasClass(navOpenClass);
+
           $nav
             .off('click')
             .attr('class', '')
@@ -238,6 +242,7 @@
               ${Settings.disableBody ? 'disable-body' : ''}
               ${isIos ? 'is-ios' : ''}
               ${isTouchDevice ? 'touch-device' : ''}
+              ${wasOpen ? navOpenClass : ''}
             `);
 
           // close menu on body click (nav::after)
@@ -341,30 +346,23 @@
               const $menu = $(`<ul class="${nav.classes}">`).appendTo($content);
 
               $.each(nav.items, (i_item, item) => {
-                const $item_content = item.$content.clone(true, true);
-                let $a = $item_content.find('a').addBack('a');
+                const $item_content = item.$content;
+                let $item_link = $item_content.find('a').addBack('a');
+                const $a = $item_link.length ? $item_link.clone() : $(`<a>`).append($item_content.clone()).on('click', stopPropagation);
 
-                if (!$a.length) {
-                  $a = $item_content.wrapAll('<a>').parent();
+                // on click trigger original link
+                if ($item_link.length) {
+                  $a.on('click', (e) => {
+                    e.stopPropagation();
+                    $item_link[0].click();
+                  });
                 }
 
                 if ($a.attr('href') === '#') {
                   // prevent page jumping
-                  $a.on('click', preventClick(true));
-                }
-
-                const $item = $(`<li class="${item.classes}">`).append($a.on('click', stopPropagation));
-
-                // insert item
-                $menu.append($item);
-
-                // indent levels in expanded levels
-                if (Settings.levelSpacing && (Settings.levelOpen === 'expand' || (Settings.levelOpen === false || Settings.levelOpen === 'none'))) {
-                  const indent = Settings.levelSpacing * level;
-
-                  if (indent) {
-                    $menu.css('text-indent', `${indent}px`);
-                  }
+                  $a.on('click', (e) => {
+                    e.preventDefault();
+                  });
                 }
 
                 // close nav on item click
@@ -383,6 +381,20 @@
                   }
                 }
 
+                const $item = $(`<li class="${item.classes}">`).append($a);
+
+                // insert item
+                $menu.append($item);
+
+                // indent levels in expanded levels
+                if (Settings.levelSpacing && (Settings.levelOpen === 'expand' || (Settings.levelOpen === false || Settings.levelOpen === 'none'))) {
+                  const indent = Settings.levelSpacing * level;
+
+                  if (indent) {
+                    $menu.css('text-indent', `${indent}px`);
+                  }
+                }
+
                 // do subnav
                 if (item.subnav.length) {
                   const nextLevel = level + 1;
@@ -391,25 +403,26 @@
 
                   // create new level
                   if (!_indexes[nextLevel]) {
-                    _indexes[nextLevel] = [0];
+                    _indexes[nextLevel] = 0;
                   }
 
                   // li parent class
                   $item.addClass('nav-parent');
 
                   if (Settings.levelOpen !== false && Settings.levelOpen !== 'none') {
+                    const index = _indexes[nextLevel];
                     const $next_span = $('<span class="nav-next">').appendTo($a);
-                    const $next_label = $(`<label for="${navUniqId}-${nextLevel}-${_indexes[nextLevel]}">`).on('click', stopPropagation);
-                    const $checkbox = $(`<input type="checkbox" id="${navUniqId}-${nextLevel}-${_indexes[nextLevel]}">`)
+                    const $next_label = $(`<label for="${navUniqId}-${nextLevel}-${index}">`).on('click', stopPropagation);
+                    const $checkbox = $(`<input type="checkbox" id="${navUniqId}-${nextLevel}-${index}">`)
                       .attr('data-level', nextLevel)
-                      .attr('data-index', _indexes[nextLevel])
+                      .attr('data-index', index)
                       .val(uniqid)
                       .on('click', stopPropagation)
                       .on('change', checkboxChange);
 
                     // nav is updated, we should keep this level open
                     if (_openLevels.indexOf(uniqid) !== -1) {
-                      $wrapper.addClass('sub-level-open');
+                      $wrapper.addClass('sub-level-open').on('click', () => closeLevel(nextLevel, index)); // close on self click
                       $item.addClass('level-open');
                       $checkbox.prop('checked', true);
                     }
@@ -417,7 +430,7 @@
                     $item.prepend($checkbox);
 
                     // subnav title
-                    nav_title = Settings.levelTitles === true ? $($item_content).text().trim() : '';
+                    nav_title = Settings.levelTitles === true ? $item_content.text().trim() : '';
 
                     if (!$a.attr('href') || $a.attr('href').charAt(0) === '#') {
                       $a.prepend($next_label.on('click', function() {
@@ -443,7 +456,7 @@
                 const $children_menus = $content.children('ul');
                 let $back = $(`<li class="nav-back"><a href="#">${Settings.labelBack || ''}<span></span></a></li>`);
 
-                $back.children('a').on('click', preventClick(true, true, () => closeLevel(level, backIndex)));
+                $back.children('a').on('click', preventClick(() => closeLevel(level, backIndex)));
 
                 if (Settings.insertBack === true) {
                   $children_menus.first().prepend($back);
@@ -459,7 +472,7 @@
               const $nav_ul = $content.children('ul');
               const $close = $(`<li class="nav-close"><a href="#">${Settings.labelClose || ''}<span></span></a></li>`);
 
-              $close.children('a').on('click', preventClick(true, true, closeNav));
+              $close.children('a').on('click', preventClick(closeNav));
 
               if (Settings.insertClose === true) {
                 $nav_ul.first().prepend($close);
@@ -501,7 +514,7 @@
         function openNav() {
           _open = true;
 
-          $nav.addClass('nav-open');
+          $nav.addClass(navOpenClass);
           $toggle.addClass('toggle-open');
 
           if (Settings.levelOpen === 'expand' && _closeLevelsTimeout) {
@@ -539,7 +552,7 @@
             setTransform($nav_content, 0, Settings.side);
           }
 
-          $nav.removeClass('nav-open');
+          $nav.removeClass(navOpenClass);
           $nav_container.removeAttr('style');
           $toggle.removeClass('toggle-open');
 
@@ -593,7 +606,7 @@
           }
 
           if (Settings.levelOpen === 'overlap') {
-            $wrap.on('click', () => closeLevel(l, i))
+            $wrap.on('click', () => closeLevel(l, i)); // close on self click
             setTransform($nav_container, l * Settings.levelSpacing, Settings.side);
 
             if ($nav_content && $nav_content.length) {
@@ -618,7 +631,7 @@
           }
 
           if (transform && Settings.levelOpen === 'overlap') {
-            $wrap.off('click').on('click', stopPropagation);
+            $wrap.off('click').on('click', stopPropagation); //level closed, remove wrapper click
             setTransform($nav_container, (l - 1) * Settings.levelSpacing, Settings.side);
 
             if ($nav_content && $nav_content.length) {
@@ -643,7 +656,11 @@
 
         // Public methods
 
-        self.isOpen = () => $nav.hasClass('nav-open');
+        self.options = (option) => {
+          return option ? Settings[option] : Object.assign({}, Settings);
+        };
+
+        self.isOpen = () => $nav.hasClass(navOpenClass);
 
         self.open = () => {
           // timeout in case of update
@@ -659,7 +676,7 @@
             createNavDom(true);
           }
 
-          if (typeof options === 'boolean' || updateDom) {
+          if (options === true || updateDom) {
             initNav();
             createModel();
             createNavDom(true);
