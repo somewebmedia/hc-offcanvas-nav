@@ -85,7 +85,10 @@ Methods are used to control the plugin after initialization.
 
 | Method | Accepts | Description |
 |---------|---------|--------------|
+| *`isOpen`* | N/A | Checks if the nav is open, and returns boolean. |
 | *`update`* | object, boolean | Updates the settings with the new ones, and/or updates the internal state of the plugin making the DOM changes based on the original nav. |
+| *`open`* | N/A | Opens the nav. |
+| *`close`* | N/A | Closes the nav. |
 
 ```js
 var Nav = $('#main-nav').hcOffcanvasNav({
@@ -112,13 +115,24 @@ Nav.update({
 
 | Event | Description |
 |---------|--------------|
-| *`close`* | Triggers when the nav is closed. Returns Event object, and the plugin Settings object. |
+| *`open`* | Triggers each time when the nav is opened. |
+| *`close`* | Triggers each time when the nav is closed. |
+| *`close.once`* | Triggers only the first time the nav is closed, and than it detaches itself. |
+
+All events return Event object, and the plugin Settings object.
 
 ```js
 var Nav = $('#main-nav').hcOffcanvasNav();
 
 // change nav open side after each close
 Nav.on('close', function(event, settings) {
+  Nav.update({
+    side: settings.side === 'left' ? 'right' : 'left'
+  });
+});
+
+// will change nav open side only once
+Nav.on('close.once', function(event, settings) {
   Nav.update({
     side: settings.side === 'left' ? 'right' : 'left'
   });
