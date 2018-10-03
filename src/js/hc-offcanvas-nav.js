@@ -343,7 +343,7 @@
             }
 
             $.each(menu, (i_nav, nav) => {
-              const $menu = $(`<ul class="${nav.classes}">`).appendTo($content);
+              const $menu = $(`<ul>`).addClass(nav.classes).appendTo($content);
 
               $.each(nav.items, (i_item, item) => {
                 const $item_content = item.$content;
@@ -381,7 +381,7 @@
                   }
                 }
 
-                const $item = $(`<li class="${item.classes}">`).append($a);
+                const $item = $(`<li>`).addClass(item.classes).append($a);
 
                 // insert item
                 $menu.append($item);
