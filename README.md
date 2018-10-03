@@ -85,6 +85,7 @@ Methods are used to control the plugin after initialization.
 
 | Method | Accepts | Description |
 |---------|---------|--------------|
+| *`options`* | string | Returns current settings, or a particular setting if you specify it. |
 | *`isOpen`* | N/A | Checks if the nav is open, and returns boolean. |
 | *`update`* | object, boolean | Updates the settings with the new ones, and/or updates the internal state of the plugin making the DOM changes based on the original nav. |
 | *`open`* | N/A | Opens the nav. |
