@@ -170,14 +170,7 @@
 
         const navUniqId = `hc-nav-${navCount}`;
 
-        let _open = false;
-        let _top = 0;
-        let _containerWidth = 0;
-        let _transitionDuration;
-        let _closeLevelsTimeout = null;
-
         let $toggle;
-        let $nav_content;
 
         // add classes to original menu so we know it's connected to our copy
         $this.addClass(`hc-nav ${navUniqId}`);
@@ -215,24 +208,61 @@
         printStyle(css);
 
         // this is our nav
-        const $nav = $('<nav>')
-          .on('click', stopPropagation) // prevent menu close on self click
-          .addClass(`
-            hc-offcanvas-nav
-            ${navUniqId}
-            ${Settings.navClass || ''}
-            nav-levels-${Settings.levelOpen || 'none'}
-            side-${Settings.side}
-            ${Settings.disableBody ? 'disable-body' : ''}
-            ${isIos ? 'is-ios' : ''}
-            ${isTouchDevice ? 'touch-device' : ''}
-          `);
-
+        const $nav = $('<nav>').on('click', stopPropagation); // prevent menu close on self click
         const $nav_container = $('<div class="nav-container">').appendTo($nav);
+        let $nav_content;
 
         let Model = {};
+        let _open = false;
+        let _top = 0;
+        let _containerWidth = 0;
+        let _transitionDuration;
+        let _closeLevelsTimeout = null;
         let _indexes = {}; // object with level indexes
         const _openLevels = []; // array with current open levels
+
+        // init function
+        const initNav = () => {
+          // remove transition from the nav container so we can update the nav without flickering
+          $nav_container.css('transition', 'none');
+
+          $nav
+            .off('click')
+            .attr('class', '')
+            .addClass(`
+              hc-offcanvas-nav
+              ${navUniqId}
+              ${Settings.navClass || ''}
+              nav-levels-${Settings.levelOpen || 'none'}
+              side-${Settings.side}
+              ${Settings.disableBody ? 'disable-body' : ''}
+              ${isIos ? 'is-ios' : ''}
+              ${isTouchDevice ? 'touch-device' : ''}
+            `);
+
+          // close menu on body click (nav::after)
+          if (Settings.disableBody) {
+            $nav.on('click', closeNav);
+          }
+
+          setTimeout(() => {
+            // clear inline transition
+            $nav_container.css('transition', '');
+
+            _containerWidth = $nav_container.width();
+            _transitionDuration = toMs($nav_container.css('transition-duration'));
+
+            if (typeof Settings.pushContent !== 'boolean') {
+              $nav_content = $(Settings.pushContent);
+
+              if ($nav_content.length) {
+                printStyle(`${getElementCssTag(Settings.pushContent)} {
+                  transition: ${$nav_container.css('transition-property').split(',')[0]} ${$nav_container.css('transition-duration')} ${$nav_container.css('transition-timing-function').split(',')[0]};
+                }`);
+              }
+            }
+          }, 1); // timed out so we can get computed data
+        };
 
         // create nav model
 
@@ -242,9 +272,6 @@
             const $ul = $this.find('ul').addBack('ul'); // original nav menus
             return $ul.first().add($ul.first().siblings('ul'));
           };
-
-          // reset indexes
-          _indexes = {};
 
           // call
           Model = getModel($first_level());
@@ -256,13 +283,15 @@
               const $ul = $(this);
 
               const nav = {
-                $ul: $ul,
+                classes: $ul.attr('class'),
                 items: []
               };
 
               $ul.children('li').each(function() {
                 const $li = $(this);
-                const $content = $li.children(':not(ul):not(div)');
+                const $content = $li.children(':not(ul):not(div)').add($li.contents().filter(function() {
+                  return this.nodeType === 3 && this.nodeValue.trim();
+                }));
                 const $nested_navs = $li.find('ul');
                 const $subnav = $nested_navs.first().add($nested_navs.first().siblings('ul'));
 
@@ -273,8 +302,9 @@
 
                 // add elements to this level
                 nav.items.push({
-                  $li: $li,
-                  $content: $content.clone(true, true),
+                  uniqid: $li.data('hc-uniqid'),
+                  classes: $li.attr('class'),
+                  $content: $content,
                   subnav: $subnav.length ? getModel($subnav) : []
                 });
               });
@@ -286,13 +316,14 @@
           }
         };
 
-        // init our Model
-        createModel();
-
         // create nav DOM function
-        const createNavDom = () => {
-          // empty the container first in case of update
-          $nav_container.empty();
+        const createNavDom = (reinit) => {
+          if (reinit) {
+            // empty the container
+            $nav_container.empty();
+            // reset indexes
+            _indexes = {};
+          }
 
           // call
           createDom(Model, $nav_container, 0, Settings.navTitle);
@@ -307,14 +338,24 @@
             }
 
             $.each(menu, (i_nav, nav) => {
-              const $menu = nav.$ul.clone(true, true).empty().appendTo($content);
+              const $menu = $(`<ul class="${nav.classes}">`).appendTo($content);
 
               $.each(nav.items, (i_item, item) => {
+                const $item_content = item.$content.clone(true, true);
+                let $a = $item_content.find('a').addBack('a');
 
-                const $item_content = item.$content;
-                const $a = $item_content.find('a').addBack('a').on('click', stopPropagation);
-                const $item = item.$li.clone(true, true).empty().append($item_content);
+                if (!$a.length) {
+                  $a = $item_content.wrapAll('<a>').parent();
+                }
 
+                if ($a.attr('href') === '#') {
+                  // prevent page jumping
+                  $a.on('click', preventClick(true));
+                }
+
+                const $item = $(`<li class="${item.classes}">`).append($a.on('click', stopPropagation));
+
+                // insert item
                 $menu.append($item);
 
                 // indent levels in expanded levels
@@ -345,7 +386,7 @@
                 // do subnav
                 if (item.subnav.length) {
                   const nextLevel = level + 1;
-                  const uniqid = $item.data('hc-uniqid');
+                  const uniqid = item.uniqid;
                   let nav_title = '';
 
                   // create new level
@@ -357,7 +398,7 @@
                   $item.addClass('nav-parent');
 
                   if (Settings.levelOpen !== false && Settings.levelOpen !== 'none') {
-                    const $next_span = $('<span class="nav-next">').appendTo($item_content);
+                    const $next_span = $('<span class="nav-next">').appendTo($a);
                     const $next_label = $(`<label for="${navUniqId}-${nextLevel}-${_indexes[nextLevel]}">`).on('click', stopPropagation);
                     const $checkbox = $(`<input type="checkbox" id="${navUniqId}-${nextLevel}-${_indexes[nextLevel]}">`)
                       .attr('data-level', nextLevel)
@@ -366,7 +407,7 @@
                       .on('click', stopPropagation)
                       .on('change', checkboxChange);
 
-                    // updated, we should keep this level open
+                    // nav is updated, we should keep this level open
                     if (_openLevels.indexOf(uniqid) !== -1) {
                       $wrapper.addClass('sub-level-open');
                       $item.addClass('level-open');
@@ -430,29 +471,14 @@
           }
         };
 
+        // init nav
+        initNav();
+
+        // init our Model
+        createModel();
+
         // create view from model
-        createNavDom($nav_container);
-
-        // get some computed data
-        setTimeout(() => {
-          _containerWidth = $nav_container.width();
-          _transitionDuration = toMs($nav_container.css('transition-duration'));
-
-          if (typeof Settings.pushContent !== 'boolean') {
-            $nav_content = $(Settings.pushContent);
-
-            if ($nav_content.length) {
-              printStyle(`${getElementCssTag(Settings.pushContent)} {
-                transition: ${$nav_container.css('transition-property').split(',')[0]} ${$nav_container.css('transition-duration')} ${$nav_container.css('transition-timing-function').split(',')[0]};
-              }`);
-            }
-          }
-        }, 1);
-
-        // close menu on body click (nav::after)
-        if (Settings.disableBody) {
-          $nav.on('click', closeNav);
-        }
+        createNavDom();
 
         // insert nav to DOM
         $body.append($nav);
@@ -499,6 +525,11 @@
           if ($nav_content && $nav_content.length) {
             setTransform($nav_content, _containerWidth, Settings.side);
           }
+
+          // trigger open event
+          setTimeout(() => {
+            self.trigger('open', $.extend({}, Settings));
+          }, _transitionDuration + 1);
         }
 
         function closeNav() {
@@ -532,8 +563,10 @@
 
           // trigger close event
           setTimeout(() => {
-            // send copy of the setting object
-            self.trigger('close', $.extend({}, Settings));
+            self.trigger('close.$', $.extend({}, Settings));
+
+            // only trigger close event once and detach it
+            self.trigger('close.once', $.extend({}, Settings)).off('close.once');
           }, _transitionDuration + 1);
         }
 
@@ -547,6 +580,7 @@
 
         function openLevel(l, i) {
           const $checkbox = $(`#${navUniqId}-${l}-${i}`);
+          const uniqid = $checkbox.val();
           const $li = $checkbox.parent('li');
           const $wrap = $li.closest('.nav-wrapper');
 
@@ -554,7 +588,6 @@
           $li.addClass('level-open');
 
           // remember what is open
-          const uniqid = $li.data('hc-uniqid');
           if (_openLevels.indexOf(uniqid) === -1) {
             _openLevels.push(uniqid);
           }
@@ -571,6 +604,7 @@
 
         const _closeLevel = (l, i, transform) => {
           const $checkbox = $(`#${navUniqId}-${l}-${i}`);
+          const uniqid = $checkbox.val();
           const $li = $checkbox.parent('li');
           const $wrap = $li.closest('.nav-wrapper');
 
@@ -579,7 +613,6 @@
           $li.removeClass('level-open');
 
           // this is not open anymore
-          const uniqid = $li.data('hc-uniqid');
           if (_openLevels.indexOf(uniqid) !== -1) {
             _openLevels.splice(_openLevels.indexOf(uniqid), 1);
           }
@@ -610,14 +643,26 @@
 
         // Public methods
 
+        self.isOpen = () => $nav.hasClass('nav-open');
+
+        self.open = () => {
+          // timeout in case of update
+          setTimeout(openNav, 1.5);
+        };
+
+        self.close = closeNav;
+
         self.update = (options, updateDom) => {
           if (typeof options === 'object') {
             Settings = $.extend({}, Settings, options);
+            initNav();
+            createNavDom(true);
           }
 
           if (typeof options === 'boolean' || updateDom) {
+            initNav();
             createModel();
-            createNavDom();
+            createNavDom(true);
           }
         };
       };
