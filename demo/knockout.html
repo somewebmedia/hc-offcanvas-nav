@@ -1,0 +1,144 @@
+
+<!DOCTYPE html>
+<html>
+
+  <head>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:200,300,400,600,700">
+    <link rel="stylesheet" href="demo.css">
+
+    <style>
+      .hc-nav-trigger {
+        left: 20px;
+      }
+
+      .hc-nav-trigger span,
+      .hc-nav-trigger span::before,
+      .hc-nav-trigger span::after {
+        background: #fff;
+      }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+    <script src="hc-offcanvas-nav.js"></script>
+  </head>
+
+  <body>
+
+    <div id="container">
+
+      <nav id="nav">
+        <ul>
+          <li>
+            <a>Pages</a>
+            <ul data-bind="template: { name: 'page-template', data: {pages: pages}}"></ul>
+          </li>
+        </ul>
+      </nav>
+
+      <script type="text/html" id="page-template">
+        <!-- ko foreach: pages -->
+        <li>
+          <a data-bind="click: $root.clicked">
+            <span data-bind="text: title"></span>
+          </a>
+          <!-- ko if: pages().length > 0 -->
+          <ul data-bind="template: { name: 'page-template', data: {pages: pages}}"></ul>
+          <!-- /ko -->
+        </li>
+        <!-- /ko -->
+        <li><a data-bind="click: $root.createItem">New item</a></li>
+      </script>
+
+      <script>
+        (function($) {
+
+          var Nav;
+
+          var PageModel = function (page) {
+            var self = this;
+
+            self.id = page.id;
+            self.title = page.title;
+            self.pages = ko.observableArray();
+
+            self.pages(ko.utils.arrayMap(page.pages, function(page) {
+              return new PageModel(page);
+            }));
+          }
+
+          var NavigationModel = function(pages) {
+            var self = this;
+
+            self.pages = ko.observableArray();
+
+            self.pages(ko.utils.arrayMap(pages, function(page) {
+              return new PageModel(page);
+            }));
+
+            self.clicked = function(data) {
+              console.log('You clicked an item', data.title);
+            }.bind(self);
+
+            self.createItem = function(data) {
+              console.log('New item added');
+
+              data.pages.push({
+                title: 'N',
+                pages: ko.observableArray()
+              });
+
+              // update nav
+              Nav.update(true);
+
+              // or you can update the nav when it closes
+              /*Nav.on('close', (e) => {
+                Nav.update(true);
+                Nav.off('close');
+              });*/
+
+            }.bind(self);
+          };
+
+          var pages = [
+            {
+              title: 'X',
+              pages: [
+                {
+                  title: 'XX',
+                  pages: []
+                },
+                {
+                  title: 'XXX',
+                  pages: []
+                }
+              ]
+            },
+            {
+              title: 'Y',
+              pages: []
+            },
+            {
+              title: 'Z',
+              pages: []
+            }
+          ];
+
+          ko.applyBindings(new NavigationModel(pages));
+
+          Nav = $('#nav').hcOffcanvasNav({
+            maxWidth: false,
+            levelTitles: true,
+            closeOnClick: false
+          });
+        })(jQuery);
+      </script>
+
+    </div>
+
+  </body>
+</html>

@@ -79,6 +79,67 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | *`labelBack`* | 'Back' | string | Label for the back buttons. |
 
 
+### Methods
+
+Methods are used to control the plugin after initialization.
+
+| Method | Accepts | Description |
+|---------|---------|--------------|
+| *`options`* | string | Returns current settings, or a particular setting if you specify it. |
+| *`isOpen`* | N/A | Checks if the nav is open, and returns boolean. |
+| *`update`* | object, boolean | Updates the settings with the new ones, and/or updates the internal state of the plugin making the DOM changes based on the original nav. |
+| *`open`* | N/A | Opens the nav. |
+| *`close`* | N/A | Closes the nav. |
+
+```js
+var Nav = $('#main-nav').hcOffcanvasNav({
+  maxWidth: 980
+});
+
+// update the settings
+Nav.update({
+  maxWidth: 1024,
+  navTitle: 'All pages'
+});
+
+// update the nav DOM
+Nav.update(true);
+
+// update the settings and the DOM
+Nav.update({
+  maxWidth: 1024,
+  navTitle: 'All pages'
+}, true);
+```
+
+### Events
+
+| Event | Description |
+|---------|--------------|
+| *`open`* | Triggers each time when the nav is opened. |
+| *`close`* | Triggers each time when the nav is closed. |
+| *`close.once`* | Triggers only the first time the nav is closed, and than it detaches itself. |
+
+All events return Event object, and the plugin Settings object.
+
+```js
+var Nav = $('#main-nav').hcOffcanvasNav();
+
+// change nav open side after each close
+Nav.on('close', function(event, settings) {
+  Nav.update({
+    side: settings.side === 'left' ? 'right' : 'left'
+  });
+});
+
+// will change nav open side only once
+Nav.on('close.once', function(event, settings) {
+  Nav.update({
+    side: settings.side === 'left' ? 'right' : 'left'
+  });
+});
+```
+
 ## License
 
 The code and the documentation are released under the MIT License.
