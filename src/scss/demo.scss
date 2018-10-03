@@ -347,6 +347,16 @@ main {
 
   li {
 
+    &.add > a::before {
+      @include mi;
+      content: 'add';
+    }
+
+    &.new > a::before {
+      @include mi;
+      content: 'fiber_new';
+    }
+
     &.cryptocurrency > a::before {
       @include mi;
       content: 'local_atm';

@@ -30,16 +30,14 @@
                 <ul>
                   <li><a href="#">Bitcoin</a></li>
                   <li><a href="#">Ethereum</a></li>
-                  <li><a href="#">NEO</a></li>
-                  <li><a href="#">ZCash</a></li>
-                  <li><a href="#">Dogecoin</a></li>
+                  <li class="add"><a href="#" data-add="['Litecoin','Dogecoin','Bitcoin Cash','ZCash']">Add Coin</a></li>
                 </ul>
               </li>
             </ul>
 
             <ul class="second-nav">
               <li class="devices">
-                <a>Devices</a>
+                <span>Devices</span>
                 <ul>
                   <li class="mobile">
                     <a href="#">Mobile Phones</a>
@@ -128,6 +126,7 @@
               </li>
               <li class="collections"><a href="#">Collections</a></li>
               <li class="credits"><a href="#">Credits</a></li>
+              <li class="add"><a href="#" data-add="['Charts', 'Logs', 'Tests', 'Profile']">Add Item</a></li>
             </ul>
 
           </nav>
@@ -184,6 +183,8 @@
 
             <div class="actions checkboxes">
 
+              <div><label><input type="checkbox" data-demo="{closeOnClick:true}" checked><span></span>Close on click</label></div>
+
               <div><label><input type="checkbox" data-demo="{disableBody:true}" checked><span></span>Disable body</label></div>
 
               <div><label><input type="checkbox" data-demo="{pushContent:'#container'}" checked><span></span>Push content</label></div>
@@ -219,9 +220,9 @@
 
       <script>
         (function($) {
-          var $nav = $('#main-nav');
+          var $main_nav = $('#main-nav');
           var $toggle = $('.toggle');
-          var data = {};
+
           var defaultData = {
             maxWidth: false,
             customToggle: $toggle,
@@ -230,57 +231,69 @@
             pushContent: '#container'
           };
 
-          // calling like this only for demo purposes
+          // add new items to original nav
+          $main_nav.find('li.add').children('a').on('click', function() {
+            var $this = $(this);
+            var $li = $this.parent();
+            var items = eval('(' + $this.attr('data-add') + ')');
 
-          const initNav = function(conf) {
-            var $old = $('.hc-offcanvas-nav');
+            $li.before('<li class="new"><a>'+items[0]+'</a></li>');
 
-            setTimeout(function() {
-              if ($old.length) {
-                // clear previous instance
-                $old.remove();
-              }
-            }, $toggle.hasClass('toggle-open') ? 420 : 0);
+            items.shift();
 
-            if ($toggle.hasClass('toggle-open')) {
-              $toggle.click();
+            if (!items.length) {
+              $li.remove();
+            }
+            else {
+              $this.attr('data-add', JSON.stringify(items));
             }
 
-            // remove old toggle click event
-            $toggle.off('click');
+            Nav.update(true);
+          });
 
-            // remember data
-            $.extend(data, conf)
+          // call our plugin
+          var Nav = $main_nav.hcOffcanvasNav(defaultData);
 
-            // call the plugin
-            $nav.clone(true, true).hcOffcanvasNav($.extend({}, defaultData, data));
-          }
+          // demo settings update
 
-          // run first demo
-          initNav({});
+          const update = (settings) => {
+            if (Nav.isOpen()) {
+              Nav.on('close.once', function() {
+                Nav.update(settings);
+                Nav.open();
+              });
+
+              Nav.close();
+            }
+            else {
+              Nav.update(settings);
+            }
+          };
 
           $('.actions').find('a').on('click', function(e) {
             e.preventDefault();
 
             var $this = $(this).addClass('active');
             var $siblings = $this.parent().siblings().children('a').removeClass('active');
+            var settings = eval('(' + $this.data('demo') + ')');
 
-            initNav(eval('(' + $this.data('demo') + ')'));
+            update(settings);
           });
 
           $('.actions').find('input').on('change', function() {
             var $this = $(this);
-            var data = eval('(' + $this.data('demo') + ')');
+            var settings = eval('(' + $this.data('demo') + ')');
 
             if ($this.is(':checked')) {
-              initNav(data);
+              update(settings);
             }
             else {
               var removeData = {};
-              $.each(data, function(index, value) {
+              $.each(settings, function(index, value) {
                 removeData[index] = false;
               });
-              initNav(removeData);
+
+              update(removeData);
             }
           });
         })(jQuery);
