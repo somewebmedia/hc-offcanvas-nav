@@ -212,7 +212,7 @@
         // this is our nav
         const $nav = $('<nav>').on('click', stopPropagation); // prevent menu close on self click
         const $nav_container = $('<div class="nav-container">').appendTo($nav);
-        let $nav_content;
+        let $nav_content = null;
 
         let Model = {};
         let _open = false;
@@ -265,6 +265,9 @@
                   transition: ${$nav_container.css('transition-property').split(',')[0]} ${$nav_container.css('transition-duration')} ${$nav_container.css('transition-timing-function').split(',')[0]};
                 }`);
               }
+            }
+            else {
+              $nav_content = null
             }
           }, 1); // timed out so we can get computed data
         };
