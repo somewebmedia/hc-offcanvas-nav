@@ -262,7 +262,7 @@
 
               if ($nav_content.length) {
                 printStyle(`${getElementCssTag(Settings.pushContent)} {
-                  transition: ${$nav_container.css('transition-property').split(',')[0]} ${$nav_container.css('transition-duration')} ${$nav_container.css('transition-timing-function').split(',')[0]};
+                  transition: ${$nav_container.css('transition-property')} ${$nav_container.css('transition-duration')} ${$nav_container.css('transition-timing-function')};
                 }`);
               }
             }
