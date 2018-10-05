@@ -79,21 +79,20 @@
           : getElementCssTag(el.parent()) + ' ' + el.prop('tagName').toLowerCase();
   };
 
-  const printStyle = (() => {
+  const printStyle = (id) => {
     const $head = $('head');
-    const id = 'hc-offcanvas-nav-style';
 
-    return (css) => {
+    return (css, append) => {
       const $style = $head.find(`style#${id}`);
 
       if ($style.length) {
-        $style.html($style.html() + css);
+        $style.html(append ? $style.html() + css : css);
       }
       else {
         $(`<style id="${id}">${css}</style>`).appendTo($head);
       }
     };
-  })();
+  };
 
   const insertAt = ($insert, n, $parent) => {
     const $children = $parent.children();
@@ -109,17 +108,52 @@
     }
   };
 
+  const getAxis = (position) => {
+    return ['left', 'right'].indexOf(position) !== -1 ? 'x' : 'y';
+  };
+
   const setTransform = (() => {
     const transform = browserPrefix('transform');
 
-    return ($el, val, side) => {
+    return ($el, val, position) => {
       if (transform) {
-        const x = side === 'left' ? val : -val;
-        $el.css(transform, x ? `translate3d(${x}px,0,0)` : '');
+        if (val === 0) {
+          $el.css(transform, '');
+        }
+        else {
+          if (getAxis(position) === 'x') {
+            const x = position === 'left' ? val : -val;
+            $el.css(transform, x ? `translate3d(${x}px,0,0)` : '');
+          }
+          else {
+            const y = position === 'top' ? val : -val;
+            $el.css(transform, y ? `translate3d(0,${y}px,0)` : '');
+          }
+        }
       }
       else {
-        $el.css(side, val);
+        $el.css(position, val);
       }
+    };
+  })();
+
+  const deprecated = (() => {
+    const pluginName = 'HC Off-canvas Nav';
+
+    return (what, instead, type) => {
+      console.warn(
+        '%c' + pluginName + ':'
+        + '%c ' + type
+        + "%c '"+ what + "'"
+        + '%c is now deprecated and will be removed. Use'
+        + "%c '" + instead + "'"
+        + '%c instead.',
+        'color: #fa253b',
+        'color: default',
+        'color: #5595c6',
+        'color: default',
+        'color: #5595c6',
+        'color: default');
     };
   })();
 
@@ -137,9 +171,9 @@
       const defaults = {
         maxWidth:         1024,
         pushContent:      false,
-        side:             'left',
+        position:         'left', // left, right, top
 
-        levelOpen:        'overlap', // overlap / expand / none
+        levelOpen:        'overlap', // overlap, expand, none/false
         levelSpacing:     40,
         levelTitles:      false,
 
@@ -155,6 +189,11 @@
         labelBack:        'Back'
       };
 
+      if (options.side) {
+        deprecated('side', 'position', 'option');
+        options.position = options.side;
+      }
+
       let Settings = $.extend({}, defaults, options);
 
       const navOpenClass = 'nav-open';
@@ -163,7 +202,7 @@
         const $this = $(this);
 
         if (!$this.find('ul').addBack('ul').length) {
-          console.log('%c! HC Offcanvas Nav:' + `%c Menu must contain <ul> element.`, 'color: red', 'color: black');
+          console.error('%c! HC Offcanvas Nav:' + `%c Menu must contain <ul> element.`, 'color: #fa253b', 'color: default');
           return;
         }
 
@@ -171,11 +210,29 @@
         navCount++;
 
         const navUniqId = `hc-nav-${navCount}`;
+        const insertStyle = printStyle(`hc-offcanvas-${navCount}-style`);
 
         let $toggle;
 
         // add classes to original menu so we know it's connected to our copy
         $this.addClass(`hc-nav ${navUniqId}`);
+
+        // this is our nav
+        const $nav = $('<nav>').on('click', stopPropagation); // prevent menu close on self click
+        const $nav_container = $('<div class="nav-container">').appendTo($nav);
+        let $push_content = null;
+
+        let Model = {};
+        let _open = false;
+        let _top = 0;
+        let _containerWidth = 0;
+        let _containerHeight = 0;
+        let _transitionProperty;
+        let _transitionDuration;
+        let _transitionFunction;
+        let _closeLevelsTimeout = null;
+        let _indexes = {}; // object with level indexes
+        const _openLevels = []; // array with current open levels
 
         // toggle
         if (!Settings.customToggle) {
@@ -186,45 +243,81 @@
           $toggle = $(Settings.customToggle).addClass(`hc-nav-trigger ${navUniqId}`).on('click', toggleNav);
         }
 
-        const toggleDisplay = $toggle.css('display');
+        const calcNav = () => {
+          // clear inline transition
+          $nav_container.css('transition', '');
 
-        // insert styles
-        let css = `
-          .hc-offcanvas-nav.${navUniqId} {
-            display: block;
+          pageContentTransition();
+
+          _containerWidth = $nav_container.outerWidth();
+          _containerHeight = $nav_container.outerHeight();
+
+          // fix 100% transform glitching
+          const transform = $nav_container.css('transform').match(/-?\d+/g);
+          const x = transform[4] != 0 ? (transform[4] < 0 ? -1 : 1) * _containerWidth + 'px' : 0;
+          const y = transform[5] != 0 ? (transform[5] < 0 ? -1 : 1) *_containerHeight + 'px' : 0;
+
+          if (x || y) {
+            insertStyle(`.hc-offcanvas-nav.${navUniqId} .nav-container {
+              transform:translate3d(${x}, ${y}, 0);
+            }\n`, true);
           }
-          .hc-nav-trigger.${navUniqId} {
-            display: ${toggleDisplay && toggleDisplay !== 'none' ? toggleDisplay : 'block'}
+        };
+
+        const pageContentTransition = () => {
+          _transitionProperty = $nav_container.css('transition-property');
+          _transitionDuration = toMs($nav_container.css('transition-duration'));
+          _transitionFunction = $nav_container.css('transition-timing-function');
+
+          if ($push_content && $push_content.length && _transitionProperty) {
+            insertStyle(`${getElementCssTag(Settings.pushContent)} {
+              transition: ${_transitionProperty} ${_transitionDuration}ms ${_transitionFunction};
+            }`, true);
           }
-          .hc-nav.${navUniqId} {
-            display: none;
-          }
-        `;
-
-        if (Settings.maxWidth) {
-          css = `@media screen and (max-width: ${Settings.maxWidth - 1}px) {
-            ${css}
-          }`;
-        }
-
-        printStyle(css);
-
-        // this is our nav
-        const $nav = $('<nav>').on('click', stopPropagation); // prevent menu close on self click
-        const $nav_container = $('<div class="nav-container">').appendTo($nav);
-        let $nav_content = null;
-
-        let Model = {};
-        let _open = false;
-        let _top = 0;
-        let _containerWidth = 0;
-        let _transitionDuration;
-        let _closeLevelsTimeout = null;
-        let _indexes = {}; // object with level indexes
-        const _openLevels = []; // array with current open levels
+        };
 
         // init function
-        const initNav = () => {
+        const initNav = (reinit) => {
+          const toggleDisplay = $toggle.css('display');
+
+          // create styles
+          let css = `
+            .hc-offcanvas-nav.${navUniqId} {
+              display: block;
+            }
+            .hc-nav-trigger.${navUniqId} {
+              display: ${toggleDisplay && toggleDisplay !== 'none' ? toggleDisplay : 'block'}
+            }
+            .hc-nav.${navUniqId} {
+              display: none;
+            }
+            .hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-left li.level-open > .nav-wrapper {
+              transform: translate3d(-${Settings.levelSpacing}px,0,0);
+            }
+            .hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-right li.level-open > .nav-wrapper {
+              transform: translate3d(${Settings.levelSpacing}px,0,0);
+            }
+            .hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-top li.level-open > .nav-wrapper {
+              transform: translate3d(0,-${Settings.levelSpacing}px,0);
+            }
+            .hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-bottom li.level-open > .nav-wrapper {
+              transform: translate3d(0,${Settings.levelSpacing}px,0);
+            }
+          `;
+
+          if (Settings.maxWidth) {
+            css = `@media screen and (max-width: ${Settings.maxWidth - 1}px) {
+              ${css}
+            }`;
+          }
+
+          insertStyle(css);
+
+          if (reinit) {
+            // everything is computed, don't wait
+            pageContentTransition();
+          }
+
           // remove transition from the nav container so we can update the nav without flickering
           $nav_container.css('transition', 'none');
 
@@ -238,7 +331,7 @@
               ${navUniqId}
               ${Settings.navClass || ''}
               nav-levels-${Settings.levelOpen || 'none'}
-              side-${Settings.side}
+              nav-position-${Settings.position}
               ${Settings.disableBody ? 'disable-body' : ''}
               ${isIos ? 'is-ios' : ''}
               ${isTouchDevice ? 'touch-device' : ''}
@@ -250,30 +343,22 @@
             $nav.on('click', closeNav);
           }
 
-          setTimeout(() => {
-            // clear inline transition
-            $nav_container.css('transition', '');
+          // get page content
+          if (typeof Settings.pushContent !== 'boolean') {
+            $push_content = $(Settings.pushContent);
+          }
+          else {
+            $push_content = null;
+          }
 
-            _containerWidth = $nav_container.width();
-            _transitionDuration = toMs($nav_container.css('transition-duration'));
-
-            if (typeof Settings.pushContent !== 'boolean') {
-              $nav_content = $(Settings.pushContent);
-
-              if ($nav_content.length) {
-                printStyle(`${getElementCssTag(Settings.pushContent)} {
-                  transition: ${$nav_container.css('transition-property')} ${$nav_container.css('transition-duration')} ${$nav_container.css('transition-timing-function')};
-                }`);
-              }
-            }
-            else {
-              $nav_content = null
-            }
-          }, 1); // timed out so we can get computed data
+          // timed out so we can get computed data
+          setTimeout(calcNav, 1);
         };
 
-        // create nav model
+        // calc nav again once everything is loaded
+        $(window).on('load', calcNav);
 
+        // create nav model function
         const createModel = () => {
           // get first level menus
           const $first_level = () => {
@@ -538,8 +623,9 @@
             }
           }
 
-          if ($nav_content && $nav_content.length) {
-            setTransform($nav_content, _containerWidth, Settings.side);
+          const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
+          if ($push_content && $push_content.length) {
+            setTransform($push_content, transformVal, Settings.position);
           }
 
           // trigger open event
@@ -551,8 +637,8 @@
         function closeNav() {
           _open = false;
 
-          if ($nav_content && $nav_content.length) {
-            setTransform($nav_content, 0, Settings.side);
+          if ($push_content && $push_content.length) {
+            setTransform($push_content, 0);
           }
 
           $nav.removeClass(navOpenClass);
@@ -610,10 +696,11 @@
 
           if (Settings.levelOpen === 'overlap') {
             $wrap.on('click', () => closeLevel(l, i)); // close on self click
-            setTransform($nav_container, l * Settings.levelSpacing, Settings.side);
+            setTransform($nav_container, l * Settings.levelSpacing, Settings.position);
 
-            if ($nav_content && $nav_content.length) {
-              setTransform($nav_content, _containerWidth + l * Settings.levelSpacing, Settings.side);
+            const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
+            if ($push_content && $push_content.length) {
+              setTransform($push_content, transformVal + l * Settings.levelSpacing, Settings.position);
             }
           }
         }
@@ -635,10 +722,11 @@
 
           if (transform && Settings.levelOpen === 'overlap') {
             $wrap.off('click').on('click', stopPropagation); //level closed, remove wrapper click
-            setTransform($nav_container, (l - 1) * Settings.levelSpacing, Settings.side);
+            setTransform($nav_container, (l - 1) * Settings.levelSpacing, Settings.position);
 
-            if ($nav_content && $nav_content.length) {
-              setTransform($nav_content, _containerWidth + (l - 1) * Settings.levelSpacing, Settings.side);
+            const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
+            if ($push_content && $push_content.length) {
+              setTransform($push_content, transformVal + (l - 1) * Settings.levelSpacing, Settings.position);
             }
           }
         };
@@ -675,12 +763,12 @@
         self.update = (options, updateDom) => {
           if (typeof options === 'object') {
             Settings = $.extend({}, Settings, options);
-            initNav();
+            initNav(true);
             createNavDom(true);
           }
 
           if (options === true || updateDom) {
-            initNav();
+            initNav(true);
             createModel();
             createNavDom(true);
           }

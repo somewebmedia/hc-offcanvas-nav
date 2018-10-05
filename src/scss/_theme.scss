@@ -19,7 +19,9 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     }
   }
 
-  .nav-wrapper {
+  .nav-container,
+  .nav-wrapper,
+  ul {
     background: $hc-offcanvas-nav-background-color;
   }
 
@@ -158,7 +160,7 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     }
   }
 
-  &.side-left {
+  &.nav-position-left {
     &.nav-open {
       .nav-wrapper {
         box-shadow: 1px 0 2px rgba(0, 0, 0, .2);
@@ -166,7 +168,7 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     }
   }
 
-  &.side-right {
+  &.nav-position-right {
 
     &.nav-open {
       .nav-wrapper {
@@ -188,6 +190,33 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
           margin-left: 0;
           margin-right: -2px;
           transform: translate(-50%, -50%) rotate(135deg);
+        }
+      }
+    }
+  }
+
+  &.nav-position-top {
+
+    &.nav-open {
+      .nav-wrapper {
+        box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+      }
+    }
+
+    span.nav-next {
+      &::before {
+        margin-left: 0;
+        margin-right: -2px;
+        transform: translate(-50%, -50%) rotate(-135deg);
+      }
+    }
+
+    li.nav-back {
+      span {
+        &::before {
+          margin-left: 0;
+          margin-right: -2px;
+          transform: translate(-50%, -50%) rotate(45deg);
         }
       }
     }
@@ -246,7 +275,7 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
       span.nav-next {
         &::before {
           margin-top: -2px;
-          transform: translate(-50%, -50%) rotate(225deg);
+          transform: translate(-50%, -50%) rotate(-135deg);
         }
       }
     }
