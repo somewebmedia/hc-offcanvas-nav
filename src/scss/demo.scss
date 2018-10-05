@@ -347,6 +347,10 @@ main {
 
 .hc-offcanvas-nav {
 
+  .nav-wrapper-0 > .nav-content {
+    padding-bottom: 41px;
+  }
+
   h2 {
     font-weight: 400;
   }
@@ -415,6 +419,7 @@ main {
 
   ul.bottom-nav {
     position: absolute;
+    z-index: 10;
     bottom: 0;
     width: 100%;
     display: flex;
