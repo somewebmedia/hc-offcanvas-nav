@@ -10,13 +10,18 @@ const argv = require('yargs').argv;
 
 gulp.task('js', () => {
   return gulp.src(['./src/js/*.js'])
-    .pipe(babel({
-      presets: [
-        ['env', {
-          modules: false
-        }]
-      ]
-    }))
+    .pipe(babel(
+      {
+        presets: [
+          [
+            '@babel/preset-env',
+            {
+              modules: false
+            }
+          ]
+        ]
+      }
+    ))
     .pipe(argv.dev ? through.obj() : uglify({
       output: {
         comments: saveLicense
