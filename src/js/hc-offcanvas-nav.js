@@ -160,7 +160,7 @@
   let navCount = 0;
 
   $.fn.extend({
-    hcOffcanvasNav: function(options) {
+    hcOffcanvasNav: function(options = {}) {
       if (!this.length) return this;
 
       const self = this;
