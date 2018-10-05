@@ -1,4 +1,4 @@
-/*!
+/*
  * HC Off-canvas Nav
  * ===================
  * Version: 3.2.0
@@ -9,9 +9,9 @@
  * License: MIT
  */
 
-(function($, window) {
-  'use strict';
+'use strict';
 
+(function($, window) {
   const document = window.document;
   const $html = $(document.getElementsByTagName('html')[0]);
   const $document = $(document);
