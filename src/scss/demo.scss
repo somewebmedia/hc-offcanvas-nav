@@ -1,6 +1,7 @@
 $hc-offcanvas-nav-container-width: 280px;
 $background: #243949;
 $white: #fffce1;
+$yellow: #dab977;
 
 @import './hc-offcanvas-nav';
 @import './mixins';
@@ -152,6 +153,16 @@ header {
     }
   }
 
+  .ver {
+    padding-top: 15px;
+    font-weight: 200;
+    color: $yellow;
+
+    span {
+      color: $white;
+    }
+  }
+
   .toggle {
     @include hc-hamburger('default', 35px, 24px, 4px, darken($background, 7%), .25s);
     position: relative;
@@ -172,7 +183,7 @@ header {
         &,
         &::before,
         &::after {
-          background: #dab977;
+          background: $yellow;
         }
       }
     }
@@ -269,7 +280,7 @@ main {
           &:checked {
 
             & ~ span {
-              background: #dab977;
+              background: $yellow;
 
               &::before {
                 content: '';
@@ -336,11 +347,11 @@ main {
     transition: all .1s ease;
 
     &:not(.active):hover {
-      color: darken(#dab977, 5%);
+      color: darken($yellow, 5%);
     }
 
     &.active {
-      background: #dab977;
+      background: $yellow;
     }
   }
 }
