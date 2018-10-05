@@ -201,6 +201,16 @@ footer {
       path {
         transition: fill .1s ease;
       }
+
+      .l-1 {
+        fill: #4fb5e1;
+      }
+      .l-2 {
+        fill: #f2c053;
+      }
+      .l-3 {
+        fill: #a7ce38;
+      }
     }
 
     &:not(:hover) {
@@ -400,6 +410,54 @@ main {
     &.credits > a::before {
       @include mi;
       content: 'credit_card';
+    }
+  }
+
+  ul.bottom-nav {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+
+    li {
+      flex: auto;
+
+      a {
+        padding: 10px;
+        text-align: center;
+        height: 100%;
+        border-bottom: none;
+      }
+
+      svg {
+        fill: #fff;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      &.github {
+        svg {
+          width: 17px;
+          height: 17px;
+        }
+      }
+
+      &.ko-fi {
+        svg {
+          width: 21px;
+          height: 21px;
+        }
+      }
+
+      &.email {
+        svg {
+          width: 19px;
+          height: 19px;
+        }
+      }
     }
   }
 }
