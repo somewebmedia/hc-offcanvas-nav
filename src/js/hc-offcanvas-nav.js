@@ -669,7 +669,7 @@
         function openNav() {
           _open = true;
 
-          $nav.addClass(navOpenClass);
+          $nav.css('visibility', 'visible').addClass(navOpenClass);
           $toggle.addClass('toggle-open');
 
           if (Settings.levelOpen === 'expand' && _closeLevelsTimeout) {
@@ -736,8 +736,10 @@
             }
           }
 
-          // trigger close event
           setTimeout(() => {
+            $nav.css('visibility', '');
+
+            // trigger close event
             self.trigger('close.$', $.extend({}, Settings));
 
             // only trigger close event once and detach it

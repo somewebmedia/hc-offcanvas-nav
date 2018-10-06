@@ -15,6 +15,7 @@ body.hc-nav-open {
 }
 
 .hc-offcanvas-nav {
+  visibility: hidden;
   display: none;
   position: fixed;
   top: 0;
