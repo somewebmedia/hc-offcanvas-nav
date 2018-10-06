@@ -302,7 +302,7 @@ body.hc-nav-open {
   // Open Nav
   &.nav-open {
     div.nav-container {
-      transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0) !important;
     }
   }
 }

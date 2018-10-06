@@ -80,16 +80,43 @@
   };
 
   const printStyle = (id) => {
-    const $head = $('head');
+    const $style = $(`<style id="${id}">`).appendTo($('head'))
+    let rules = {};
+    let media = {};
 
-    return (css, append) => {
-      const $style = $head.find(`style#${id}`);
+    return {
+      reset: () => {
+        rules = {};
+        media = {};
+      },
+      add: (selector, declarations, query) => {
+        if (query) {
+          media[query] = media[query] || {};
+          media[query][selector.trim()] = declarations.trim();
+        }
+        else {
+          rules[selector.trim()] = declarations.trim();
+        }
 
-      if ($style.length) {
-        $style.html(append ? $style.html() + css : css);
-      }
-      else {
-        $(`<style id="${id}">${css}</style>`).appendTo($head);
+      },
+      insert: () => {
+        let cssText = '';
+
+        for (let breakpoint in media) {
+          cssText += `@media screen and (${breakpoint}) {\n`;
+
+          for (let key in media[breakpoint]) {
+            cssText += `${key} { ${media[breakpoint][key]}; }\n`;
+          }
+
+          cssText += '}\n';
+        }
+
+        for (let key in rules) {
+          cssText += `${key} { ${rules[key]}; }\n`;
+        }
+
+        $style.html(cssText);
       }
     };
   };
@@ -195,8 +222,30 @@
       }
 
       let Settings = $.extend({}, defaults, options);
+      let UpdatedSettings = [];
 
       const navOpenClass = 'nav-open';
+
+      const checkForUpdate = (options) => {
+        if (!UpdatedSettings.length) {
+          return false;
+        }
+
+        let hasUpdated = false;
+
+        if (typeof options === 'string') {
+          options = [options];
+        }
+
+        let l = options.length;
+        for (let i = 0; i < l; i++) {
+          if (UpdatedSettings.indexOf(options[i])) {
+            hasUpdated = true;
+          }
+        }
+
+        return hasUpdated;
+      };
 
       const Plugin = function() {
         const $this = $(this);
@@ -210,7 +259,7 @@
         navCount++;
 
         const navUniqId = `hc-nav-${navCount}`;
-        const insertStyle = printStyle(`hc-offcanvas-${navCount}-style`);
+        const Styles = printStyle(`hc-offcanvas-${navCount}-style`);
 
         let $toggle;
 
@@ -243,8 +292,8 @@
           $toggle = $(Settings.customToggle).addClass(`hc-nav-trigger ${navUniqId}`).on('click', toggleNav);
         }
 
-        const calcNav = () => {
-          // clear inline transition
+        const calcNav = () => {console.log('calc')
+          // clear inline transition if any
           $nav_container.css('transition', '');
 
           pageContentTransition();
@@ -253,15 +302,12 @@
           _containerHeight = $nav_container.outerHeight();
 
           // fix 100% transform glitching
-          const transform = $nav_container.css('transform').match(/-?\d+/g);
-          const x = transform[4] != 0 ? (transform[4] < 0 ? -1 : 1) * _containerWidth + 'px' : 0;
-          const y = transform[5] != 0 ? (transform[5] < 0 ? -1 : 1) *_containerHeight + 'px' : 0;
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-left .nav-container`, `transform: translate3d(-${_containerWidth}px, 0, 0)`);
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-right .nav-container`, `transform: translate3d(${_containerWidth}px, 0, 0)`);
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-top .nav-container`, `transform: translate3d(0, -${_containerHeight}px, 0)`);
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-bottom .nav-container`, `transform: translate3d(0, ${_containerHeight}px, 0)`);
 
-          if (x || y) {
-            insertStyle(`.hc-offcanvas-nav.${navUniqId} .nav-container {
-              transform:translate3d(${x}, ${y}, 0);
-            }\n`, true);
-          }
+          Styles.insert();
         };
 
         const pageContentTransition = () => {
@@ -269,57 +315,51 @@
           _transitionDuration = toMs($nav_container.css('transition-duration'));
           _transitionFunction = $nav_container.css('transition-timing-function');
 
-          if ($push_content && $push_content.length && _transitionProperty) {
-            insertStyle(`${getElementCssTag(Settings.pushContent)} {
-              transition: ${_transitionProperty} ${_transitionDuration}ms ${_transitionFunction};
-            }`, true);
+          if (Settings.pushContent && $push_content && $push_content.length && _transitionProperty) {
+            Styles.add(`${getElementCssTag(Settings.pushContent)}`, `transition: ${_transitionProperty} ${_transitionDuration}ms ${_transitionFunction}`);
           }
         };
 
         // init function
         const initNav = (reinit) => {
           const toggleDisplay = $toggle.css('display');
+          const mediaquery = Settings.maxWidth ? `max-width: ${Settings.maxWidth - 1}px` : false;
 
-          // create styles
-          let css = `
-            .hc-offcanvas-nav.${navUniqId} {
-              display: block;
-            }
-            .hc-nav-trigger.${navUniqId} {
-              display: ${toggleDisplay && toggleDisplay !== 'none' ? toggleDisplay : 'block'}
-            }
-            .hc-nav.${navUniqId} {
-              display: none;
-            }
-            .hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-left li.level-open > .nav-wrapper {
-              transform: translate3d(-${Settings.levelSpacing}px,0,0);
-            }
-            .hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-right li.level-open > .nav-wrapper {
-              transform: translate3d(${Settings.levelSpacing}px,0,0);
-            }
-            .hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-top li.level-open > .nav-wrapper {
-              transform: translate3d(0,-${Settings.levelSpacing}px,0);
-            }
-            .hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-bottom li.level-open > .nav-wrapper {
-              transform: translate3d(0,${Settings.levelSpacing}px,0);
-            }
-          `;
-
-          if (Settings.maxWidth) {
-            css = `@media screen and (max-width: ${Settings.maxWidth - 1}px) {
-              ${css}
-            }`;
+          // clear media queries from previous run
+          if (checkForUpdate('maxWidth')) {
+            Styles.reset();
           }
 
-          insertStyle(css);
+          // create main styles
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}`, 'display: block', mediaquery);
+          Styles.add(`.hc-nav-trigger.${navUniqId}`, `display: ${toggleDisplay && toggleDisplay !== 'none' ? toggleDisplay : 'block'}`, mediaquery);
+          Styles.add(`.hc-nav.${navUniqId}`, 'display: none', mediaquery);
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-left li.level-open > .nav-wrapper`, `transform: translate3d(-${Settings.levelSpacing}px,0,0)`, mediaquery);
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-right li.level-open > .nav-wrapper`, `transform: translate3d(${Settings.levelSpacing}px,0,0)`, mediaquery);
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-top li.level-open > .nav-wrapper`, `transform: translate3d(0,-${Settings.levelSpacing}px,0)`, mediaquery);
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-bottom li.level-open > .nav-wrapper`, `transform: translate3d(0,${Settings.levelSpacing}px,0)`, mediaquery);
 
-          if (reinit) {
-            // everything is computed, don't wait
+          Styles.insert();
+
+          // get page content
+          if (!reinit || checkForUpdate('pushContent')) {
+            if (typeof Settings.pushContent !== 'boolean') {
+              $push_content = $(Settings.pushContent);
+            }
+            else {
+              $push_content = null;
+            }
+          }
+
+          if (reinit && checkForUpdate(['pushContent', 'position'])) {
+            // everything is already computed, don't wait
             pageContentTransition();
           }
 
-          // remove transition from the nav container so we can update the nav without flickering
-          $nav_container.css('transition', 'none');
+          if (reinit && checkForUpdate(['position', 'levelOpen'])) {
+            // remove transition from the nav container so we can update the nav without flickering
+            $nav_container.css('transition', 'none');
+          }
 
           const wasOpen = $nav.hasClass(navOpenClass);
 
@@ -343,20 +383,11 @@
             $nav.on('click', closeNav);
           }
 
-          // get page content
-          if (typeof Settings.pushContent !== 'boolean') {
-            $push_content = $(Settings.pushContent);
+          if (!reinit || (reinit && checkForUpdate(['position', 'levelOpen']))) {
+            // timed out so we can get computed data
+            setTimeout(calcNav, 1);
           }
-          else {
-            $push_content = null;
-          }
-
-          // timed out so we can get computed data
-          setTimeout(calcNav, 1);
         };
-
-        // calc nav again once everything is loaded
-        $(window).on('load', calcNav);
 
         // create nav model function
         const createModel = () => {
@@ -762,12 +793,26 @@
 
         self.update = (options, updateDom) => {
           if (typeof options === 'object') {
+            // clear updated array
+            UpdatedSettings = [];
+
+            // only get what's been actually updated
+            for (let prop in options) {
+              if (Settings[prop] !== options[prop]) {
+                UpdatedSettings.push(prop);
+              }
+            }
+
+            // merge to our settings
             Settings = $.extend({}, Settings, options);
+
+            // reinit DOM
             initNav(true);
             createNavDom(true);
           }
 
           if (options === true || updateDom) {
+            // reinit model and DOM
             initNav(true);
             createModel();
             createNavDom(true);
