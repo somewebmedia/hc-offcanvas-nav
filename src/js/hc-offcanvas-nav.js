@@ -85,7 +85,6 @@
     let media = {};
 
     const parseRules = (text) => {
-      text = text.trim();
       if (text.substr(-1) !== ';') {
         text += text.substr(-1) !== ';' ? ';' : '';
       }
@@ -98,14 +97,32 @@
         media = {};
       },
       add: (selector, declarations, query) => {
+        selector = selector.trim();
+        declarations = declarations.trim();
+
         if (query) {
+          query = query.trim();
           media[query] = media[query] || {};
-          media[query][selector.trim()] = parseRules(declarations.trim());
+          media[query][selector] = parseRules(declarations);
         }
         else {
-          rules[selector.trim()] = parseRules(declarations.trim());
+          rules[selector] = parseRules(declarations);
         }
+      },
+      remove: (selector, query) => {
+        selector = selector.trim();
 
+        if (query) {
+          query = query.trim();
+          if (typeof media[query][selector] !== 'undefined') {
+            delete media[query][selector];
+          }
+        }
+        else {
+          if (typeof rules[selector] !== 'undefined') {
+            delete rules[selector];
+          }
+        }
       },
       insert: () => {
         let cssText = '';
@@ -247,7 +264,7 @@
 
         let l = options.length;
         for (let i = 0; i < l; i++) {
-          if (UpdatedSettings.indexOf(options[i])) {
+          if (UpdatedSettings.indexOf(options[i]) !== -1) {
             hasUpdated = true;
           }
         }
@@ -301,10 +318,8 @@
         }
 
         const calcNav = () => {
-          // clear inline transition if any
-          $nav_container.css('transition', '');
-
-          pageContentTransition();
+          // remove transition from the nav container so we can update the nav without flickering
+          $nav_container.css('transition', 'none');
 
           _containerWidth = $nav_container.outerWidth();
           _containerHeight = $nav_container.outerHeight();
@@ -316,6 +331,11 @@
           Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-bottom .nav-container`, `transform: translate3d(0, ${_containerHeight}px, 0)`);
 
           Styles.insert();
+
+          // clear our 'none' inline transition
+          $nav_container.css('transition', '');
+
+          pageContentTransition();
         };
 
         const pageContentTransition = () => {
@@ -323,9 +343,11 @@
           _transitionDuration = toMs($nav_container.css('transition-duration'));
           _transitionFunction = $nav_container.css('transition-timing-function');
 
-          if (Settings.pushContent && $push_content && $push_content.length && _transitionProperty) {
-            Styles.add(`${getElementCssTag(Settings.pushContent)}`, `transition: ${_transitionProperty} ${_transitionDuration}ms ${_transitionFunction}`);
+          if (Settings.pushContent && $push_content && _transitionProperty) {
+            Styles.add(getElementCssTag(Settings.pushContent), `transition: ${_transitionProperty} ${_transitionDuration}ms ${_transitionFunction}`);
           }
+
+          Styles.insert();
         };
 
         // init function
@@ -350,24 +372,24 @@
           Styles.insert();
 
           // get page content
-          if (!reinit || checkForUpdate('pushContent')) {
-            if (typeof Settings.pushContent !== 'boolean') {
+          if (!reinit || (reinit && checkForUpdate('pushContent'))) {
+            if (typeof Settings.pushContent === 'string') {
               $push_content = $(Settings.pushContent);
+
+              if (!$push_content.length) {
+                $push_content = null;
+              }
+            }
+            else if (Settings.pushContent instanceof jQuery) {
+              $push_content = Settings.pushContent;
             }
             else {
               $push_content = null;
             }
           }
 
-          if (reinit && checkForUpdate(['pushContent', 'position'])) {
-            // everything is already computed, don't wait
-            pageContentTransition();
-          }
-
-          if (reinit && checkForUpdate(['position', 'levelOpen'])) {
-            // remove transition from the nav container so we can update the nav without flickering
-            $nav_container.css('transition', 'none');
-          }
+          // remove transition from the nav container so we can update the nav without flickering
+          $nav_container.css('transition', 'none');
 
           const wasOpen = $nav.hasClass(navOpenClass);
 
@@ -394,7 +416,10 @@
             $nav.on('click', closeNav);
           }
 
-          if (!reinit || (reinit && checkForUpdate(['position', 'levelOpen']))) {
+          if (reinit) {
+            calcNav();
+          }
+          else {
             // timed out so we can get computed data
             setTimeout(calcNav, 1);
           }
@@ -665,8 +690,8 @@
             }
           }
 
-          const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
-          if ($push_content && $push_content.length) {
+          if ($push_content) {
+            const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
             setTransform($push_content, transformVal, Settings.position);
           }
 
@@ -679,7 +704,7 @@
         function closeNav() {
           _open = false;
 
-          if ($push_content && $push_content.length) {
+          if ($push_content) {
             setTransform($push_content, 0);
           }
 
@@ -746,8 +771,8 @@
             $wrap.on('click', () => closeLevel(l, i)); // close on self click
             setTransform($nav_container, l * Settings.levelSpacing, Settings.position);
 
-            const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
-            if ($push_content && $push_content.length) {
+            if ($push_content) {
+              const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
               setTransform($push_content, transformVal + l * Settings.levelSpacing, Settings.position);
             }
           }
@@ -772,8 +797,8 @@
             $wrap.off('click').on('click', stopPropagation); //level closed, remove wrapper click
             setTransform($nav_container, (l - 1) * Settings.levelSpacing, Settings.position);
 
-            const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
-            if ($push_content && $push_content.length) {
+            if ($push_content) {
+              const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
               setTransform($push_content, transformVal + (l - 1) * Settings.levelSpacing, Settings.position);
             }
           }
@@ -795,24 +820,21 @@
 
         // Public methods
 
-        self.options = (option) => {
+        self.settings = (option) => {
           return option ? Settings[option] : Object.assign({}, Settings);
         };
 
         self.isOpen = () => $nav.hasClass(navOpenClass);
 
-        self.open = () => {
-          // timeout in case of update
-          setTimeout(openNav, 1.5);
-        };
+        self.open = openNav;
 
         self.close = closeNav;
 
         self.update = (options, updateDom) => {
-          if (typeof options === 'object') {
-            // clear updated array
-            UpdatedSettings = [];
+          // clear updated array
+          UpdatedSettings = [];
 
+          if (typeof options === 'object') {
             // only get what's been actually updated
             for (let prop in options) {
               if (Settings[prop] !== options[prop]) {
