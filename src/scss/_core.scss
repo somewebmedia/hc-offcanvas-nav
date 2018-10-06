@@ -260,9 +260,9 @@ body.hc-nav-open {
     top: 0;
 
     .nav-container {
+      top: 0;
       width: 100%;
       height: $hc-offcanvas-nav-container-height;
-      top: 0;
       transform: translate3d(0, -$hc-container-y, 0);
     }
 
@@ -279,12 +279,14 @@ body.hc-nav-open {
 
   // Bottom
   &.nav-position-bottom {
-    top: 0;
+    top: auto;
+    bottom: 0;
 
     .nav-container {
+      top: auto;
+      bottom: 0;
       width: 100%;
       height: $hc-offcanvas-nav-container-height;
-      top: 0;
       transform: translate3d(0, $hc-container-y, 0);
     }
 

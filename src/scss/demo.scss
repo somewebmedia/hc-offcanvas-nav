@@ -326,6 +326,14 @@ main {
         flex: 1 1 33.33%;
         max-width: 33.33%;
       }
+
+      &.position {
+        div {
+          float: left;
+          flex: 1 1 25%;
+          max-width: 25%;
+        }
+      }
     }
   }
 

@@ -84,6 +84,14 @@
     let rules = {};
     let media = {};
 
+    const parseRules = (text) => {
+      text = text.trim();
+      if (text.substr(-1) !== ';') {
+        text += text.substr(-1) !== ';' ? ';' : '';
+      }
+      return text;
+    };
+
     return {
       reset: () => {
         rules = {};
@@ -92,10 +100,10 @@
       add: (selector, declarations, query) => {
         if (query) {
           media[query] = media[query] || {};
-          media[query][selector.trim()] = declarations.trim();
+          media[query][selector.trim()] = parseRules(declarations.trim());
         }
         else {
-          rules[selector.trim()] = declarations.trim();
+          rules[selector.trim()] = parseRules(declarations.trim());
         }
 
       },
@@ -106,14 +114,14 @@
           cssText += `@media screen and (${breakpoint}) {\n`;
 
           for (let key in media[breakpoint]) {
-            cssText += `${key} { ${media[breakpoint][key]}; }\n`;
+            cssText += `${key} { ${media[breakpoint][key]} }\n`;
           }
 
           cssText += '}\n';
         }
 
         for (let key in rules) {
-          cssText += `${key} { ${rules[key]}; }\n`;
+          cssText += `${key} { ${rules[key]} }\n`;
         }
 
         $style.html(cssText);
@@ -363,20 +371,23 @@
 
           const wasOpen = $nav.hasClass(navOpenClass);
 
+          const navClasses = [
+            'hc-offcanvas-nav',
+            Settings.navClass || '',
+            navUniqId,
+            Settings.navClass || '',
+            'nav-levels-' + Settings.levelOpen || 'none',
+            'nav-position-' + Settings.position,
+            Settings.disableBody ? 'disable-body' : '',
+            isIos ? 'is-ios' : '',
+            isTouchDevice ? 'touch-device' : '',
+            wasOpen ? navOpenClass : ''
+          ].join(' ');
+
           $nav
             .off('click')
             .attr('class', '')
-            .addClass(`
-              hc-offcanvas-nav
-              ${navUniqId}
-              ${Settings.navClass || ''}
-              nav-levels-${Settings.levelOpen || 'none'}
-              nav-position-${Settings.position}
-              ${Settings.disableBody ? 'disable-body' : ''}
-              ${isIos ? 'is-ios' : ''}
-              ${isTouchDevice ? 'touch-device' : ''}
-              ${wasOpen ? navOpenClass : ''}
-            `);
+            .addClass(navClasses);
 
           // close menu on body click (nav::after)
           if (Settings.disableBody) {
