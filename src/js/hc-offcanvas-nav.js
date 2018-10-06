@@ -17,7 +17,7 @@
   const $document = $(document);
 
   const hasScrollBar = () => {
-    return document.documentElement.scrollHeight > document.documentElement.offsetHeight;
+    return document.documentElement.scrollHeight > document.documentElement.clientHeight;
   };
 
   const isIos = (() => {
