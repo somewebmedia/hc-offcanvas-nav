@@ -300,9 +300,9 @@ body.hc-nav-open {
   }
 
   // Open Nav
-  &.nav-open {
+  &.nav-open[class*='hc-nav-'] {
     div.nav-container {
-      transform: translate3d(0, 0, 0) !important;
+      transform: translate3d(0, 0, 0);
     }
   }
 }

@@ -292,7 +292,7 @@
           $toggle = $(Settings.customToggle).addClass(`hc-nav-trigger ${navUniqId}`).on('click', toggleNav);
         }
 
-        const calcNav = () => {console.log('calc')
+        const calcNav = () => {
           // clear inline transition if any
           $nav_container.css('transition', '');
 
@@ -676,8 +676,14 @@
           $nav_container.removeAttr('style');
           $toggle.removeClass('toggle-open');
 
-          if (Settings.levelOpen !== false && Settings.levelOpen !== 'none') {
+          if (Settings.levelOpen === 'expand' && ['top', 'bottom'].indexOf(Settings.position) !== -1) {
+            // close all levels before closing the nav because the nav height changed
+            closeLevel(0);
+          }
+          else if (Settings.levelOpen !== false && Settings.levelOpen !== 'none') {
+            // close all levels when nav closes
             _closeLevelsTimeout = setTimeout(() => {
+              // keep in timeout so we can prevent it if nav opens again before it's closed
               closeLevel(0);
             }, Settings.levelOpen === 'expand' ? _transitionDuration : 0);
           }
