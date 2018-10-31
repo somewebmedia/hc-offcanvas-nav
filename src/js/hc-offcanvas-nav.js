@@ -503,7 +503,7 @@
               $.each(nav.items, (i_item, item) => {
                 const $item_content = item.$content;
                 let $item_link = $item_content.find('a').addBack('a');
-                const $a = $item_link.length ? $item_link.clone() : $(`<a>`).append($item_content.clone()).on('click', stopPropagation);
+                const $a = $item_link.length ? $item_link.clone(true, true) : $(`<a>`).append($item_content.clone(true, true)).on('click', stopPropagation);
 
                 // on click trigger original link
                 if ($item_link.length) {
