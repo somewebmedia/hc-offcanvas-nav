@@ -449,7 +449,10 @@
 
               $ul.children('li').each(function() {
                 const $li = $(this);
-                const $content = $li.children(':not(ul):not(div)').add($li.contents().filter(function() {
+                const $content = $li.children().filter(function() {
+                  const $this = $(this);
+                  return $this.is(':not(ul)') && !$this.find('ul').length;
+                }).add($li.contents().filter(function() {
                   return this.nodeType === 3 && this.nodeValue.trim();
                 }));
                 const $nested_navs = $li.find('ul');
@@ -503,7 +506,7 @@
               $.each(nav.items, (i_item, item) => {
                 const $item_content = item.$content;
                 let $item_link = $item_content.find('a').addBack('a');
-                const $a = $item_link.length ? $item_link.clone(true, true) : $(`<a>`).append($item_content.clone(true, true)).on('click', stopPropagation);
+                const $a = $item_link.length ? $item_link.clone(true, true).addClass('nav-item') : $(`<span class="nav-item">`).append($item_content.clone(true, true)).on('click', stopPropagation);
 
                 // on click trigger original link
                 if ($item_link.length) {
@@ -524,12 +527,12 @@
                 if (Settings.closeOnClick) {
                   if (Settings.levelOpen === false || Settings.levelOpen === 'none') {
                     // every item should close the nav
-                    $a.on('click', closeNav);
+                    $a.filter('a').on('click', closeNav);
                   }
                   else {
                     // only items without submenus,
                     // or with submenus but with valid hrefs
-                    $a.filter(function() {
+                    $a.filter('a').filter(function() {
                       const $this = $(this);
                       return !item.subnav.length || ($this.attr('href') && $this.attr('href').charAt(0) !== '#');
                     }).on('click', closeNav);

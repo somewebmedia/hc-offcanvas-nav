@@ -105,6 +105,12 @@ body.hc-nav-open {
     }
   }
 
+  .nav-item {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+  }
+
   // Background overlay
 
   &.disable-body,
