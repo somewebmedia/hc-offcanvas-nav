@@ -380,6 +380,29 @@ main {
 
   li {
 
+    &.search {
+      .nav-item {
+        padding-top: 0;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 3px;
+        font-size: 14px;
+        color: #fff;
+        background: rgba(#fff, .12);
+        padding: 5px 10px;
+        box-shadow: none;
+        outline: none;
+
+        &::placeholder {
+          color: rgba(#fff, .8);
+        }
+      }
+    }
+
     &.add > a::before {
       @include mi;
       content: 'add';

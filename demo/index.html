@@ -31,6 +31,13 @@
           <nav id="main-nav">
 
             <ul class="first-nav">
+              <li class="search">
+                <div class="form-container">
+                  <form class="search-form" action="https://www.google.com/search" target="_blank" method="get">
+                    <input type="text" name="q" placeholder="Search..." autocomplete="off">
+                  </form>
+                </div>
+              </li>
               <li class="cryptocurrency">
                 <a href="https://www.google.com/search?q=Crypto" target="_blank">Cryptocurrency</a>
                 <ul>
@@ -56,13 +63,15 @@
                   </li>
                   <li class="television">
                     <a href="#">Televisions</a>
-                    <ul>
-                      <li><a href="#">Flat Superscreen</a></li>
-                      <li><a href="#">Gigantic LED</a></li>
-                      <li><a href="#">Power Eater</a></li>
-                      <li><a href="#">3D Experience</a></li>
-                      <li><a href="#">Classic Comfort</a></li>
-                    </ul>
+                    <div class="subnav-container">
+                      <ul>
+                        <li><a href="#">Flat Superscreen</a></li>
+                        <li><a href="#">Gigantic LED</a></li>
+                        <li><a href="#">Power Eater</a></li>
+                        <li><a href="#">3D Experience</a></li>
+                        <li><a href="#">Classic Comfort</a></li>
+                      </ul>
+                    </div>
                   </li>
                   <li class="camera">
                     <a href="#">Cameras</a>
@@ -255,7 +264,8 @@
             customToggle: $toggle,
             navTitle: 'All Categories',
             levelTitles: true,
-            pushContent: '#container'
+            pushContent: '#container',
+            insertClose: 2
           };
 
           // add new items to original nav
