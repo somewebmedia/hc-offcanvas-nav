@@ -71,7 +71,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | *`navTitle`* | null | string | Main navigation (first level) title. |
 | *`navClass`* | '' | string | Custom navigation class. |
 | *`disableBody`* | true | bool | Disable body scroll when navigation is open. |
-| *`closeOnClick`* | true| bool | Close the navigation when one of the links are clicked. |
+| *`closeOnClick`* | true| bool | Close the navigation when links are clicked. |
 | *`customToggle`* | null | string / element object | Custom navigation toggle element. |
 | *`insertClose`* | true | bool | Insert navigation close button. |
 | *`insertBack`* | true | bool | Insert back buttons to submenus. |
@@ -138,6 +138,25 @@ Nav.on('close.once', function(event, settings) {
     side: settings.side === 'left' ? 'right' : 'left'
   });
 });
+```
+
+### Data Attributes
+
+| Attr | Accepts | Description |
+|-------|--------|-------------|
+| *`data-nav-close`* | boolean | Attached on the item links. Tells the nav if it needs to be closed on click or not. |
+
+If `closeOnClick` options is enabled for the nav, in the example below the "Add Page" link will not close it.
+
+```html
+<nav id="main-nav">
+  <ul>
+    <li><a href="#">Home</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+    <li><a data-nav-close="false" href="#">Add Page</a></li>
+  </ul>
+</nav>
 ```
 
 ## License

@@ -527,12 +527,12 @@
                 if (Settings.closeOnClick) {
                   if (Settings.levelOpen === false || Settings.levelOpen === 'none') {
                     // every item should close the nav
-                    $a.filter('a').on('click', closeNav);
+                    $a.filter('a').filter('[data-nav-close!="false"]').on('click', closeNav);
                   }
                   else {
                     // only items without submenus,
                     // or with submenus but with valid hrefs
-                    $a.filter('a').filter(function() {
+                    $a.filter('a').filter('[data-nav-close!="false"]').filter(function() {
                       const $this = $(this);
                       return !item.subnav.length || ($this.attr('href') && $this.attr('href').charAt(0) !== '#');
                     }).on('click', closeNav);
