@@ -408,52 +408,52 @@ main {
       content: 'add';
     }
 
-    &.new > a::before {
+    &.new > .nav-item::before {
       @include mi;
       content: 'fiber_new';
     }
 
-    &.cryptocurrency > a::before {
+    &.cryptocurrency > .nav-item::before {
       @include mi;
       content: 'local_atm';
     }
 
-    &.devices > a::before {
+    &.devices > .nav-item::before {
       @include mi;
       content: 'devices';
     }
 
-    &.mobile > a::before {
+    &.mobile > .nav-item::before {
       @include mi;
       content: 'phone_android';
     }
 
-    &.television > a::before {
+    &.television > .nav-item::before {
       @include mi;
       content: 'desktop_windows';
     }
 
-    &.camera > a::before {
+    &.camera > .nav-item::before {
       @include mi;
       content: 'camera_alt';
     }
 
-    &.magazines > a::before {
+    &.magazines > .nav-item::before {
       @include mi;
       content: 'import_contacts';
     }
 
-    &.store > a::before {
+    &.store > .nav-item::before {
       @include mi;
       content: 'store';
     }
 
-    &.collections > a::before {
+    &.collections > .nav-item::before {
       @include mi;
       content: 'collections';
     }
 
-    &.credits > a::before {
+    &.credits > .nav-item::before {
       @include mi;
       content: 'credit_card';
     }
