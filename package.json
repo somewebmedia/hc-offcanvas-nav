@@ -19,13 +19,13 @@
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.0",
     "gulp-autoprefixer": "^6.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-sass": "^4.0.2",
     "gulp-uglify": "^3.0.2",
     "uglify-save-license": "^0.4.1",
-    "yargs": "^6.6.0"
+    "yargs": "^13.2.2"
   },
   "keywords": [
     "nav",
