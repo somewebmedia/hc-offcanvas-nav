@@ -27,6 +27,7 @@ gulp.task('js', () => {
         comments: saveLicense
       }
     }))
+    .pipe(gulp.dest('./docs/'))
     .pipe(gulp.dest('./dist/'));
 });
 
