@@ -27,7 +27,7 @@ gulp.task('js', () => {
         comments: saveLicense
       }
     }))
-    .pipe(gulp.dest('./demo/'))
+    .pipe(gulp.dest('./docs/'))
     .pipe(gulp.dest('./dist/'));
 });
 
@@ -48,7 +48,7 @@ gulp.task('demo', () => {
       'outputStyle': argv.dev ? 'development' : 'compressed'
     }).on('error', sass.logError))
     .pipe(autoprefixer())
-    .pipe(gulp.dest('./demo/'));
+    .pipe(gulp.dest('./docs/'));
 });
 
 gulp.task('default', ['js', 'scss', 'demo'], () => {});
