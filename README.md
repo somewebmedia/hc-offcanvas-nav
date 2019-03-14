@@ -73,8 +73,8 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | *`disableBody`* | true | bool | Disable body scroll when navigation is open. |
 | *`closeOnClick`* | true| bool | Close the navigation when links are clicked. |
 | *`customToggle`* | null | string / element object | Custom navigation toggle element. |
-| *`insertClose`* | true | bool | Insert navigation close button. |
-| *`insertBack`* | true | bool | Insert back buttons to submenus. |
+| *`insertClose`* | true | bool / int | Insert navigation close button. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
+| *`insertBack`* | true | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
 | *`labelClose`* | 'Close' | string | Label for the close button. |
 | *`labelBack`* | 'Back' | string | Label for the back buttons. |
 
