@@ -2,7 +2,7 @@ HC Off-canvas Nav
 ===============
 
 jQuery plugin for creating off-canvas multi-level navigations.
-Check out the [demo](http://somewebmedia.com/hc-offcanvas-nav).
+Check out the [demo](https://somewebmedia.github.io/hc-offcanvas-nav/).
 
 ## Quick start
 
