@@ -228,6 +228,7 @@
         levelOpen:          'overlap', // overlap, expand, none/false
         levelSpacing:       40,
         levelTitles:        false,
+        levelTitlesAsBack:  false,
 
         navTitle:           null,
         navClass:           '',
@@ -499,7 +500,7 @@
           // call
           createDom(Model, $nav_container, 0, Settings.navTitle);
 
-          function createDom(menu, $container, level, title, backIndex) {
+          function createDom(menu, $container, level, title, backIndex, backTitle) {
             const $wrapper = $(`<div class="nav-wrapper nav-wrapper-${level}">`).appendTo($container).on('click', stopPropagation);
             const $content = $('<div class="nav-content">').appendTo($wrapper);
 
@@ -626,7 +627,7 @@
 
                   _indexes[nextLevel]++;
 
-                  createDom(item.subnav, $item, nextLevel, nav_title, _indexes[nextLevel]-1);
+                  createDom(item.subnav, $item, nextLevel, nav_title, _indexes[nextLevel]-1, title);
                 }
               });
             });
@@ -635,7 +636,8 @@
             if (level && typeof backIndex !== 'undefined') {
               if (Settings.insertBack !== false && Settings.levelOpen === 'overlap') {
                 const $children_menus = $content.children('ul');
-                let $back = $(`<li class="nav-back"><a href="#">${Settings.labelBack || ''}<span></span></a></li>`);
+                const backLabel = (Settings.levelTitlesAsBack ? (backTitle || Settings.labelBack) : Settings.labelBack) || '';
+                let $back = $(`<li class="nav-back"><a href="#">${backLabel}<span></span></a></li>`);
 
                 $back.children('a').on('click', preventClick(() => closeLevel(level, backIndex)));
 
