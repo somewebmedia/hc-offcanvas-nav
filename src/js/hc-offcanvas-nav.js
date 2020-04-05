@@ -235,6 +235,8 @@
         closeOnClick:     true,
         customToggle:     null,
 
+        bodyInsert:       'prepend', // prepend/append to body
+
         insertClose:      true,
         insertBack:       true,
         labelClose:       'Close',
@@ -652,7 +654,12 @@
         createNavDom();
 
         // insert nav to DOM
-        $body.append($nav);
+        if (Settings.bodyInsert === 'prepend') {
+          $body.prepend($nav);
+        }
+        else if (Settings.bodyInsert === 'prepend') {
+          $body.append($nav);
+        }
 
         // Private methods
 
