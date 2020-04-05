@@ -238,6 +238,7 @@
         bodyInsert:         'prepend', // prepend/append to body
         removeOriginalNav:  false,
 
+        rtl:                false,
         insertClose:        true,
         insertBack:         true,
         labelClose:         'Close',
@@ -406,7 +407,8 @@
             Settings.disableBody ? 'disable-body' : '',
             isIos ? 'is-ios' : '',
             isTouchDevice ? 'touch-device' : '',
-            wasOpen ? navOpenClass : ''
+            wasOpen ? navOpenClass : '',
+            Settings.rtl ? 'rtl' : ''
           ].join(' ');
 
           $nav

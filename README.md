@@ -77,8 +77,9 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | *`insertBack`* | true | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
 | *`labelClose`* | 'Close' | string | Label for the close button. |
 | *`labelBack`* | 'Back' | string | Label for the back buttons. |
+| *`rtl`* | false | bool | Set the content direction to right-to-left. |
 | *`bodyInsert`* | 'prepend' | string | Choose to prepend or append navigation to body. |
-| *`removeOriginalNav`* | false | bool | Remove original menu from the DOM. Don't use this if planning to update the nav. |
+| *`removeOriginalNav`* | false | bool | Remove original menu from the DOM. Don't use this if planning to update the nav! |
 
 
 ### Methods

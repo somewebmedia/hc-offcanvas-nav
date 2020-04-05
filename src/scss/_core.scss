@@ -314,4 +314,19 @@ body.hc-nav-open {
       transform: translate3d(0, 0, 0);
     }
   }
+
+  // RTL
+  &.rtl {
+
+    li {
+      text-align: right;
+    }
+
+    span.nav-next,
+    li.nav-back span,
+    li.nav-close span {
+      left: 0;
+      right: unset;
+    }
+  }
 }

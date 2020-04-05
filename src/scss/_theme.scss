@@ -314,4 +314,22 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
       }
     }
   }
+
+  // RTL
+  &.rtl {
+
+    a[href]:not([href="#"]) > span.nav-next {
+      border-left: none;
+      border-right: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+    }
+
+    li {
+      &.nav-parent {
+        .nav-item {
+          padding-right: 17px;
+          padding-left: 58px;
+        }
+      }
+    }
+  }
 }
