@@ -93,18 +93,20 @@ body.hc-nav-open {
     cursor: pointer;
   }
 
-  a {
-    position: relative;
-    display: block;
-    box-sizing: border-box;
-    cursor: pointer;
+  li:not(.custom-content) {
+    a {
+      position: relative;
+      display: block;
+      box-sizing: border-box;
+      cursor: pointer;
 
-    &,
-    &:hover {
-      text-decoration: none;
+      &,
+      &:hover {
+        text-decoration: none;
+      }
     }
   }
-
+  
   .nav-item {
     position: relative;
     display: block;
