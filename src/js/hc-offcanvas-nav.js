@@ -235,7 +235,7 @@
         closeOnClick:       true,
         customToggle:       null,
 
-        bodyInsert:         'append', // prepend/append to body
+        bodyInsert:         'prepend', // prepend/append to body
         removeOriginalNav:  false,
 
         insertClose:        true,
