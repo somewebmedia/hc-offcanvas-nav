@@ -517,7 +517,7 @@
 
                 // item has custom content
                 if (item.custom) {
-                  const $custom_item = $(`<li class="custom-content">`).addClass(item.classes).append($(`<span class="nav-item">`).append($item_content));
+                  const $custom_item = $(`<li class="custom-content">`).addClass(item.classes).append($(`<span class="nav-item">`).append($item_content.clone(true, true)));
 
                   // insert item
                   $menu.append($custom_item);
