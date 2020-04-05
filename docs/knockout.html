@@ -22,8 +22,8 @@
       }
     </style>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
     <script src="hc-offcanvas-nav.js?ver=3.4.1"></script>
   </head>
 
@@ -35,7 +35,7 @@
         <ul>
           <li>
             <a>Pages</a>
-            <ul data-bind="template: { name: 'page-template', data: {pages: pages}}"></ul>
+            <ul data-bind="template: {name: 'page-template', data: {pages: pages}}"></ul>
           </li>
         </ul>
       </nav>
@@ -47,7 +47,7 @@
             <span data-bind="text: title"></span>
           </a>
           <!-- ko if: pages().length > 0 -->
-          <ul data-bind="template: { name: 'page-template', data: {pages: pages}}"></ul>
+          <ul data-bind="template: {name: 'page-template', data: {pages: pages}}"></ul>
           <!-- /ko -->
         </li>
         <!-- /ko -->
@@ -59,7 +59,7 @@
 
           var Nav;
 
-          var PageModel = function (page) {
+          var PageModel = function(page) {
             var self = this;
 
             self.id = page.id;
