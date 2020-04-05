@@ -511,11 +511,9 @@
                 let $item_link = $item_content.find('a').addBack('a');
                 const $a = $item_link.length ? $item_link.clone(true, true).addClass('nav-item') : $(`<span class="nav-item">`).append($item_content.clone(true, true)).on('click', stopPropagation);
 
-                // on click trigger original link
                 if ($item_link.length) {
                   $a.on('click', (e) => {
                     e.stopPropagation();
-                    $item_link[0].click();
                   });
                 }
 
