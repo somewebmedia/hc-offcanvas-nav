@@ -310,7 +310,7 @@
 
         // toggle
         if (!Settings.customToggle) {
-          $toggle = $(`<a class="hc-nav-trigger ${navUniqId}"><span></span></a>`).on('click', toggleNav);
+          $toggle = $(`<a href="#" class="hc-nav-trigger ${navUniqId}"><span></span></a>`).on('click', toggleNav);
           $this.after($toggle);
         }
         else {
