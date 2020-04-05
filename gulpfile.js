@@ -1,4 +1,5 @@
-const gulp = require('gulp');
+const { src, dest, parallel, series, watch } = require('gulp');
+const glob = require('glob');
 const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const uglify = require('gulp-uglify');
@@ -8,8 +9,8 @@ const through = require('through2');
 const path = require('path');
 const argv = require('yargs').argv;
 
-gulp.task('js', () => {
-  return gulp.src(['./src/js/*.js'])
+const compileJs = () => {
+  return src(['./src/js/*.js'])
     .pipe(babel(
       {
         presets: [
@@ -27,33 +28,39 @@ gulp.task('js', () => {
         comments: saveLicense
       }
     }))
-    .pipe(gulp.dest('./docs/'))
-    .pipe(gulp.dest('./dist/'));
-});
+    .pipe(dest('./demo/'))
+    .pipe(dest('./dist/'));
+};
 
-gulp.task('scss', () => {
-  return gulp.src(['./src/scss/*.scss', '!./src/scss/demo.scss'])
+const compileScss = () => {
+  return src(['./src/scss/*.scss', '!./src/scss/demo.scss'])
     .pipe(sass({
       'includePaths': ['node_modules'],
       'outputStyle': argv.dev ? 'development' : 'compressed'
     }).on('error', sass.logError))
     .pipe(autoprefixer())
-    .pipe(gulp.dest('./dist/'));
-});
+    .pipe(dest('./dist/'));
+};
 
-gulp.task('demo', () => {
-  return gulp.src(['./src/scss/demo.scss'])
+const runDemo = () => {
+  return src(['./src/scss/demo.scss'])
     .pipe(sass({
       'includePaths': ['node_modules'],
       'outputStyle': argv.dev ? 'development' : 'compressed'
     }).on('error', sass.logError))
     .pipe(autoprefixer())
-    .pipe(gulp.dest('./docs/'));
-});
+    .pipe(dest('./demo/'));
+};
 
-gulp.task('default', ['js', 'scss', 'demo'], () => {});
+const defaultTask = series(parallel(compileJs, compileScss), runDemo);
 
-gulp.task('watch', ['default'], () => {
-  gulp.watch(['./src/js/*.js'], ['js']);
-  gulp.watch(['./src/scss/*.scss'], ['scss', 'demo']);
-});
+const watchFiles = () => {
+  const watch_scss = glob.sync('./src/scss/*.scss');
+  const watch_js = glob.sync('./src/js/*.js');
+
+  watch(watch_scss, series(compileScss, runDemo));
+  watch(watch_js, compileJs);
+};
+
+module.exports.default = defaultTask;
+module.exports.watch = series(defaultTask, watchFiles);
