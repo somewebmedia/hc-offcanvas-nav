@@ -3,6 +3,7 @@ const glob = require('glob');
 const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const uglify = require('gulp-uglify');
+const open = require('gulp-open');
 const saveLicense = require('uglify-save-license');
 const babel = require('gulp-babel');
 const through = require('through2');
@@ -42,7 +43,7 @@ const compileScss = () => {
     .pipe(dest('./dist/'));
 };
 
-const runDemo = () => {
+const compileDemo = () => {
   return src(['./src/scss/demo.scss'])
     .pipe(sass({
       'includePaths': ['node_modules'],
@@ -52,15 +53,20 @@ const runDemo = () => {
     .pipe(dest('./demo/'));
 };
 
-const defaultTask = series(parallel(compileJs, compileScss), runDemo);
+const runDemo = () => {
+  return src('./demo/index.html').pipe(open());
+};
+
+const defaultTask = parallel(compileJs, compileScss, compileDemo);
 
 const watchFiles = () => {
   const watch_scss = glob.sync('./src/scss/*.scss');
   const watch_js = glob.sync('./src/js/*.js');
 
-  watch(watch_scss, series(compileScss, runDemo));
+  watch(watch_scss, parallel(compileScss, compileDemo));
   watch(watch_js, compileJs);
 };
 
 module.exports.default = defaultTask;
 module.exports.watch = series(defaultTask, watchFiles);
+module.exports.demo = series(defaultTask, runDemo);
