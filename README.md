@@ -68,6 +68,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | *`levelOpen`* | 'overlap' | string | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
 | *`levelSpacing`* | 40 | int | If levels are overlaped, this is the spacing between them, if they are expanding, this is the text indent of the submenus. |
 | *`levelTitles`* | false | bool | Show titles for submenus, which is the parent item name. Works only for overlaped levels. |
+| *`levelTitlesAsBack`* | false | bool | Use level titles as back labels. |
 | *`navTitle`* | null | string | Main navigation (first level) title. |
 | *`navClass`* | '' | string | Custom navigation class. |
 | *`disableBody`* | true | bool | Disable body scroll when navigation is open. |
