@@ -382,6 +382,11 @@ main {
 
   li {
 
+    .custom-message {
+      font-size: 12px;
+      text-align: center;
+    }
+
     &.search {
       .nav-item {
         padding-top: 0;
