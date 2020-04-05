@@ -509,11 +509,16 @@
               $.each(nav.items, (i_item, item) => {
                 const $item_content = item.$content;
                 let $item_link = $item_content.find('a').addBack('a');
-                const $a = $item_link.length ? $item_link.clone(true, true).addClass('nav-item') : $(`<span class="nav-item">`).append($item_content.clone(true, true)).on('click', stopPropagation);
+                const $a = $item_link.length ? $item_link.clone(false, true).addClass('nav-item') : $(`<span class="nav-item">`).append($item_content.clone(true, true)).on('click', stopPropagation);
 
                 if ($item_link.length) {
                   $a.on('click', (e) => {
                     e.stopPropagation();
+
+                    // on click trigger original click event
+                    if (($._data($item_link[0], 'events') || {}).click) {
+                      $item_link[0].click();
+                    }
                   });
                 }
 
