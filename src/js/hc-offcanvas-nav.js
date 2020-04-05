@@ -452,13 +452,15 @@
 
               $ul.children('li').each(function() {
                 const $li = $(this);
-                const $content = $li.children().filter(function() {
+                const customContent = typeof $li.data('nav-custom-content') !== 'undefined';
+                const $content = customContent ? $li.children() : $li.children().filter(function() {
                   const $this = $(this);
                   return $this.is(':not(ul)') && !$this.find('ul').length;
                 }).add($li.contents().filter(function() {
+                  // text node
                   return this.nodeType === 3 && this.nodeValue.trim();
                 }));
-                const $nested_navs = $li.find('ul');
+                const $nested_navs = !customContent ? $li.find('ul') : $();
                 const $subnav = $nested_navs.first().add($nested_navs.first().siblings('ul'));
 
                 // save unique identifier for remembering open menus
@@ -468,10 +470,11 @@
 
                 // add elements to this level
                 nav.items.push({
-                  uniqid: $li.data('hc-uniqid'),
+                  uniqid: $li.data('hc-uniqid') || null,
                   classes: $li.attr('class'),
                   $content: $content,
-                  subnav: $subnav.length ? getModel($subnav) : []
+                  subnav: $subnav.length ? getModel($subnav) : [],
+                  custom: customContent
                 });
               });
 
@@ -508,6 +511,18 @@
 
               $.each(nav.items, (i_item, item) => {
                 const $item_content = item.$content;
+
+                // item has custom content
+                if (item.custom) {
+                  const $custom_item = $(`<li class="custom-content">`).addClass(item.classes).append($(`<span class="nav-item">`).append($item_content));
+
+                  // insert item
+                  $menu.append($custom_item);
+
+                  // stop here
+                  return;
+                }
+
                 let $item_link = $item_content.find('a').addBack('a');
                 const $a = $item_link.length ? $item_link.clone(true, true).addClass('nav-item') : $(`<span class="nav-item">`).append($item_content.clone(true, true)).on('click', stopPropagation);
 
