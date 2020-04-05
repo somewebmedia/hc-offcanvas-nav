@@ -77,6 +77,20 @@ body.hc-nav-open {
         visibility: visible;
       }
     }
+
+    &:not(.custom-content) {
+      a {
+        position: relative;
+        display: block;
+        box-sizing: border-box;
+        cursor: pointer;
+
+        &,
+        &:hover {
+          text-decoration: none;
+        }
+      }
+    }
   }
 
   input[type="checkbox"] {
@@ -91,18 +105,6 @@ body.hc-nav-open {
     bottom: 0;
     z-index: 10;
     cursor: pointer;
-  }
-
-  a {
-    position: relative;
-    display: block;
-    box-sizing: border-box;
-    cursor: pointer;
-
-    &,
-    &:hover {
-      text-decoration: none;
-    }
   }
 
   .nav-item {

@@ -147,6 +147,7 @@ Nav.on('close.once', function(event, settings) {
 
 | Attr | Accepts | Description |
 |-------|--------|-------------|
+| *`data-nav-custom-content`* | | Attached on the list items. Will clone item's content as is. |
 | *`data-nav-close`* | boolean | Attached on the item links. Tells the nav if it needs to be closed on click or not. |
 
 If `closeOnClick` options is enabled for the nav, in the example below the "Add Page" link will not close it.
