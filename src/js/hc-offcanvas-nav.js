@@ -36,7 +36,7 @@
     return parseFloat(s) * (/\ds$/.test(s) ? 1000 : 1);
   };
 
-  const ID = function() {
+  const ID = () => {
     return Math.random().toString(36).substr(2) + '-' + Math.random().toString(36).substr(2);
   };
 
@@ -221,26 +221,27 @@
       const $body = $(document.body);
 
       const defaults = {
-        maxWidth:         1024,
-        pushContent:      false,
-        position:         'left', // left, right, top
+        maxWidth:           1024,
+        pushContent:        false,
+        position:           'left', // left, right, top
 
-        levelOpen:        'overlap', // overlap, expand, none/false
-        levelSpacing:     40,
-        levelTitles:      false,
+        levelOpen:          'overlap', // overlap, expand, none/false
+        levelSpacing:       40,
+        levelTitles:        false,
 
-        navTitle:         null,
-        navClass:         '',
-        disableBody:      true,
-        closeOnClick:     true,
-        customToggle:     null,
+        navTitle:           null,
+        navClass:           '',
+        disableBody:        true,
+        closeOnClick:       true,
+        customToggle:       null,
 
-        bodyInsert:       'prepend', // prepend/append to body
+        bodyInsert:         'append', // prepend/append to body
+        removeOriginalNav:  false,
 
-        insertClose:      true,
-        insertBack:       true,
-        labelClose:       'Close',
-        labelBack:        'Back'
+        insertClose:        true,
+        insertBack:         true,
+        labelClose:         'Close',
+        labelBack:          'Back'
       };
 
       if (options.side) {
@@ -275,9 +276,9 @@
       };
 
       const Plugin = function() {
-        const $this = $(this);
+        const $originalNav = $(this);
 
-        if (!$this.find('ul').addBack('ul').length) {
+        if (!$originalNav.find('ul').addBack('ul').length) {
           console.error('%c! HC Offcanvas Nav:' + `%c Menu must contain <ul> element.`, 'color: #fa253b', 'color: default');
           return;
         }
@@ -291,7 +292,7 @@
         let $toggle;
 
         // add classes to original menu so we know it's connected to our copy
-        $this.addClass(`hc-nav ${navUniqId}`);
+        $originalNav.addClass(`hc-nav ${navUniqId}`);
 
         // this is our nav
         const $nav = $('<nav>').on('click', stopPropagation); // prevent menu close on self click
@@ -313,7 +314,7 @@
         // toggle
         if (!Settings.customToggle) {
           $toggle = $(`<a href="#" class="hc-nav-trigger ${navUniqId}"><span></span></a>`).on('click', toggleNav);
-          $this.after($toggle);
+          $originalNav.after($toggle);
         }
         else {
           $toggle = $(Settings.customToggle).addClass(`hc-nav-trigger ${navUniqId}`).on('click', toggleNav);
@@ -431,7 +432,7 @@
         const createModel = () => {
           // get first level menus
           const $first_level = () => {
-            const $ul = $this.find('ul').addBack('ul'); // original nav menus
+            const $ul = $originalNav.find('ul').addBack('ul'); // original nav menus
             return $ul.first().add($ul.first().siblings('ul'));
           };
 
@@ -657,8 +658,13 @@
         if (Settings.bodyInsert === 'prepend') {
           $body.prepend($nav);
         }
-        else if (Settings.bodyInsert === 'prepend') {
+        else if (Settings.bodyInsert === 'append') {
           $body.append($nav);
+        }
+
+        // remove original nav
+        if (Settings.removeOriginalNav === true) {
+          $originalNav.remove();
         }
 
         // Private methods
