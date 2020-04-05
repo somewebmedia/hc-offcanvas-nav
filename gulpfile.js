@@ -29,7 +29,7 @@ const compileJs = () => {
         comments: saveLicense
       }
     }))
-    .pipe(dest('./demo/'))
+    .pipe(dest('./docs/'))
     .pipe(dest('./dist/'));
 };
 
@@ -50,11 +50,11 @@ const compileDemo = () => {
       'outputStyle': argv.dev ? 'development' : 'compressed'
     }).on('error', sass.logError))
     .pipe(autoprefixer())
-    .pipe(dest('./demo/'));
+    .pipe(dest('./docs/'));
 };
 
 const runDemo = () => {
-  return src('./demo/index.html').pipe(open());
+  return src('./docs/index.html').pipe(open());
 };
 
 const defaultTask = parallel(compileJs, compileScss, compileDemo);
