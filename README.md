@@ -1,8 +1,16 @@
 HC Off-canvas Nav
 ===============
 
-jQuery plugin for creating off-canvas multi-level navigations.
-Check out the [demo](https://somewebmedia.github.io/hc-offcanvas-nav/).
+[![Version](https://img.shields.io/npm/v/hc-offcanvas-nav.svg)](https://www.npmjs.com/package/hc-offcanvas-nav) [![Downloads](https://img.shields.io/npm/dt/hc-offcanvas-nav.svg)](https://www.npmjs.com/package/hc-offcanvas-nav)
+
+jQuery plugin for creating off-canvas multi-level navigations, using ARIA.
+
+- [demo](https://somewebmedia.github.io/hc-offcanvas-nav/).
+
+## Why it is accessible
+- It relies on <a href="https://www.w3.org/TR/wai-aria-practices/#dialog_modal"><abbr title="Accessible Rich Internet Application">ARIA</abbr> Design pattern for Dialogs</a>
+- The tab key loops through all of the keyboard focusable items within the offcanvas navigation
+- You can close it using <kbd>Esc</kbd>
 
 ## Quick start
 
