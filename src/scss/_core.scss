@@ -85,6 +85,10 @@ body.hc-nav-open {
         box-sizing: border-box;
         cursor: pointer;
 
+        &[disabled] {
+          cursor: not-allowed;
+        }
+
         &,
         &:hover {
           text-decoration: none;

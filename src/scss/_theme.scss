@@ -50,6 +50,10 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
       z-index: 1;
       background: rgba(0, 0, 0, 0);
       border-bottom: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+
+      &[disabled] {
+        color: rgba($hc-offcanvas-nav-text-color, .5);
+      }
     }
   }
 

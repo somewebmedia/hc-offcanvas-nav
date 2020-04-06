@@ -550,13 +550,13 @@
                 // close nav on item click
                 if (Settings.closeOnClick) {
                   if (Settings.levelOpen === false || Settings.levelOpen === 'none') {
-                    // every item should close the nav
-                    $a.filter('a').filter('[data-nav-close!="false"]').on('click', closeNav);
+                    // every item should close the nav except disabled
+                    $a.filter('a[data-nav-close!="false"]:not([disabled])').on('click', closeNav);
                   }
                   else {
-                    // only items without submenus,
-                    // or with submenus but with valid hrefs
-                    $a.filter('a').filter('[data-nav-close!="false"]').filter(function() {
+                    // only items without submenus
+                    // or with submenus but with valid links
+                    $a.filter('a[data-nav-close!="false"]:not([disabled])').filter(function() {
                       const $this = $(this);
                       return !item.subnav.length || ($this.attr('href') && $this.attr('href').charAt(0) !== '#');
                     }).on('click', closeNav);

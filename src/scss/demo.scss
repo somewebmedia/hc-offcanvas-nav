@@ -26,7 +26,7 @@ $yellow: #dab977;
   width: 19px;
   height: 19px;
   margin-right: 15px;
-  font-size: 19px;
+  font-size: 18px;
   vertical-align: top;
 }
 
@@ -460,9 +460,14 @@ main {
       content: 'collections';
     }
 
-    &.credits > .nav-item::before {
+    &.nolink > .nav-item::before {
       @include mi;
-      content: 'credit_card';
+      content: 'format_clear';
+    }
+
+    &.disabled > .nav-item::before {
+      @include mi;
+      content: 'block';
     }
   }
 
