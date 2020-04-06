@@ -7,7 +7,7 @@ jQuery plugin for creating off-canvas multi-level navigations, using ARIA.
 
 - [Demo](https://somewebmedia.github.io/hc-offcanvas-nav/).
 
-## Why it is accessible
+### Why it is accessible
 - It relies on <a href="https://www.w3.org/TR/wai-aria-practices/#dialog_modal"><abbr title="Accessible Rich Internet Application">ARIA</abbr> Design pattern for Dialogs</a>
 - The tab key loops through all of the keyboard focusable items within the offcanvas navigation
 - You can close it using <kbd>Esc</kbd>
