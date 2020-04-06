@@ -384,7 +384,15 @@ main {
 
     .custom-message {
       font-size: 12px;
-      text-align: center;
+
+      a {
+        color: #fff;
+        font-size: 13px;
+
+        &:hover {
+          text-decoration: none;
+        }
+      }
     }
 
     &.search {
@@ -402,7 +410,7 @@ main {
         background: rgba(#fff, .12);
         padding: 5px 10px;
         box-shadow: none;
-        outline: none;
+        border: 1px solid rgba(#fff, .05);
 
         &::placeholder {
           color: rgba(#fff, .8);
