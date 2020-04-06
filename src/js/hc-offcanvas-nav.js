@@ -290,6 +290,7 @@
 
         const navUniqId = `hc-nav-${navCount}`;
         const Styles = printStyle(`hc-offcanvas-${navCount}-style`);
+        const keydownEventName = 'keydown.hc-offcanvas-nav';
 
         let $toggle;
 
@@ -302,6 +303,7 @@
         let $push_content = null;
 
         let Model = {};
+
         let _open = false;
         let _top = 0;
         let _containerWidth = 0;
@@ -313,6 +315,9 @@
         let _indexes = {}; // object with level indexes
         const _openLevels = []; // array with current open levels
 
+        let _keyboard = false;
+        const _focusEls = []; // array to store keyboard accessed items
+
         // toggle
         if (!Settings.customToggle) {
           $toggle = $(`<a href="#" class="hc-nav-trigger ${navUniqId}"><span></span></a>`).on('click', toggleNav);
@@ -321,6 +326,81 @@
         else {
           $toggle = $(Settings.customToggle).addClass(`hc-nav-trigger ${navUniqId}`).on('click', toggleNav);
         }
+
+        // make nav opening keyboard accessible
+        $toggle.on('keydown', (e) => {
+          if (e.key === 'Enter' || e.keyCode === 13) {
+            // trap focus inside nav
+            setTimeout(() => {
+              trapFocus($nav, 0);
+            }, 10);
+          }
+        });
+
+        // close nav on escape
+        $document.on('keydown', (e) => {
+          if (e.key === 'Escape' || e.keyCode === 27) {
+            closeNav();
+          }
+        });
+
+        function trapFocus($el, i) {
+          if (typeof i === 'undefined' && !_focusEls.length) {
+            return;
+          }
+
+          const focusableSelector = '[tabindex=0], a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select';
+          const $focusable = $el.find('.nav-content:first').children('ul').children('li').children(':not(.nav-wrapper)').find(focusableSelector).addBack(focusableSelector).filter(':not([tabindex=-1])');
+
+          if (!$focusable.length) {
+            return;
+          }
+
+          const $first = $focusable.first();
+          const $last = $focusable.last();
+
+          if (typeof i === 'undefined') {
+            // focus last focusable element
+            _focusEls[_focusEls.length - 1].focus();
+            // remove last element from focusable array
+            _focusEls.pop();
+          }
+          else {
+            // put focus on item with desired index
+            $focusable.eq(i).focus();
+          }
+
+          // unbind previous keydown event
+          $document.off(keydownEventName);
+
+          $document.on(keydownEventName, (e) => {
+            const isTabPressed = (e.key === 'Tab' || e.keyCode === 9);
+
+            if (!isTabPressed) {
+              return;
+            }
+
+            /* shift + tab */
+            if (e.shiftKey) {
+              if (document.activeElement === $first[0]) {
+                e.preventDefault();
+                $last.focus();
+              }
+            }
+            /* tab */
+            else {
+              if (document.activeElement === $last[0]) {
+                e.preventDefault();
+                $first.focus();
+              }
+            }
+          });
+        };
+
+        const untrapFocus = () => {
+          $document.off(keydownEventName);
+          $toggle[0].focus();
+        };
 
         const calcNav = () => {
           // remove transition from the nav container so we can update the nav without flickering
@@ -415,6 +495,7 @@
           $nav
             .off('click')
             .attr('class', '')
+            .attr('aria-hidden', true)
             .addClass(navClasses);
 
           // close menu on body click (nav::after)
@@ -517,7 +598,7 @@
 
                 // item has custom content
                 if (item.custom) {
-                  const $custom_item = $(`<li class="custom-content">`).addClass(item.classes).append($(`<div class="nav-item">`).append($item_content.clone(true, true)));
+                  const $custom_item = $(`<li class="custom-content">`).addClass(item.classes).append($(`<div class="nav-item nav-item-custom">`).append($item_content.clone(true, true)));
 
                   // insert item
                   $menu.append($custom_item);
@@ -527,7 +608,10 @@
                 }
 
                 let $item_link = $item_content.find('a').addBack('a');
-                const $a = $item_link.length ? $item_link.clone(false, true).addClass('nav-item') : $(`<span class="nav-item">`).append($item_content.clone(true, true)).on('click', stopPropagation);
+
+                const $a = $item_link.length
+                  ? $item_link.clone(false, true).addClass('nav-item')
+                  : $(`<${item.subnav.length ? 'a href="#"' : 'span'} class="nav-item">`).append($item_content.clone(true, true)).on('click', stopPropagation);
 
                 if ($item_link.length) {
                   $a.on('click', (e) => {
@@ -538,9 +622,16 @@
                       $item_link[0].click();
                     }
                   });
+
+                  if (typeof $a.attr('href') !== 'undefined' && $a.attr('href') !== '#') {
+                    $a.attr('tabindex', '0');
+                  }
                 }
 
                 if ($a.attr('href') === '#') {
+                  // disable focus ability if no valid link and has subnav
+                  $a.attr('tabindex', item.subnav.length ? '-1' : '0');
+
                   // prevent page jumping
                   $a.on('click', (e) => {
                     e.preventDefault();
@@ -551,21 +642,22 @@
                 if (Settings.closeOnClick) {
                   if (Settings.levelOpen === false || Settings.levelOpen === 'none') {
                     // every item should close the nav except disabled
-                    $a.filter('a[data-nav-close!="false"]:not([disabled])').on('click', closeNav);
+                    $a.filter('a').filter('[data-nav-close!="false"]:not([disabled])').on('click', closeNav);
                   }
                   else {
                     // only items without submenus
                     // or with submenus but with valid links
-                    $a.filter('a[data-nav-close!="false"]:not([disabled])').filter(function() {
+                    $a.filter('a').filter('[data-nav-close!="false"]:not([disabled])').filter(function() {
                       const $this = $(this);
                       return !item.subnav.length || ($this.attr('href') && $this.attr('href').charAt(0) !== '#');
                     }).on('click', closeNav);
                   }
                 }
 
+                // our nav list item
                 const $item = $(`<li>`).addClass(item.classes).append($a);
 
-                // insert item
+                // insert item into nav
                 $menu.append($item);
 
                 // indent levels in expanded levels
@@ -594,8 +686,21 @@
                   if (Settings.levelOpen !== false && Settings.levelOpen !== 'none') {
                     const index = _indexes[nextLevel];
                     const $next_span = $('<span class="nav-next">').appendTo($a);
-                    const $next_label = $(`<label for="${navUniqId}-${nextLevel}-${index}">`).on('click', stopPropagation);
-                    const $checkbox = $(`<input type="checkbox" id="${navUniqId}-${nextLevel}-${index}">`)
+
+                    const $next_label = $(`<label for="${navUniqId}-${nextLevel}-${index}" tabindex="0">`)
+                      .on('click', stopPropagation)
+                      .on('keydown', function(e) {
+                        if (e.key === 'Enter' || e.keyCode === 13) {
+                          const $this = $(this);
+                          // remember we are accessing via keyboard
+                          _keyboard = true;
+                          _focusEls.push($this);
+                          // trigger click by keyboard
+                          $this.click();
+                        }
+                      });
+
+                    const $checkbox = $(`<input type="checkbox" id="${navUniqId}-${nextLevel}-${index}" tabindex="-1">`)
                       .attr('data-level', nextLevel)
                       .attr('data-index', index)
                       .val(uniqid)
@@ -614,7 +719,7 @@
                     // subnav title
                     nav_title = Settings.levelTitles === true ? $item_content.text().trim() : '';
 
-                    if (!$a.attr('href') || $a.attr('href').charAt(0) === '#') {
+                    if (!$a.attr('href') || $a.attr('href') === '#') {
                       $a.prepend($next_label.on('click', function() {
                         // trigger parent click in case it has custom click events
                         $(this).parent().trigger('click');
@@ -622,6 +727,9 @@
                     }
                     else {
                       $next_span.append($next_label);
+
+                      // so we know not to focus it when manually assigning focus
+                      $a.attr('data-focusable', false);
                     }
                   }
 
@@ -637,9 +745,16 @@
               if (Settings.insertBack !== false && Settings.levelOpen === 'overlap') {
                 const $children_menus = $content.children('ul');
                 const backLabel = (Settings.levelTitlesAsBack ? (backTitle || Settings.labelBack) : Settings.labelBack) || '';
-                let $back = $(`<li class="nav-back"><a href="#">${backLabel}<span></span></a></li>`);
+                let $back = $(`<li class="nav-back"><a href="#" tabindex="0">${backLabel}<span></span></a></li>`);
 
-                $back.children('a').on('click', preventClick(() => closeLevel(level, backIndex)));
+                $back.children('a')
+                  .on('click', preventClick(() => closeLevel(level, backIndex)))
+                  .on('keydown', function(e) {
+                    if (e.key === 'Enter' || e.keyCode === 13) {
+                      // remember we are accessing via keyboard
+                      _keyboard = true;
+                    }
+                  });
 
                 if (Settings.insertBack === true) {
                   $children_menus.first().prepend($back);
@@ -653,7 +768,7 @@
             // insert close link
             if (level === 0 && Settings.insertClose !== false) {
               const $nav_ul = $content.children('ul');
-              const $close = $(`<li class="nav-close"><a href="#">${Settings.labelClose || ''}<span></span></a></li>`);
+              const $close = $(`<li class="nav-close"><a href="#" tabindex="0">${Settings.labelClose || ''}<span></span></a></li>`);
 
               $close.children('a').on('click', preventClick(closeNav));
 
@@ -707,7 +822,11 @@
         function openNav() {
           _open = true;
 
-          $nav.css('visibility', 'visible').addClass(navOpenClass);
+          $nav
+            .css('visibility', 'visible')
+            .attr('aria-hidden', false)
+            .addClass(navOpenClass);
+
           $toggle.addClass('toggle-open');
 
           if (Settings.levelOpen === 'expand' && _closeLevelsTimeout) {
@@ -733,8 +852,8 @@
             setTransform($push_content, transformVal, Settings.position);
           }
 
-          // trigger open event
           setTimeout(() => {
+            // trigger open event
             self.trigger('open', $.extend({}, Settings));
           }, _transitionDuration + 1);
         }
@@ -746,7 +865,7 @@
             setTransform($push_content, 0);
           }
 
-          $nav.removeClass(navOpenClass);
+          $nav.removeClass(navOpenClass).attr('aria-hidden', true);
           $nav_container.removeAttr('style');
           $toggle.removeClass('toggle-open');
 
@@ -773,6 +892,9 @@
               _top = 0; // reset top
             }
           }
+
+          // put focus back to trigger
+          untrapFocus();
 
           setTimeout(() => {
             $nav.css('visibility', '');
@@ -816,6 +938,13 @@
               setTransform($push_content, transformVal + l * Settings.levelSpacing, Settings.position);
             }
           }
+
+          if (_keyboard) {
+            // trap focus inside level when keyboard accessing
+            trapFocus($li.children('.nav-wrapper'), 0);
+            // reset keyboard flag
+            _keyboard = false;
+          }
         }
 
         const _closeLevel = (l, i, transform) => {
@@ -855,6 +984,13 @@
                 _closeLevel(level, index, level == l);
               }
             }
+          }
+
+          if (_keyboard) {
+            // trap focus back one level when keyboard accessing
+            trapFocus($(`#${navUniqId}-${l}-${i}`).closest('.nav-wrapper'));
+            // reset keyboard flag
+            _keyboard = false;
           }
         }
 

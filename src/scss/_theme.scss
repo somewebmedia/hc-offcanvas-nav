@@ -33,14 +33,26 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     color: darken($hc-offcanvas-nav-background-color, 20%);
   }
 
-  span.nav-item,
-  div.nav-item {
+  .nav-item {
     padding: 14px 17px;
     font-size: 15px;
     color: $hc-offcanvas-nav-text-color;
     z-index: 1;
     background: rgba(0, 0, 0, 0);
     border-bottom: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+
+    &:focus,
+    &:focus-within {
+      z-index: 10;
+    }
+  }
+
+  .nav-close,
+  .nav-next,
+  .nav-back {
+    &:focus {
+      z-index: 10;
+    }
   }
 
   li:not(.custom-content) {

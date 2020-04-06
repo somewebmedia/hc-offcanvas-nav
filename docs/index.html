@@ -84,8 +84,8 @@
                   </li>
                 </ul>
               </li>
-              <li class="magazines active">
-                <a href="#">Magazines</a>
+              <li class="magazines">
+                <a href="#magazines">Magazines</a>
                 <ul>
                   <li><a href="#">National Geographic</a></li>
                   <li><a href="#">Scientific American</a></li>
@@ -144,8 +144,9 @@
                   </li>
                 </ul>
               </li>
-              <li class="collections"><a href="#">Collections</a></li>
-              <li class="credits"><a href="#">Credits</a></li>
+              <li class="collections"><a href="#collections">Collections</a></li>
+              <li class="nolink">No Link</li>
+              <li class="disabled"><a href="#" disabled>Disabled Link</a></li>
               <li class="add"><a href="#" data-nav-close="false" data-add="['Charts', 'Logs', 'Tests', 'Profile']">Add Item</a></li>
             </ul>
 
@@ -271,8 +272,7 @@
             levelTitles: true,
             levelTitlesAsBack: true,
             pushContent: '#container',
-            insertClose: 2,
-            closeLevels: false
+            insertClose: 2
           };
 
           // add new items to original nav
