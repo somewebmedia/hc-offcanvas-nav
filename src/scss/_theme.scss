@@ -33,7 +33,8 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     color: darken($hc-offcanvas-nav-background-color, 20%);
   }
 
-  .nav-item {
+  span.nav-item,
+  div.nav-item {
     padding: 14px 17px;
     font-size: 15px;
     color: $hc-offcanvas-nav-text-color;
