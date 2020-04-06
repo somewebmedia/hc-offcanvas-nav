@@ -1010,6 +1010,7 @@
           // clear updated array
           UpdatedSettings = [];
 
+          // update our settings
           if (typeof options === 'object') {
             // only get what's been actually updated
             for (let prop in options) {
@@ -1018,18 +1019,24 @@
               }
             }
 
-            // merge to our settings
             Settings = $.extend({}, Settings, options);
-
-            // reinit DOM
-            initNav(true);
-            createNavDom(true);
           }
 
-          if (options === true || updateDom) {
-            // reinit model and DOM
+          if (options === true || updateDom === true) {
+            // can't update Model if original nav removed
+            if (Settings.removeOriginalNav) {
+              console.warn('%c! HC Offcanvas Nav:' + `%c Can't update because original navigation has been removed. Disable \`removeOriginalNav\` option.`, 'color: #fa253b', 'color: default');
+              return;
+            }
+
+            // hard update, reinit Model and DOM
             initNav(true);
             createModel();
+            createNavDom(true);
+          }
+          else {
+            // soft update just reinit DOM from existing Model
+            initNav(true);
             createNavDom(true);
           }
         };
