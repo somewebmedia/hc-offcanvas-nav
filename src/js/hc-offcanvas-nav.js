@@ -37,7 +37,7 @@
   };
 
   const ID = () => {
-    return Math.random().toString(36).substr(2) + '-' + Math.random().toString(36).substr(2);
+    return Math.random().toString(36).substr(2);
   };
 
   const stopPropagation = (e) => e.stopPropagation();
@@ -531,15 +531,16 @@
           };
 
           // call
-          Model = getModel($first_level());
+          Model = getModel($first_level(), null);
 
-          function getModel($menu) {
+          function getModel($menu, id) {
             const level = [];
 
             $menu.each(function() {
               const $ul = $(this);
 
               const nav = {
+                id: id,
                 classes: $ul.attr('class'),
                 items: []
               };
@@ -558,16 +559,18 @@
                 const $subnav = $nested_navs.first().add($nested_navs.first().siblings('ul'));
 
                 // save unique identifier for remembering open menus
+                let uniqid = null;
                 if ($subnav.length && !$li.data('hc-uniqid')) {
-                  $li.data('hc-uniqid', ID());
+                  uniqid = ID();
+                  $li.data('hc-uniqid', uniqid);
                 }
 
                 // add elements to this level
                 nav.items.push({
-                  uniqid: $li.data('hc-uniqid') || null,
+                  id: uniqid,
                   classes: $li.attr('class'),
                   $content: $content,
-                  subnav: $subnav.length ? getModel($subnav) : [],
+                  subnav: $subnav.length ? getModel($subnav, uniqid) : [],
                   custom: customContent
                 });
               });
@@ -601,14 +604,25 @@
             }
 
             $.each(menu, (i_nav, nav) => {
-              const $menu = $(`<ul>`).addClass(nav.classes).appendTo($content);
+              const $menu = $(`<ul role="menubar" aria-level="${level+1}">`).addClass(nav.classes).appendTo($content);
+
+              if (i_nav === 0 && title) {
+                $menu.attr('aria-label', title);
+              }
+
+              if (nav.id) {
+                $menu.attr('aria-labelledby', 'menu-' + nav.id);
+              }
 
               $.each(nav.items, (i_item, item) => {
                 const $item_content = item.$content;
 
                 // item has custom content
                 if (item.custom) {
-                  const $custom_item = $(`<li class="custom-content">`).addClass(item.classes).append($(`<div class="nav-item nav-item-custom">`).append($item_content.clone(true, true)));
+                  const $custom_item = $(`<li class="custom-content">`)
+                    .addClass(item.classes)
+                    .append($(`<div class="nav-item nav-item-custom">`)
+                    .append($item_content.clone(true, true)));
 
                   // insert item
                   $menu.append($custom_item);
@@ -623,6 +637,12 @@
                   ? $item_link.clone(false, true).addClass('nav-item')
                   : $(`<${item.subnav.length ? 'a href="#"' : 'span'} class="nav-item">`).append($item_content.clone(true, true)).on('click', stopPropagation);
 
+                if ($a.is('a')) {
+                  $a
+                    .attr('tabindex', '0')
+                    .attr('role', 'menuitem');
+                }
+
                 if ($item_link.length) {
                   $a.on('click', (e) => {
                     e.stopPropagation();
@@ -632,16 +652,9 @@
                       $item_link[0].click();
                     }
                   });
-
-                  if (typeof $a.attr('href') !== 'undefined' && $a.attr('href') !== '#') {
-                    $a.attr('tabindex', '0');
-                  }
                 }
 
                 if ($a.attr('href') === '#') {
-                  // disable focus ability if no valid link and has subnav
-                  $a.attr('tabindex', item.subnav.length ? '-1' : '0');
-
                   // prevent page jumping
                   $a.on('click', (e) => {
                     e.preventDefault();
@@ -650,7 +663,7 @@
 
                 // close nav on item click
                 if (Settings.closeOnClick) {
-                  if (Settings.levelOpen === false || Settings.levelOpen === 'none') {
+                  if (!areLevelsOpenable()) {
                     // every item should close the nav except disabled
                     $a.filter('a').filter('[data-nav-close!="false"]:not([disabled])').on('click', closeNav);
                   }
@@ -664,11 +677,14 @@
                   }
                 }
 
-                // our nav list item
-                const $item = $(`<li>`).addClass(item.classes).append($a);
+                // our nav item
+                const $item = $(`<li>`)
+                  .addClass(item.classes)
+                  .append($a)
+                  .appendTo($menu);
 
-                // insert item into nav
-                $menu.append($item);
+                // wrap item link
+                $a.wrap('<div class="nav-item-wrapper">');
 
                 // indent levels in expanded levels
                 if (Settings.levelSpacing && (Settings.levelOpen === 'expand' || (Settings.levelOpen === false || Settings.levelOpen === 'none'))) {
@@ -682,7 +698,7 @@
                 // do subnav
                 if (item.subnav.length) {
                   const nextLevel = level + 1;
-                  const uniqid = item.uniqid;
+                  const uniqid = item.id;
                   let nav_title = '';
 
                   // create new level
@@ -693,29 +709,43 @@
                   // li parent class
                   $item.addClass('nav-parent');
 
-                  if (Settings.levelOpen !== false && Settings.levelOpen !== 'none') {
+                  if (!areLevelsOpenable()) {
+                    $a.attr('aria-expanded', true);
+                  }
+                  // if we can open levels
+                  else {
                     const index = _indexes[nextLevel];
-                    const $next_span = $('<span class="nav-next">').appendTo($a);
-
-                    const $next_label = $(`<label for="${navUniqId}-${nextLevel}-${index}" tabindex="0">`)
-                      .on('click', stopPropagation)
-                      .on('keydown', function(e) {
-                        if (e.key === 'Enter' || e.keyCode === 13) {
-                          const $this = $(this);
-                          // remember we are accessing via keyboard
-                          _keyboard = true;
-                          _focusEls.push($this);
-                          // trigger click by keyboard
-                          $this.click();
-                        }
-                      });
 
                     const $checkbox = $(`<input type="checkbox" id="${navUniqId}-${nextLevel}-${index}" tabindex="-1">`)
                       .attr('data-level', nextLevel)
                       .attr('data-index', index)
                       .val(uniqid)
                       .on('click', stopPropagation)
-                      .on('change', checkboxChange);
+                      .on('change', checkboxChange)
+                      .prependTo($item);
+
+                    function triggerLevel() {
+                      // trigger checkbox to toggle level
+                      $checkbox
+                        .prop('checked', !$checkbox.prop('checked'))
+                        .trigger('change');
+                    }
+
+                    function attachToLink($el) {
+                      $el
+                        .on('click', triggerLevel)
+                        .on('keydown', function(e) {
+                          if (e.key === 'Enter' || e.keyCode === 13) {
+                            // remember we are accessing via keyboard
+                            _keyboard = true;
+                            _focusEls.push($(this));
+                          }
+                        })
+                        // ARIA
+                        .attr('aria-controls', 'menu-' + uniqid)
+                        .attr('aria-haspopup', Settings.levelOpen === 'overlap')
+                        .attr('aria-expanded', false);
+                    }
 
                     // nav is updated, we should keep this level open
                     if (_openLevels.indexOf(uniqid) !== -1) {
@@ -724,22 +754,23 @@
                       $checkbox.prop('checked', true);
                     }
 
-                    $item.prepend($checkbox);
-
                     // subnav title
                     nav_title = Settings.levelTitles === true ? $item_content.text().trim() : '';
 
+                    // item has no actual link
                     if (!$a.attr('href') || $a.attr('href') === '#') {
-                      $a.prepend($next_label.on('click', function() {
-                        // trigger parent click in case it has custom click events
-                        $(this).parent().trigger('click');
-                      }));
-                    }
-                    else {
-                      $next_span.append($next_label);
+                      $('<span class="nav-next">').appendTo($a);
 
-                      // so we know not to focus it when manually assigning focus
-                      $a.attr('data-focusable', false);
+                      attachToLink($a);
+                    }
+                    // item has real link
+                    else {
+                      attachToLink(
+                        // create "next" link separately
+                        $(`<a href="#" class="nav-next" aria-label="${nav_title} Submenu" role="menuitem" tabindex="0">`)
+                          .on('click', stopPropagation)
+                          .insertAfter($a)
+                      );
                     }
                   }
 
@@ -755,7 +786,7 @@
               if (Settings.insertBack !== false && Settings.levelOpen === 'overlap') {
                 const $children_menus = $content.children('ul');
                 const backLabel = (Settings.levelTitlesAsBack ? (backTitle || Settings.labelBack) : Settings.labelBack) || '';
-                let $back = $(`<li class="nav-back"><a href="#" tabindex="0">${backLabel}<span></span></a></li>`);
+                let $back = $(`<li class="nav-back"><a href="#" role="menuitem" tabindex="0">${backLabel}<span></span></a></li>`);
 
                 $back.children('a')
                   .on('click', preventClick(() => closeLevel(level, backIndex)))
@@ -778,7 +809,7 @@
             // insert close link
             if (level === 0 && Settings.insertClose !== false) {
               const $nav_ul = $content.children('ul');
-              const $close = $(`<li class="nav-close"><a href="#" tabindex="0">${Settings.labelClose || ''}<span></span></a></li>`);
+              const $close = $(`<li class="nav-close"><a href="#" role="menuitem" tabindex="0">${Settings.labelClose || ''}<span></span></a></li>`);
 
               $close.children('a').on('click', preventClick(closeNav));
 
@@ -827,6 +858,10 @@
           else {
             closeLevel(l, i);
           }
+        }
+
+        function areLevelsOpenable() {
+          return Settings.levelOpen !== false && Settings.levelOpen !== 'none';
         }
 
         function openNav() {
@@ -883,7 +918,7 @@
             // close all levels before closing the nav because the nav height changed
             closeLevel(0);
           }
-          else if (Settings.levelOpen !== false && Settings.levelOpen !== 'none') {
+          else if (areLevelsOpenable()) {
             // close all levels when nav closes
             _closeLevelsTimeout = setTimeout(() => {
               // keep in timeout so we can prevent it if nav opens again before it's closed
@@ -933,6 +968,7 @@
 
           $wrap.addClass('sub-level-open');
           $li.addClass('level-open');
+          $li.children('.nav-item-wrapper').children('[aria-controls]').attr('aria-expanded', true);
 
           // remember what is open
           if (_openLevels.indexOf(uniqid) === -1) {
@@ -966,6 +1002,7 @@
           $checkbox.prop('checked', false);
           $wrap.removeClass('sub-level-open');
           $li.removeClass('level-open');
+          $li.children('.nav-item-wrapper').children('[aria-controls]').attr('aria-expanded', false);
 
           // this is not open anymore
           if (_openLevels.indexOf(uniqid) !== -1) {

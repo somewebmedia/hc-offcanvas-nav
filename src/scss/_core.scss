@@ -177,6 +177,7 @@ body.hc-nav-open {
       .nav-wrapper {
         min-width: 0;
         max-height: 0;
+        visibility: hidden;
         overflow: hidden;
         transition: height 0s ease $hc-offcanvas-nav-transition-duration;
       }
@@ -186,6 +187,7 @@ body.hc-nav-open {
       & > .nav-wrapper {
         max-height: none;
         overflow: visible;
+        visibility: visible;
       }
     }
   }
@@ -338,7 +340,7 @@ body.hc-nav-open {
       text-align: right;
     }
 
-    span.nav-next,
+    .nav-next,
     li.nav-back span,
     li.nav-close span {
       left: 0;
