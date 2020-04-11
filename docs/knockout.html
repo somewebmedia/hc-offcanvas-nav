@@ -34,7 +34,7 @@
       <nav id="nav">
         <ul>
           <li>
-            <a>Pages</a>
+            <a href="#">Pages</a>
             <ul data-bind="template: {name: 'page-template', data: {pages: pages}}"></ul>
           </li>
         </ul>
@@ -43,7 +43,7 @@
       <script type="text/html" id="page-template">
         <!-- ko foreach: pages -->
         <li>
-          <a data-bind="click: $root.clicked">
+          <a href="#" data-bind="click: $root.clicked">
             <span data-bind="text: title"></span>
           </a>
           <!-- ko if: pages().length > 0 -->
@@ -51,7 +51,7 @@
           <!-- /ko -->
         </li>
         <!-- /ko -->
-        <li><a data-bind="click: $root.createItem">New item</a></li>
+        <li><a href="#" data-bind="click: $root.createItem">New item</a></li>
       </script>
 
       <script>
