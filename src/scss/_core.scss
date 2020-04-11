@@ -154,19 +154,22 @@ body.hc-nav-open {
   // Expand Levels
   &.nav-levels-expand {
 
-    .nav-content {
-      overflow: scroll;
-      overflow-x: visible;
-      overflow-y: auto;
-      box-sizing: border-box;
-      max-height: 100vh;
-    }
-
     .nav-wrapper {
-      max-height: 100vh;
 
       &::after {
         display: none;
+      }
+
+      &.nav-wrapper-0 {
+        max-height: 100vh;
+
+        & > .nav-content {
+          overflow: scroll;
+          overflow-x: visible;
+          overflow-y: auto;
+          box-sizing: border-box;
+          max-height: 100vh;
+        }
       }
     }
 
@@ -182,6 +185,7 @@ body.hc-nav-open {
     .level-open {
       & > .nav-wrapper {
         max-height: none;
+        overflow: visible;
       }
     }
   }
