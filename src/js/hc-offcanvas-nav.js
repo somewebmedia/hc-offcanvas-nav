@@ -298,7 +298,7 @@
         $originalNav.addClass(`hc-nav ${navUniqId}`);
 
         // this is our nav
-        const $nav = $('<nav>').on('click', stopPropagation); // prevent menu close on self click
+        const $nav = $('<nav role="navigation">').on('click', stopPropagation); // prevent menu close on self click
         const $nav_container = $('<div class="nav-container">').appendTo($nav);
         let $push_content = null;
 
@@ -320,12 +320,20 @@
 
         // toggle
         if (!Settings.customToggle) {
-          $toggle = $(`<a href="#" class="hc-nav-trigger ${navUniqId}"><span></span></a>`).on('click', toggleNav);
+          $toggle = $(`<a href="#" aria-label="Open Menu" class="hc-nav-trigger ${navUniqId}"><span></span></a>`)
+            .on('click', toggleNav);
           $originalNav.after($toggle);
         }
         else {
-          $toggle = $(Settings.customToggle).addClass(`hc-nav-trigger ${navUniqId}`).on('click', toggleNav);
+          $toggle = $(Settings.customToggle)
+            .addClass(`hc-nav-trigger ${navUniqId}`)
+            .on('click', toggleNav);
         }
+
+        // ARIA for toggle
+        $toggle
+          .attr('role', 'button')
+          .attr('aria-controls', navUniqId);
 
         // make nav opening keyboard accessible
         $toggle.on('keydown', (e) => {
@@ -496,6 +504,7 @@
             .off('click')
             .attr('class', '')
             .attr('aria-hidden', true)
+            .attr('aria-labelledby', navUniqId)
             .addClass(navClasses);
 
           // close menu on body click (nav::after)
@@ -514,6 +523,7 @@
 
         // create nav model function
         const createModel = () => {
+
           // get first level menus
           const $first_level = () => {
             const $ul = $originalNav.find('ul').addBack('ul'); // original nav menus
