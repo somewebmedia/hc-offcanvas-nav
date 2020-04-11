@@ -43,14 +43,12 @@ body.hc-nav-open {
   .nav-wrapper {
     width: 100%;
     height: 100%;
-    max-height: 100vh;
-    overscroll-behavior: none;
     box-sizing: border-box;
+    overscroll-behavior: none;
   }
 
   .nav-content {
     height: 100%;
-    max-height: 100vh;
   }
 
   .nav-wrapper-0 {
@@ -161,9 +159,12 @@ body.hc-nav-open {
       overflow-x: visible;
       overflow-y: auto;
       box-sizing: border-box;
+      max-height: 100vh;
     }
 
     .nav-wrapper {
+      max-height: 100vh;
+
       &::after {
         display: none;
       }
@@ -193,6 +194,11 @@ body.hc-nav-open {
       overflow-x: visible;
       overflow-y: auto;
       box-sizing: border-box;
+      max-height: 100vh;
+    }
+
+    .nav-wrapper {
+      max-height: 100vh;
     }
 
     ul {
