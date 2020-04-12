@@ -605,7 +605,7 @@
             }
 
             $.each(menu, (i_nav, nav) => {
-              const $menu = $(`<ul role="menubar" aria-level="${level+1}">`).addClass(nav.classes).appendTo($content);
+              const $menu = $(`<ul role="menu" aria-level="${level+1}">`).addClass(nav.classes).appendTo($content);
 
               if (i_nav === 0 && title) {
                 $menu.attr('aria-label', title);
