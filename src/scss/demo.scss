@@ -419,62 +419,62 @@ main {
       }
     }
 
-    &.add > a::before {
+    &.add > .nav-item-wrapper a::before {
       @include mi;
       content: 'add';
     }
 
-    &.new > .nav-item::before {
+    &.new > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'fiber_new';
     }
 
-    &.cryptocurrency > .nav-item::before {
+    &.cryptocurrency > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'local_atm';
     }
 
-    &.devices > .nav-item::before {
+    &.devices > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'devices';
     }
 
-    &.mobile > .nav-item::before {
+    &.mobile > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'phone_android';
     }
 
-    &.television > .nav-item::before {
+    &.television > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'desktop_windows';
     }
 
-    &.camera > .nav-item::before {
+    &.camera > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'camera_alt';
     }
 
-    &.magazines > .nav-item::before {
+    &.magazines > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'import_contacts';
     }
 
-    &.store > .nav-item::before {
+    &.store > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'store';
     }
 
-    &.collections > .nav-item::before {
+    &.collections > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'collections';
     }
 
-    &.nolink > .nav-item::before {
+    &.nolink > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'format_clear';
     }
 
-    &.disabled > .nav-item::before {
+    &.disabled > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'block';
     }
