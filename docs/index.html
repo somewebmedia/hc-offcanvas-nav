@@ -265,15 +265,24 @@
           var $main_nav = $('#main-nav');
           var $toggle = $('.toggle');
 
-          var defaultData = {
+          var defaultOptions = {
             disableAt: false,
-            customToggle: $toggle,
+            customToggle: $(),
+            levelSpacing: 40,
             navTitle: 'All Categories',
             levelTitles: true,
             levelTitleAsBack: true,
             pushContent: '#container',
             insertClose: 2
           };
+
+          // call our plugin
+          var Nav = $main_nav.hcOffcanvasNav(defaultOptions);
+
+          // Open 4th level menu with the index 0
+          $toggle.click(() => {
+            Nav.open(3, 0);
+          });
 
           // add new items to original nav
           $main_nav.find('li.add').children('a').on('click', function() {
@@ -294,9 +303,6 @@
 
             Nav.update(true);
           });
-
-          // call our plugin
-          var Nav = $main_nav.hcOffcanvasNav(defaultData);
 
           // demo settings update
 
