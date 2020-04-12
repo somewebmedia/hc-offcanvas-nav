@@ -816,7 +816,7 @@
             if (level && typeof backIndex !== 'undefined') {
               if (Settings.insertBack !== false && Settings.levelOpen === 'overlap') {
                 const $children_menus = $content.children('ul');
-                const backLabel = (Settings.levelTitlesAsBack ? (backTitle || Settings.labelBack) : Settings.labelBack) || '';
+                const backLabel = (Settings.levelTitleAsBack ? (backTitle || Settings.labelBack) : Settings.labelBack) || '';
                 let $back = $(`<li class="nav-back"><a href="#" role="menuitem" tabindex="0">${backLabel}<span></span></a></li>`);
 
                 $back
