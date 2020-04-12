@@ -348,8 +348,15 @@
 
         // close nav on escape
         $document.on('keydown', (e) => {
-          if (e.key === 'Escape' || e.keyCode === 27) {
-            closeNav();
+          if (isOpen() && (e.key === 'Escape' || e.keyCode === 27)) {
+            const level = whatLevelIsOpen();
+
+            if (level === 0) {
+              closeNav();
+            }
+            else {
+              closeLevel(level);
+            }
           }
         });
 
@@ -723,7 +730,7 @@
                   else {
                     const index = _indexes[nextLevel];
 
-                    const $checkbox = $(`<input type="checkbox" id="${navUniqId}-${nextLevel}-${index}" tabindex="-1">`)
+                    const $checkbox = $(`<input type="checkbox" id="${navUniqId}-${nextLevel}-${index}" class="hc-chk" tabindex="-1">`)
                       .attr('data-level', nextLevel)
                       .attr('data-index', index)
                       .val(uniqid)
@@ -874,6 +881,19 @@
 
         function areLevelsOpenable() {
           return Settings.levelOpen !== false && Settings.levelOpen !== 'none';
+        }
+
+        function isOpen() {
+          return $nav.hasClass(navOpenClass);
+        }
+
+        function whatLevelIsOpen() {
+          if (!_openLevels.length) {
+            return isOpen() ? 0 : false;
+          }
+          else {
+            return $nav_container.find('.hc-chk').filter(`[value=${_openLevels[_openLevels.length - 1]}]`).data('level');
+          }
         }
 
         function openNav(expanded) {
@@ -1064,7 +1084,7 @@
           return option ? Settings[option] : Object.assign({}, Settings);
         };
 
-        self.isOpen = () => $nav.hasClass(navOpenClass);
+        self.isOpen = isOpen;
 
         self.open = openNav;
 
