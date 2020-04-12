@@ -342,7 +342,7 @@
             // trap focus inside nav
             setTimeout(() => {
               trapFocus($nav, 0);
-            }, 10);
+            }, 0);
           }
         });
 
@@ -518,7 +518,7 @@
           }
           else {
             // timed out so we can get computed data
-            setTimeout(calcNav, 1);
+            setTimeout(calcNav, 0);
           }
         };
 
@@ -911,7 +911,7 @@
           setTimeout(() => {
             // trigger open event
             self.trigger('open', $.extend({}, Settings));
-          }, _transitionDuration + 1);
+          }, _transitionDuration);
         }
 
         function closeNav() {
@@ -960,7 +960,7 @@
 
             // only trigger close event once and detach it
             self.trigger('close.once', $.extend({}, Settings)).off('close.once');
-          }, _transitionDuration + 1);
+          }, _transitionDuration);
         }
 
         function toggleNav(e) {
