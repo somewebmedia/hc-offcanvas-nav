@@ -70,26 +70,26 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 
 | Property | Default | Type | Description |
 |-----------|---------|-------|-------------|
-| *`maxWidth`* | 1024 | int/boolean | Resolution below which to display the mobile menu, and hide the regular. |
-| *`pushContent`* | false | false / string / element object | Content element (string selector or jQuery object) that will be pushed when the navigation is open. |
-| *`expanded`* | false | boolean | Initialize menu in expanded mode. It won't push content. |
-| *`position`* | 'left' | string | Position on which the menu will open. Available options: `'left'`, `'right'`, `'top'` and `'bottom'`. |
-| *`levelOpen`* | 'overlap' | string | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
-| *`levelSpacing`* | 40 | int | If levels are overlaped, this is the spacing between them, if they are expanding, this is the text indent of the submenus. |
-| *`levelTitles`* | false | bool | Show titles for submenus, which is the parent item text. Works only for overlaped levels. |
-| *`navTitle`* | null | string | Main navigation (first level) title. |
-| *`navClass`* | '' | string | Custom navigation class. |
-| *`disableBody`* | true | bool | Disable body scroll when navigation is open. |
-| *`closeOnClick`* | true| bool | Close the navigation when links are clicked. |
-| *`customToggle`* | null | string / element object | Custom navigation toggle element. |
-| *`insertClose`* | true | bool / int | Insert navigation close button. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
-| *`insertBack`* | true | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. Works only for overlaped levels. |
-| *`levelTitleAsBack`* | false | bool | Use level titles as back labels. |
-| *`labelClose`* | 'Close' | string | Label for the close button. |
-| *`labelBack`* | 'Back' | string | Label for the back buttons. |
-| *`rtl`* | false | bool | Set the content direction to right-to-left. |
-| *`bodyInsert`* | 'prepend' | string | Choose to prepend or append navigation to body. |
-| *`removeOriginalNav`* | false | bool | Remove original menu from the DOM. Don't use this if planning to update the nav! |
+| *maxWidth* | `1024` | int / bool | Resolution below which to display the mobile menu, and hide the regular. |
+| *pushContent* | `false` | false / str / jQuery obj | Content element (string selector or jQuery object) that will be pushed when the navigation is open. |
+| *expanded* | `false `| bool | Initialize menu in expanded mode. It won't push content. |
+| *position* | `'left'` | str | Position on which the menu will open. Available options: `'left'`, `'right'`, `'top'` and `'bottom'`. |
+| *levelOpen* | `'overlap'` | str | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
+| *levelSpacing* | `40` | int | If levels are overlaped, this is the spacing between them, if they are expanding, this is the text indent of the submenus. |
+| *levelTitles* | `false` | bool | Show titles for submenus, which is the parent item text. Works only for overlaped levels. |
+| *navTitle* | `null` | str | Main navigation (first level) title. |
+| *navClass* | `''` | str | Custom navigation class. |
+| *disableBody* | `true` | bool | Disable body scroll when navigation is open. |
+| *closeOnClick* | `true` | bool | Close the navigation when links are clicked. |
+| *customToggle* | `null` | str / jQuery obj | Custom navigation toggle element. |
+| *insertClose* | `true` | bool / int | Insert navigation close button. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
+| *insertBack* | `true` | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. Works only for overlaped levels. |
+| *levelTitleAsBack* | false | bool | Use level titles as back labels. |
+| *labelClose* | `'Close'` | str | Label for the close button. |
+| *labelBack* | `'Back'` | str | Label for the back buttons. |
+| *rtl* | `false` | bool | Set the content direction to right-to-left. |
+| *bodyInsert* | `'prepend'` | str | Choose to prepend or append navigation to body. |
+| *removeOriginalNav* | `false` | bool | Remove original menu from the DOM. Don't use this if planning to update the nav! |
 
 
 ### Methods
@@ -98,11 +98,11 @@ Methods are used to control the plugin after initialization.
 
 | Method | Accepts | Description |
 |---------|---------|--------------|
-| *`settings`* | string | Returns current settings, or a particular setting if you specify it. |
-| *`isOpen`* | N/A | Checks if the nav is open, and returns boolean. |
-| *`update`* | object, boolean | Updates the settings with the new ones, and/or updates the internal state of the plugin making the DOM changes based on the original nav. |
-| *`open`* | N/A | Opens the nav. |
-| *`close`* | N/A | Closes the nav. |
+| *settings* | str | Returns current settings, or a particular setting if you specify it. |
+| *isOpen* | | Checks if the nav is open, and returns boolean. |
+| *update* | obj, bool | Updates the settings with the new ones, and/or updates the internal state of the plugin making the DOM changes based on the original nav. |
+| *open* | | Opens the nav. |
+| *close* | | Closes the nav. |
 
 ```js
 var Nav = $('#main-nav').hcOffcanvasNav({
@@ -129,9 +129,9 @@ Nav.update({
 
 | Event | Description |
 |---------|--------------|
-| *`open`* | Triggers each time when the nav is opened. |
-| *`close`* | Triggers each time when the nav is closed. |
-| *`close.once`* | Triggers only the first time the nav is closed, and than it detaches itself. |
+| *open* | Triggers each time when the nav is opened. |
+| *close* | Triggers each time when the nav is closed. |
+| *close.once* | Triggers only the first time the nav is closed, and than it detaches itself. |
 
 All events return Event object, and the plugin Settings object.
 
@@ -157,8 +157,8 @@ Nav.on('close.once', function(event, settings) {
 
 | Attr | Accepts | Description |
 |-------|--------|-------------|
-| *`data-nav-custom-content`* | | Attached on the list items. Will clone item's content as is. |
-| *`data-nav-close`* | boolean | Attached on the item links. Tells the nav if it needs to be closed on click or not. |
+| *data-nav-custom-content* | | Attached on the list items. Will clone item's content as is. |
+| *data-nav-close* | bool | Attached on the item links. Tells the nav if it needs to be closed on click or not. |
 
 If `closeOnClick` options is enabled for the nav, in the example below the "Add Page" link will not close it.
 
