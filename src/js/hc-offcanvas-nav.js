@@ -307,6 +307,7 @@
         let Model = {};
 
         let _open = false;
+        let _initedExpanded = false;
         let _top = 0;
         let _containerWidth = 0;
         let _containerHeight = 0;
@@ -627,7 +628,7 @@
           createDom(Model, $nav_container, 0, Settings.navTitle);
 
           function createDom(menu, $container, level, title, backIndex, backTitle) {
-            const $wrapper = $(`<div class="nav-wrapper nav-wrapper-${level}" data-level="${level}" data-index="${backIndex}">`)
+            const $wrapper = $(`<div class="nav-wrapper nav-wrapper-${level}" data-level="${level}" data-index="${backIndex || 0}">`)
               .appendTo($container)
               .on('click', stopPropagation);
             const $content = $('<div class="nav-content">').appendTo($wrapper);
@@ -884,7 +885,8 @@
 
         // show opened nav
         if (Settings.expanded === true) {
-          openNav(true);
+          _initedExpanded = true;
+          openNav();
         }
 
         // Private methods
@@ -919,7 +921,48 @@
           }
         }
 
-        function openNav(expanded) {
+        function open(l, i = 0) {
+          openNav();
+
+          if (typeof l === 'number') {
+            const $checkbox = $(`#${navUniqId}-${l}-${i}`);
+
+            if (!$checkbox.length) {
+              console.warn(`HC Offcanvas Nav: level ${l} doesn't have index ${i}`);
+              return;
+            }
+
+            let levels = [];
+
+            if (l > 1) {
+              // get parent levels to open
+              $checkbox.parents('.nav-wrapper').each(function() {
+                const $this = $(this);
+                const level = $this.data('level');
+
+                if (level > 0) {
+                  levels.push({
+                    level: level,
+                    index: $this.data('index')
+                  });
+                }
+              });
+
+              levels = levels.reverse();
+            }
+
+            levels.push({
+              level: l,
+              index: i
+            });
+
+            for (let n = 0; n < levels.length; n++) {
+              openLevel(levels[n].level, levels[n].index);
+            }
+          }
+        }
+
+        function openNav() {
           _open = true;
 
           $nav
@@ -952,8 +995,9 @@
             setTransform($push_content, transformVal, Settings.position);
           }
 
-          if (expanded) {
+          if (_initedExpanded) {
             // don't trigger open event if nav is initially expanded
+            _initedExpanded = false;
             return;
           }
 
@@ -1109,7 +1153,7 @@
 
         self.isOpen = isOpen;
 
-        self.open = openNav;
+        self.open = open;
 
         self.close = closeNav;
 
