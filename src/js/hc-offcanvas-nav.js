@@ -924,7 +924,7 @@
         function open(l, i = 0) {
           openNav();
 
-          if (typeof l === 'number') {
+          if (areLevelsOpenable() && typeof l === 'number') {
             const $checkbox = $(`#${navUniqId}-${l}-${i}`);
 
             if (!$checkbox.length) {
@@ -957,7 +957,8 @@
             });
 
             for (let n = 0; n < levels.length; n++) {
-              openLevel(levels[n].level, levels[n].index);
+              // open each level without transition
+              openLevel(levels[n].level, levels[n].index, false);
             }
           }
         }
@@ -1064,15 +1065,28 @@
           else openNav();
         }
 
-        function openLevel(l, i) {
+        function openLevel(l, i, trans = true) {
           const $checkbox = $(`#${navUniqId}-${l}-${i}`);
           const uniqid = $checkbox.val();
           const $li = $checkbox.parent('li');
           const $wrap = $li.closest('.nav-wrapper');
+          const $subWrap = $li.children('.nav-wrapper');
+
+          if (trans === false) {
+            // disable level transition
+            $subWrap.css('transition', 'none');
+          }
 
           $wrap.addClass('sub-level-open');
           $li.addClass('level-open');
           $li.children('.nav-item-wrapper').children('[aria-controls]').attr('aria-expanded', true);
+
+          if (trans === false) {
+            setTimeout(() => {
+              // re-enable level transition after nav open
+              $subWrap.css('transition', '');
+            }, _transitionDuration);
+          }
 
           // remember what is open
           if (_openLevels.indexOf(uniqid) === -1) {
@@ -1080,9 +1094,12 @@
           }
 
           if (Settings.levelOpen === 'overlap') {
-            $wrap.on('click', () => closeLevel(l, i)); // close on self click
+            // close on self click
+            $wrap.on('click', () => closeLevel(l, i));
+            // expand the nav
             setTransform($nav_container, l * Settings.levelSpacing, Settings.position);
 
+            // push content
             if ($push_content) {
               const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
               setTransform($push_content, transformVal + l * Settings.levelSpacing, Settings.position);
@@ -1114,9 +1131,12 @@
           }
 
           if (transform && Settings.levelOpen === 'overlap') {
-            $wrap.off('click').on('click', stopPropagation); //level closed, remove wrapper click
+            //level closed, remove wrapper click
+            $wrap.off('click').on('click', stopPropagation);
+            // collapse the nav
             setTransform($nav_container, (l - 1) * Settings.levelSpacing, Settings.position);
 
+            // push back content
             if ($push_content) {
               const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
               setTransform($push_content, transformVal + (l - 1) * Settings.levelSpacing, Settings.position);
