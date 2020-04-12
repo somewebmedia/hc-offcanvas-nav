@@ -223,12 +223,12 @@
       const defaults = {
         maxWidth:           1024,
         pushContent:        false,
+        expanded:           false,
         position:           'left', // left, right, top
 
         levelOpen:          'overlap', // overlap, expand, none/false
         levelSpacing:       40,
         levelTitles:        false,
-        levelTitlesAsBack:  false,
 
         navTitle:           null,
         navClass:           '',
@@ -236,12 +236,13 @@
         closeOnClick:       true,
         customToggle:       null,
 
-        bodyInsert:         'prepend', // prepend/append to body
+        bodyInsert:         'prepend', // prepend/append
         removeOriginalNav:  false,
 
         rtl:                false,
         insertClose:        true,
         insertBack:         true,
+        levelTitleAsBack:   false,
         labelClose:         'Close',
         labelBack:          'Back'
       };
@@ -832,6 +833,11 @@
         // create view from model
         createNavDom();
 
+        // remove original nav
+        if (Settings.removeOriginalNav === true) {
+          $originalNav.remove();
+        }
+
         // insert nav to DOM
         if (Settings.bodyInsert === 'prepend') {
           $body.prepend($nav);
@@ -840,9 +846,9 @@
           $body.append($nav);
         }
 
-        // remove original nav
-        if (Settings.removeOriginalNav === true) {
-          $originalNav.remove();
+        // show opened nav
+        if (Settings.expanded === true) {
+          openNav(true);
         }
 
         // Private methods
@@ -864,7 +870,7 @@
           return Settings.levelOpen !== false && Settings.levelOpen !== 'none';
         }
 
-        function openNav() {
+        function openNav(expanded) {
           _open = true;
 
           $nav
@@ -895,6 +901,11 @@
           if ($push_content) {
             const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
             setTransform($push_content, transformVal, Settings.position);
+          }
+
+          if (expanded) {
+            // don't trigger open event if nav is initially expanded
+            return;
           }
 
           setTimeout(() => {

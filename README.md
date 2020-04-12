@@ -71,19 +71,20 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | Property | Default | Type | Description |
 |-----------|---------|-------|-------------|
 | *`maxWidth`* | 1024 | int/boolean | Resolution below which to display the mobile menu, and hide the regular. |
-| *`pushContent`* | false | false / string / element object | Content element (string selector or jQuery object) that will be pushed when the navigation is open, or false to disable this option. |
+| *`pushContent`* | false | false / string / element object | Content element (string selector or jQuery object) that will be pushed when the navigation is open. |
+| *`expanded`* | false | boolean | Initialize menu in expanded mode. It won't push content. |
 | *`position`* | 'left' | string | Position on which the menu will open. Available options: `'left'`, `'right'`, `'top'` and `'bottom'`. |
 | *`levelOpen`* | 'overlap' | string | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
 | *`levelSpacing`* | 40 | int | If levels are overlaped, this is the spacing between them, if they are expanding, this is the text indent of the submenus. |
-| *`levelTitles`* | false | bool | Show titles for submenus, which is the parent item name. Works only for overlaped levels. |
-| *`levelTitlesAsBack`* | false | bool | Use level titles as back labels. |
+| *`levelTitles`* | false | bool | Show titles for submenus, which is the parent item text. Works only for overlaped levels. |
 | *`navTitle`* | null | string | Main navigation (first level) title. |
 | *`navClass`* | '' | string | Custom navigation class. |
 | *`disableBody`* | true | bool | Disable body scroll when navigation is open. |
 | *`closeOnClick`* | true| bool | Close the navigation when links are clicked. |
 | *`customToggle`* | null | string / element object | Custom navigation toggle element. |
 | *`insertClose`* | true | bool / int | Insert navigation close button. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
-| *`insertBack`* | true | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
+| *`insertBack`* | true | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. Works only for overlaped levels. |
+| *`levelTitleAsBack`* | false | bool | Use level titles as back labels. |
 | *`labelClose`* | 'Close' | string | Label for the close button. |
 | *`labelBack`* | 'Back' | string | Label for the back buttons. |
 | *`rtl`* | false | bool | Set the content direction to right-to-left. |
