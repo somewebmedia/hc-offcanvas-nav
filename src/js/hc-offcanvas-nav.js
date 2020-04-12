@@ -542,7 +542,7 @@
 
               const nav = {
                 id: id,
-                classes: $ul.attr('class'),
+                classes: $ul.attr('class') || null,
                 items: []
               };
 
@@ -559,17 +559,23 @@
                 const $nested_navs = !customContent ? $li.find('ul') : $();
                 const $subnav = $nested_navs.first().add($nested_navs.first().siblings('ul'));
 
-                // save unique identifier for remembering open menus
                 let uniqid = null;
-                if ($subnav.length && !$li.data('hc-uniqid')) {
-                  uniqid = ID();
-                  $li.data('hc-uniqid', uniqid);
+
+                // save unique identifier for remembering open menus
+                if ($subnav.length) {
+                  if (!$li.data('hc-uniqid')) {
+                    uniqid = ID();
+                    $li.data('hc-uniqid', uniqid);
+                  }
+                  else {
+                    uniqid = $li.data('hc-uniqid');
+                  }
                 }
 
                 // add elements to this level
                 nav.items.push({
                   id: uniqid,
-                  classes: $li.attr('class'),
+                  classes: $li.attr('class') || null,
                   $content: $content,
                   subnav: $subnav.length ? getModel($subnav, uniqid) : [],
                   custom: customContent
