@@ -3,11 +3,11 @@ HC Off-canvas Nav
 
 [![Version](https://img.shields.io/npm/v/hc-offcanvas-nav.svg)](https://www.npmjs.com/package/hc-offcanvas-nav) [![Downloads](https://img.shields.io/npm/dt/hc-offcanvas-nav.svg)](https://www.npmjs.com/package/hc-offcanvas-nav)
 
-jQuery plugin for creating off-canvas multi-level navigations, using ARIA.
+jQuery plugin for creating off-canvas multi-level navigations, using ARIA. [Demo](https://somewebmedia.github.io/hc-offcanvas-nav/)
 
 <img src="https://somewebmedia.github.io/hc-offcanvas-nav/hc-offcanvas-nav.png" width="440">
 
-- [Demo](https://somewebmedia.github.io/hc-offcanvas-nav/?s=400)
+
 
 ### Features
 - Multi-level menu support
@@ -23,6 +23,8 @@ jQuery plugin for creating off-canvas multi-level navigations, using ARIA.
   - The tab key loops through all of the keyboard focusable items within the offcanvas navigation
   - You can close it using <kbd>Esc</kbd>
 
+
+
 ## Quick start
 
 ### Install
@@ -32,6 +34,7 @@ This package can be installed with:
 - [npm](https://www.npmjs.com/package/hc-offcanvas-nav): `npm install --save hc-offcanvas-nav`
 
 Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-nav/releases).
+
 
 
 ## Usage
@@ -45,7 +48,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 <script>
   jQuery(document).ready(function($) {
     $('#main-nav').hcOffcanvasNav({
-      maxWidth: 980
+      disableAt: 1024
     });
   });
 </script>
@@ -77,17 +80,18 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 </nav>
 ```
 
+
 ## Options
 
 | Property | Default | Type | Description |
 |-----------|---------|-------|-------------|
-| **maxWidth** | `1024` | int / bool | Resolution below which to display the mobile menu, and hide the regular. |
+| **disableAt** | `false` | int / bool | Resolution below which to display the mobile menu, and hide the regular. |
 | **pushContent** | `false` | bool (false) / str / jQuery obj | Content element (string selector or jQuery object) that will be pushed when the navigation is open. |
-| **expanded** | `false `| bool | Initialize menu in expanded mode. It won't push content. |
+| **expanded** | `false`| bool | Initialize menu in expanded mode. It won't push content. |
 | **position** | `'left'` | str | Position on which the menu will open. Available options: `'left'`, `'right'`, `'top'` and `'bottom'`. |
 | **levelOpen** | `'overlap'` | str | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
-| **levelSpacing** | `40` | int | If levels are overlaped, this is the spacing between them, if they are expanding, this is the text indent of the submenus. |
-| **levelTitles** | `false` | bool | Show titles for submenus, which is the parent item text. Works only for overlaped levels. |
+| **levelSpacing** | `40` | int | If levels are overlaped, this is the spacing between them, if they are expanding or always open, this is the text indent of the submenus. |
+| **levelTitles** | `true` | bool | Show titles for submenus, which is the parent item name. Works only for overlaped levels. |
 | **navTitle** | `null` | str | Main navigation (first level) title. |
 | **navClass** | `''` | str | Custom navigation class. |
 | **disableBody** | `true` | bool | Disable body scroll when navigation is open. |
@@ -95,12 +99,13 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | **customToggle** | `null` | str / jQuery obj | Custom navigation toggle element. |
 | **insertClose** | `true` | bool / int | Insert navigation close button. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
 | **insertBack** | `true` | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. Works only for overlaped levels. |
-| **levelTitleAsBack** | `false` | bool | Use level titles as back labels. |
+| **levelTitleAsBack** | `true` | bool | Use level titles as back labels. |
 | **labelClose** | `'Close'` | str | Label for the close button. |
 | **labelBack** | `'Back'` | str | Label for the back buttons. |
 | **rtl** | `false` | bool | Set the content direction to right-to-left. |
 | **bodyInsert** | `'prepend'` | str | Choose to prepend or append navigation to body. |
 | **removeOriginalNav** | `false` | bool | Remove original menu from the DOM. Don't use this if planning to update the nav! |
+
 
 
 ### Methods
@@ -117,12 +122,12 @@ Methods are used to control the plugin after initialization.
 
 ```js
 var Nav = $('#main-nav').hcOffcanvasNav({
-  maxWidth: 980
+  disableAt: 980
 });
 
 // update the settings
 Nav.update({
-  maxWidth: 1024,
+  disableAt: 1024,
   navTitle: 'All pages'
 });
 
@@ -131,10 +136,12 @@ Nav.update(true);
 
 // update the settings and the DOM
 Nav.update({
-  maxWidth: 1024,
+  disableAt: 1024,
   navTitle: 'All pages'
 }, true);
 ```
+
+
 
 ### Events
 
@@ -186,6 +193,8 @@ If `closeOnClick` options is enabled for the nav, in the example below the "Add 
   </ul>
 </nav>
 ```
+
+
 
 ## License
 

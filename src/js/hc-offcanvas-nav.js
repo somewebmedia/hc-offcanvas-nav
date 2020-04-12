@@ -197,9 +197,9 @@
         '%c' + pluginName + ':'
         + '%c ' + type
         + "%c '"+ what + "'"
-        + '%c is now deprecated and will be removed. Use'
+        + '%c is now deprecated and will be removed in the future. Use'
         + "%c '" + instead + "'"
-        + '%c instead.',
+        + '%c option instead. See details about plugin usage at https://github.com/somewebmedia/hc-offcanvas-nav.',
         'color: #fa253b',
         'color: default',
         'color: #5595c6',
@@ -221,14 +221,14 @@
       const $body = $(document.body);
 
       const defaults = {
-        maxWidth:           1024,
+        disableAt:          false,
         pushContent:        false,
         expanded:           false,
         position:           'left', // left, right, top
 
         levelOpen:          'overlap', // overlap, expand, none/false
         levelSpacing:       40,
-        levelTitles:        false,
+        levelTitles:        true,
 
         navTitle:           null,
         navClass:           '',
@@ -242,14 +242,15 @@
         rtl:                false,
         insertClose:        true,
         insertBack:         true,
-        levelTitleAsBack:   false,
+        levelTitleAsBack:   true,
         labelClose:         'Close',
         labelBack:          'Back'
       };
 
-      if (options.side) {
-        deprecated('side', 'position', 'option');
-        options.position = options.side;
+      // show deprecated messages
+      if (typeof options.maxWidth !== 'undefined') {
+        deprecated('maxWidth', 'disableAt', 'option');
+        options.disableAt = options.maxWidth;
       }
 
       let Settings = $.extend({}, defaults, options);
@@ -471,10 +472,10 @@
         // init function
         const initNav = (reinit) => {
           const toggleDisplay = $toggle.css('display');
-          const mediaquery = Settings.maxWidth ? `max-width: ${Settings.maxWidth - 1}px` : false;
+          const mediaquery = Settings.disableAt ? `max-width: ${Settings.disableAt - 1}px` : false;
 
           // clear media queries from previous run
-          if (checkForUpdate('maxWidth')) {
+          if (checkForUpdate('disableAt')) {
             Styles.reset();
           }
 
