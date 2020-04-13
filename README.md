@@ -85,6 +85,8 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 
 | Property | Default | Type | Description |
 |----------|---------|------|-------------|
+| **width** | `280` | int / str | Width of the nav. Used for `left` and `right` positions. |
+| **height** | `'auto'` | int / str | Height of the nav. Used for `top` and `bottom` positions. |
 | **disableAt** | `false` | int / bool | Resolution below which to display the mobile menu, and hide the regular. |
 | **pushContent** | `false` | bool / str / jQuery obj | Content element (string selector or jQuery object) that will be pushed when the navigation is open. |
 | **expanded** | `false`| bool | Initialize menu in expanded mode. It won't push content. |
