@@ -1,8 +1,8 @@
 {
   "name": "hc-offcanvas-nav",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "jQuery plugin for creating off-canvas multi-level navigations",
-  "homepage": "http://somewebmedia.com/hc-offcanvas-nav",
+  "homepage": "https://somewebmedia.github.io/hc-offcanvas-nav/",
   "main": "dist/hc-offcanvas-nav.js",
   "sass": "src/scss/hc-offcanvas-nav.scss",
   "author": {
@@ -32,6 +32,7 @@
     "nav",
     "navigation",
     "menu",
+    "offcanvas",
     "mobile",
     "mobile-nav",
     "hamburger",
