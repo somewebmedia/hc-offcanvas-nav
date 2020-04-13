@@ -215,6 +215,7 @@
         levelOpen:          'overlap', // overlap, expand, none/false
         levelSpacing:       40,
         levelTitles:        true,
+        closeOpenLevels:    true,
 
         navTitle:           null,
         navClass:           '',
@@ -916,27 +917,39 @@
         }
 
         function open(l, i = 0) {
+          let $checkbox;
+
+          // open main nav
           openNav();
 
-          if (_nextActiveLevel) {
-            // get level and index to open from user data input
-            const $chk = $nav_container.find('.hc-chk').filter(`[value=${_nextActiveLevel}]`);
-            l = $chk.attr('data-level');
-            i = $chk.attr('data-index');
-            // reset flag
-            _nextActiveLevel = null;
+          if (!areLevelsOpenable()) {
+            return;
           }
 
-          // open sub levels
-          if (isNumeric(l) && areLevelsOpenable()) {
-            const $checkbox = $(`#${navUniqId}-${l}-${i}`);
+          if (isNumeric(l)) {
+            $checkbox = $(`#${navUniqId}-${l}-${i}`);
 
             if (!$checkbox.length) {
               console.warn(`HC Offcanvas Nav: level ${l} doesn't have index ${i}`);
               return;
             }
+          }
+          else if (_nextActiveLevel) {
+            // get level to open from ul[data-nav-active]
+            $checkbox = $nav_container.find('.hc-chk').filter(`[value=${_nextActiveLevel}]`);
+            // reset flag
+            _nextActiveLevel = null;
+          }
+          else if (Settings.closeOpenLevels === false) {
+            // get last checked level
+            $checkbox = $nav_container.find('.hc-chk').filter(':checked').last();
+          }
 
+          // open sub levels as well
+          if ($checkbox.length) {
             let levels = [];
+            l = $checkbox.attr('data-level');
+            i = $checkbox.attr('data-index');
 
             if (l > 1) {
               // get parent levels to open
@@ -1073,23 +1086,24 @@
           else open();
         }
 
-        function openLevel(l, i, trans = true) {
+        function openLevel(l, i, transform = true) {
           const $checkbox = $(`#${navUniqId}-${l}-${i}`);
           const uniqid = $checkbox.val();
           const $li = $checkbox.parent('li');
           const $wrap = $li.closest('.nav-wrapper');
           const $subWrap = $li.children('.nav-wrapper');
 
-          if (trans === false) {
+          if (transform === false) {
             // disable level transition
             $subWrap.css('transition', 'none');
           }
 
+          $checkbox.prop('checked', true); // ensure it is checked
           $wrap.addClass('sub-level-open');
           $li.addClass('level-open');
           $li.children('.nav-item-wrapper').children('[aria-controls]').attr('aria-expanded', true);
 
-          if (trans === false) {
+          if (transform === false) {
             setTimeout(() => {
               // re-enable level transition after nav open
               $subWrap.css('transition', '');
@@ -1128,7 +1142,7 @@
           const $li = $checkbox.parent('li');
           const $wrap = $li.closest('.nav-wrapper');
 
-          $checkbox.prop('checked', false);
+          $checkbox.prop('checked', false); // ensure it is unchecked
           $wrap.removeClass('sub-level-open');
           $li.removeClass('level-open');
           $li.children('.nav-item-wrapper').children('[aria-controls]').attr('aria-expanded', false);
@@ -1155,12 +1169,15 @@
         function closeLevel(l, i) {
           for (let level = l; level <= Object.keys(_indexes).length; level++) {
             if (level == l && typeof i !== 'undefined') {
+              // close specified level
               _closeLevel(l, i, true);
             }
             else {
-              // also close all sub sub levels
-              for (let index = 0; index < _indexes[level]; index++) {
-                _closeLevel(level, index, level == l);
+              if (Settings.closeOpenLevels) {
+                // also close all sub sub levels
+                for (let index = 0; index < _indexes[level]; index++) {
+                  _closeLevel(level, index, level == l);
+                }
               }
             }
           }
