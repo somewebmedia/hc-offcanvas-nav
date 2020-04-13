@@ -1153,7 +1153,7 @@
 
         // Public methods
 
-        self.settings = (option) => option ? Settings[option] : Object.assign({}, Settings);
+        self.getSettings = (option) => option ? Settings[option] : Object.assign({}, Settings);
 
         self.isOpen = isOpen;
 
