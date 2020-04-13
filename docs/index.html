@@ -43,7 +43,9 @@
                 <ul>
                   <li><a href="#">Bitcoin</a></li>
                   <li><a href="#">Ethereum</a></li>
-                  <li class="add"><a href="#" data-nav-close="false" data-add="['Litecoin','Dogecoin','Bitcoin Cash','ZCash']">Add Coin</a></li>
+                  <li class="add">
+                    <a href="#" data-nav-close="false" data-add="['Litecoin','Dogecoin','Bitcoin Cash','ZCash']">Add Coin</a>
+                  </li>
                 </ul>
               </li>
             </ul>
@@ -133,21 +135,17 @@
                       </li>
                     </ul>
                   </li>
-                  <li>
-                    <a href="#">Jewelry</a>
-                  </li>
-                  <li>
-                    <a href="#">Music</a>
-                  </li>
-                  <li>
-                    <a href="#">Grocery</a>
-                  </li>
+                  <li><a href="#">Jewelry</a></li>
+                  <li><a href="#">Music</a></li>
+                  <li><a href="#">Grocery</a></li>
                 </ul>
               </li>
               <li class="collections"><a href="#collections">Collections</a></li>
               <li class="nolink">No Link</li>
               <li class="disabled"><a href="#" disabled>Disabled Link</a></li>
-              <li class="add"><a href="#" data-nav-close="false" data-add="['Charts', 'Logs', 'Tests', 'Profile']">Add Item</a></li>
+              <li class="add">
+                <a href="#" data-nav-close="false" data-add="['Charts', 'Logs', 'Tests', 'Profile']">Add Item</a>
+              </li>
             </ul>
 
             <ul class="bottom-nav">
@@ -204,9 +202,9 @@
 
               <div><a href="#" data-demo="{position:'right'}" class="button">Right</a></div>
 
-              <div><a href="#" data-demo="{position:'top'}" class="button">Top</a></div>
+              <div><a href="#" data-demo="{position:'top', levelSpacing:0}" class="button">Top</a></div>
 
-              <div><a href="#" data-demo="{position:'bottom'}" class="button">Bottom</a></div>
+              <div><a href="#" data-demo="{position:'bottom', levelSpacing:0}" class="button">Bottom</a></div>
 
             </div>
 
@@ -265,15 +263,19 @@
           var $main_nav = $('#main-nav');
           var $toggle = $('.toggle');
 
-          var defaultData = {
+          var defaultOptions = {
             disableAt: false,
             customToggle: $toggle,
+            levelSpacing: 40,
             navTitle: 'All Categories',
             levelTitles: true,
             levelTitleAsBack: true,
             pushContent: '#container',
             insertClose: 2
           };
+
+          // call our plugin
+          var Nav = $main_nav.hcOffcanvasNav(defaultOptions);
 
           // add new items to original nav
           $main_nav.find('li.add').children('a').on('click', function() {
@@ -294,9 +296,6 @@
 
             Nav.update(true);
           });
-
-          // call our plugin
-          var Nav = $main_nav.hcOffcanvasNav(defaultData);
 
           // demo settings update
 

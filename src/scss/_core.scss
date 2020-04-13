@@ -1,7 +1,5 @@
 $hc-offcanvas-nav-transition-duration: .4s !default;
 $hc-offcanvas-nav-transition-timing-function: ease !default;
-$hc-offcanvas-nav-container-width: 240px !default;
-$hc-offcanvas-nav-container-height: auto !default;
 
 html.hc-nav-yscroll {
   overflow-y: scroll;
@@ -32,7 +30,6 @@ body.hc-nav-open {
     position: fixed;
     z-index: 9998;
     top: 0;
-    width: $hc-offcanvas-nav-container-width;
     height: 100%;
     max-width: 100%;
     max-height: 100%;
@@ -241,7 +238,6 @@ body.hc-nav-open {
 
     .nav-container {
       left: 0;
-      transform: translate3d(-$hc-offcanvas-nav-container-width, 0, 0);
     }
 
     &.nav-levels-overlap {
@@ -261,7 +257,6 @@ body.hc-nav-open {
 
     .nav-container {
       right: 0;
-      transform: translate3d($hc-offcanvas-nav-container-width, 0, 0);
     }
 
     &.nav-levels-overlap {
@@ -275,11 +270,6 @@ body.hc-nav-open {
     }
   }
 
-  $hc-container-y: $hc-offcanvas-nav-container-height;
-  @if $hc-offcanvas-nav-container-height == auto {
-    $hc-container-y: 100%;
-  }
-
   // Top
   &.nav-position-top {
     top: 0;
@@ -287,8 +277,6 @@ body.hc-nav-open {
     .nav-container {
       top: 0;
       width: 100%;
-      height: $hc-offcanvas-nav-container-height;
-      transform: translate3d(0, -$hc-container-y, 0);
     }
 
     &.nav-levels-overlap {
@@ -311,8 +299,6 @@ body.hc-nav-open {
       top: auto;
       bottom: 0;
       width: 100%;
-      height: $hc-offcanvas-nav-container-height;
-      transform: translate3d(0, $hc-container-y, 0);
     }
 
     &.nav-levels-overlap {
