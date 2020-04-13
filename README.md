@@ -111,42 +111,120 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 
 
 
-### Methods
+## Methods
 
-Methods are used to control the plugin after initialization.
-
-| Method | Accepts | Description |
-|--------|---------|-------------|
-| **getSettings** | str | Returns current settings, or a particular setting if you specify it. |
-| **isOpen** | | Checks if the nav is open, and returns boolean. |
-| **update** | obj, bool | Updates the settings with the new ones, and/or updates the internal state of the plugin making the DOM changes based on the original nav. |
-| **open** | | Opens the nav. |
-| **close** | | Closes the nav. |
+The HC Off-canvas Nav API offers a couple of methods to control the offcanvas and are publicly available to all active instances.
 
 ```js
-var Nav = $('#main-nav').hcOffcanvasNav({
-  disableAt: 980
-});
+var Nav = $('#main-nav').hcOffcanvasNav();
+```
 
-// update the settings
+### .getSettings()
+
+Returns current settings.
+
+```js
+var currentSettings = Nav.getSettings();
+```
+
+### .isOpen()
+
+Checks if the nav is open, and returns boolean.
+
+```js
+if (Nav.isOpen()) {
+  // do something
+}
+```
+
+### .update(options, updateDOM)
+
+Updates just the specified settings with the new ones.
+
+```js
 Nav.update({
   disableAt: 1024,
   navTitle: 'All pages'
 });
+```
 
-// update the nav DOM
+Updates nav DOM. You don't have to pass empty settings object, the method is smart. Use this when original nav has been altered.
+
+```js
 Nav.update(true);
+```
 
-// update the settings and the DOM
+Updates both settings and nav DOM. Use this when original nav was changed and you also want to update some specific settings.
+
+```js
 Nav.update({
   disableAt: 1024,
   navTitle: 'All pages'
 }, true);
 ```
 
+### .open(level, index)
 
+Opens the nav if closed.
 
-### Events
+```js
+Nav.open();
+```
+
+Open the nav and also a specific sub menu. Each level sub menu has its own index that is relative to that level, not the parent menu.
+
+```js
+Nav.open(2, 1);
+```
+Above code will open the nested menu in the example structure bellow:
+
+```html
+<nav>
+  <ul><!-- Level: 0 -->
+    <li></li>
+    <li>
+      <ul><!-- Level: 1, Index 0 -->
+        <li>
+          <ul><!-- Level: 2, Index: 0 -->
+            <li></li>
+            <li></li>
+          </ul>
+        </li>
+        <li>
+          
+          <ul><!-- Level: 2, Index: 1 -->
+            <li></li>
+            <li></li>
+          </ul>
+          
+        </li>
+      </ul>
+    </li>
+    <li></li>
+    <li>
+      <ul><!-- Level: 1, Index 1 -->
+        <li>
+          <ul><!-- Level: 2, Index: 2 -->
+            <li></li>
+            <li></li>
+          </ul>
+        </li>
+        <li></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+```
+
+### .close()
+
+Closes the nav if open.
+
+```js
+Nav.close();
+```
+
+## Events
 
 | Event | Description |
 |-------|-------------|
@@ -174,7 +252,8 @@ Nav.on('close.once', function(event, settings) {
 });
 ```
 
-### Data Attributes
+
+## Data Attributes
 
 | Attr | Accepts | HTML Element | Description |
 |------|---------|--------------|-------------|
