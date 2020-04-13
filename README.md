@@ -237,17 +237,17 @@ All events return Event object, and the plugin Settings object.
 ```js
 var Nav = $('#main-nav').hcOffcanvasNav();
 
-// change nav open side after each close
+// change nav open position after each close
 Nav.on('close', function(event, settings) {
   Nav.update({
-    side: settings.side === 'left' ? 'right' : 'left'
+    position: settings.position === 'left' ? 'right' : 'left'
   });
 });
 
-// will change nav open side only once
+// will change nav open position only once
 Nav.on('close.once', function(event, settings) {
   Nav.update({
-    side: settings.side === 'left' ? 'right' : 'left'
+    position: settings.position === 'left' ? 'right' : 'left'
   });
 });
 ```
