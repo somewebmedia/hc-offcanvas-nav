@@ -948,7 +948,7 @@
         }
 
         function isOpen() {
-          return $nav.hasClass(navOpenClass);
+          return _open;
         }
 
         function whatLevelIsOpen() {
@@ -960,8 +960,11 @@
           }
         }
 
-        function open(l, i = 0) {
-          let $checkbox;
+        function open(l, i) {
+          // check if already open
+          if (isOpen() && typeof i === 'undefined') {
+            return;
+          }
 
           // open main nav
           openNav();
@@ -970,7 +973,9 @@
             return;
           }
 
-          if (typeof l === 'number') {
+          let $checkbox;
+
+          if (typeof l === 'number' && typeof i === 'number') {
             $checkbox = $(`#${navUniqId}-${l}-${i}`);
 
             if (!$checkbox.length) {
@@ -1073,6 +1078,11 @@
         }
 
         function closeNav() {
+          // check if already closed
+          if (!isOpen()) {
+            return;
+          }
+
           _open = false;
 
           if ($push_content) {
@@ -1248,7 +1258,7 @@
 
         // Public methods
 
-        self.getSettings = (option) => option ? Settings[option] : Object.assign({}, Settings);
+        self.getSettings = () => Object.assign({}, Settings);
 
         self.isOpen = isOpen;
 
