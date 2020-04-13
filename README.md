@@ -207,9 +207,9 @@ Nav.on('close.once', function(event, settings) {
 
 This package comes with [Gulp](https://gulpjs.com/). The following tasks are available:
 
-  * `default` compiles the JS and SCSS into `/dist` and builds the Demos into `/docs`.
-  * `demo` executes `default` task and opens the Demo html page.
-  * `watch` watches source JS, SCSS and Demo files and builds them automatically whenever you save.
+  * `default` compiles the JS and SCSS into `/dist` and builds the demos into `/docs`.
+  * `demo` executes `default` task and opens the demo html page.
+  * `watch` watches source JS and SCSS files and builds them automatically whenever you save.
 
 You can pass a `--dev` command if you don't want the compiled JS and Css to be minified.
 
