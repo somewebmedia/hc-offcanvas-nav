@@ -1,6 +1,6 @@
 {
   "name": "hc-offcanvas-nav",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "jQuery plugin for creating off-canvas multi-level navigations",
   "homepage": "https://somewebmedia.github.io/hc-offcanvas-nav/",
   "main": "dist/hc-offcanvas-nav.js",
