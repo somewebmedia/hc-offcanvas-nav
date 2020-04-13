@@ -84,10 +84,10 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 ## Options
 
 | Property | Default | Type | Description |
-|-----------|---------|-------|-------------|
+|----------|---------|------|-------------|
 | **disableAt** | `false` | int / bool | Resolution below which to display the mobile menu, and hide the regular. |
 | **pushContent** | `false` | bool / str / jQuery obj | Content element (string selector or jQuery object) that will be pushed when the navigation is open. |
-| [**expanded**](/#expanded) | `false`| bool | Initialize menu in expanded mode. It won't push content. |
+| **expanded** | `false`| bool | Initialize menu in expanded mode. It won't push content. |
 | **position** | `'left'` | str | Position on which the menu will open. Available options: `'left'`, `'right'`, `'top'` and `'bottom'`. |
 | **levelOpen** | `'overlap'` | str | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
 | **closeOpenLevels** | `true` | bool | Should all open sub levels be closed when the nav closes. |
@@ -114,7 +114,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 Methods are used to control the plugin after initialization.
 
 | Method | Accepts | Description |
-|---------|---------|--------------|
+|--------|---------|-------------|
 | **getSettings** | str | Returns current settings, or a particular setting if you specify it. |
 | **isOpen** | | Checks if the nav is open, and returns boolean. |
 | **update** | obj, bool | Updates the settings with the new ones, and/or updates the internal state of the plugin making the DOM changes based on the original nav. |
@@ -147,7 +147,7 @@ Nav.update({
 ### Events
 
 | Event | Description |
-|---------|--------------|
+|-------|-------------|
 | **open** | Triggers each time when the nav is opened. |
 | **close** | Triggers each time when the nav is closed. |
 | **close.once** | Triggers only the first time the nav is closed, and than it detaches itself. |
@@ -175,8 +175,8 @@ Nav.on('close.once', function(event, settings) {
 ### Data Attributes
 
 | Attr | Accepts | HTML Element | Description |
-|-------|--------|-------------|
-| **data-nav-active** | | `<ul>` | Will open specified sub menu the next time nav opens. Works with [`expanded`](/#expanded) option.  |
+|------|---------|--------------|-------------|
+| **data-nav-active** | | `<ul>` | Will open specified sub menu the next time nav opens. Works with [`expanded`](#options) option.  |
 | **data-nav-custom-content** | | `<li>` | Attached on the list items. Will clone item's content as is. |
 | **data-nav-close** | bool | `<a>` | Attached on the item links. Tells the nav if it needs to be closed on click or not. |
 
