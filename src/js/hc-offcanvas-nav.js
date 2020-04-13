@@ -290,6 +290,7 @@
 
         let _open = false; // is nav currently open
         let _initExpanded = false; // should nav be opened on init
+        let _nextActiveLevel = null; // level that should be open next
         let _top = 0; // to remember scroll position
         let _containerWidth = 0;
         let _containerHeight = 0;
@@ -461,8 +462,8 @@
           const toggleDisplay = $toggle.css('display');
           const mediaquery = Settings.disableAt ? `max-width: ${Settings.disableAt - 1}px` : false;
 
-          // clear media queries from previous run
           if (checkForUpdate('disableAt')) {
+            // clear media queries from previous run
             Styles.reset();
           }
 
@@ -557,6 +558,13 @@
                 classes: $ul.attr('class') || null,
                 items: []
               };
+
+              // this submenu should be opened on next open
+              if (typeof $ul.attr('data-nav-active') !== 'undefined') {
+                _nextActiveLevel = id;
+                // remove data attr
+                $ul.removeAttr('data-nav-active');
+              }
 
               $ul.children('li').each(function() {
                 const $li = $(this);
@@ -871,8 +879,8 @@
 
         // opened nav right away
         if (Settings.expanded === true) {
-          _initExpanded = true;
-          openNav();
+          _initExpanded = true; // set flag
+          open();
         }
 
         // Private methods
@@ -909,6 +917,15 @@
 
         function open(l, i = 0) {
           openNav();
+
+          if (_nextActiveLevel) {
+            // get level and index to open from user data input
+            const $chk = $nav_container.find('.hc-chk').filter(`[value=${_nextActiveLevel}]`);
+            l = $chk.attr('data-level');
+            i = $chk.attr('data-index');
+            // reset flag
+            _nextActiveLevel = null;
+          }
 
           // open sub levels
           if (isNumeric(l) && areLevelsOpenable()) {
@@ -1053,7 +1070,7 @@
           e.stopPropagation();
 
           if (_open) closeNav();
-          else openNav();
+          else open();
         }
 
         function openLevel(l, i, trans = true) {
