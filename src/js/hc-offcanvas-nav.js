@@ -965,7 +965,8 @@
           }
 
           if (Settings.disableBody) {
-            _top = $html.scrollTop() || $body.scrollTop(); // remember scroll position
+            // remember scroll position
+            _top = $html.scrollTop() || $body.scrollTop();
 
             if (hasScrollBar()) {
               $html.addClass('hc-nav-yscroll');
@@ -974,6 +975,7 @@
             $body.addClass('hc-nav-open');
 
             if (_top) {
+              // leave page in place
               $body.css('top', -_top);
             }
           }
@@ -1024,10 +1026,11 @@
             $html.removeClass('hc-nav-yscroll');
 
             if (_top) {
+              // reset page position
               $body.css('top', '').scrollTop(_top);
               $html.scrollTop(_top);
-
-              _top = 0; // reset top
+              // reset top
+              _top = 0;
             }
           }
 
@@ -1040,7 +1043,7 @@
             // trigger close event
             self.trigger('close.$', $.extend({}, Settings));
 
-            // only trigger close event once and detach it
+            // only trigger this close event once and detach it
             self.trigger('close.once', $.extend({}, Settings)).off('close.once');
           }, _transitionDuration);
         }
