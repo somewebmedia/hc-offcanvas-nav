@@ -1173,7 +1173,7 @@
               _closeLevel(l, i, true);
             }
             else {
-              if (Settings.closeOpenLevels) {
+              if ((l !== 0 && !Settings.closeOpenLevels) || (l === 0 && Settings.closeOpenLevels)) {
                 // also close all sub sub levels
                 for (let index = 0; index < _indexes[level]; index++) {
                   _closeLevel(level, index, level == l);
