@@ -13,6 +13,7 @@
 
 (function($, window) {
   const document = window.document;
+  const $window = $(window);
   const $html = $(document.getElementsByTagName('html')[0]);
   const $document = $(document);
 
@@ -397,7 +398,10 @@
 
         const untrapFocus = () => {
           $document.off(keydownEventName);
-          $toggle.focus();
+
+          setTimeout(() => {
+            $toggle.focus();
+          }, _transitionDuration);
         };
 
         const calcNav = () => {
@@ -847,6 +851,11 @@
               $close
                 .children('a')
                 .on('click', preventClick(closeNav))
+                .on('keydown', (e) => {
+                  if (e.key === 'Enter' || e.keyCode === 13) {
+                    untrapFocus();
+                  }
+                })
                 .wrap('<div class="nav-item-wrapper">');
 
               if (Settings.insertClose === true) {
@@ -865,6 +874,8 @@
 
             if (level === 0) {
               closeNav();
+              // put focus back to trigger
+              untrapFocus();
             }
             else {
               closeLevel(level);
@@ -874,7 +885,7 @@
         };
 
         $toggle
-          // ARIA for toggle
+          // ARIA
           .attr('role', 'button')
           .attr('aria-controls', navUniqId)
           // make nav opening keyboard accessible
@@ -1030,7 +1041,7 @@
 
           if (Settings.disableBody) {
             // remember scroll position
-            _top = $html.scrollTop() || $body.scrollTop();
+            _top = $window.scrollTop() || $html.scrollTop() || $body.scrollTop();
 
             if (hasScrollBar()) {
               $html.addClass('hc-nav-yscroll');
@@ -1080,7 +1091,7 @@
           else if (areLevelsOpenable()) {
             // close all levels when nav closes
             _closeLevelsTimeout = setTimeout(() => {
-              // keep in timeout so we can prevent it if nav opens again before it's closed
+              // keep timeout so we can prevent it if nav opens again before it's closed
               closeLevel(0);
             }, Settings.levelOpen === 'expand' ? _transitionDuration : 0);
           }
@@ -1090,16 +1101,23 @@
             $html.removeClass('hc-nav-yscroll');
 
             if (_top) {
-              // reset page position
-              $body.css('top', '').scrollTop(_top);
+              $body.css('top', '').scrollTop(_top)
               $html.scrollTop(_top);
+
+              // for some reason we need timeout if position is bottom
+              if (Settings.position === 'bottom') {
+                const t = _top;
+                setTimeout(() => {
+                  // reset page position
+                  $body.scrollTop(t);
+                  $html.scrollTop(t);
+                }, 0);
+              }
+
               // reset top
               _top = 0;
             }
           }
-
-          // put focus back to trigger
-          untrapFocus();
 
           setTimeout(() => {
             $nav.css('visibility', '');
