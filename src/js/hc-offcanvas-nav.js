@@ -24,6 +24,8 @@
 
   const isNumeric = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
+  const formatSizeVal = (n) => (n === 'auto') ? n : isNumeric(n) ? n + 'px' : n;
+
   const toMs = (s) => parseFloat(s) * (/\ds$/.test(s) ? 1000 : 1);
 
   const ID = () => Math.random().toString(36).substr(2);
@@ -207,6 +209,9 @@
       const $body = $(document.body);
 
       const defaults = {
+        width:              280,
+        height:             'auto',
+
         disableAt:          false,
         pushContent:        false,
         expanded:           false,
@@ -306,7 +311,7 @@
         const _focusEls = []; // array to store keyboard accessed items
 
         // add classes to original menu so we know it's connected to our copy
-        $originalNav.addClass(`hc-nav ${navUniqId}`);
+        $originalNav.addClass(`hc-nav-original ${navUniqId}`);
 
         if (!Settings.customToggle) {
           // our toggle
@@ -462,16 +467,47 @@
         const initNav = (reinit) => {
           const toggleDisplay = $toggle.css('display');
           const mediaquery = Settings.disableAt ? `max-width: ${Settings.disableAt - 1}px` : false;
+          const width = formatSizeVal(Settings.width);
+          const height = formatSizeVal(Settings.height);
 
-          if (checkForUpdate('disableAt')) {
+          if (width.indexOf('px') !== -1) {
+            _containerWidth = parseInt(width);
+          }
+
+          if (height.indexOf('px') !== -1) {
+            _containerHeight = parseInt(height);
+          }
+
+          if (checkForUpdate(['disableAt', 'position'])) {
             // clear media queries from previous run
             Styles.reset();
           }
 
-          // create main styles
+          // create styles
           Styles.add(`.hc-offcanvas-nav.${navUniqId}`, 'display: block', mediaquery);
+
+          // hide original
+          Styles.add(`.hc-nav-original.${navUniqId}`, 'display: none', mediaquery);
+
+          // trigger
           Styles.add(`.hc-nav-trigger.${navUniqId}`, `display: ${toggleDisplay && toggleDisplay !== 'none' ? toggleDisplay : 'block'}`, mediaquery);
-          Styles.add(`.hc-nav.${navUniqId}`, 'display: none', mediaquery);
+
+          if (['left', 'right'].indexOf(Settings.position) !== -1) {
+            // container width
+            Styles.add(`.hc-offcanvas-nav.${navUniqId} .nav-container`, `width: ${width}`);
+          }
+          else {
+            // container height
+            Styles.add(`.hc-offcanvas-nav.${navUniqId} .nav-container`, `height: ${height}`);
+          }
+
+          // container transform
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-left .nav-container`, `transform: translate3d(-${width === 'auto' ? '100%' : width}, 0, 0);`);
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-right .nav-container`, `transform: translate3d(${width === 'auto' ? '100%' : width}, 0, 0);`);
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-top .nav-container`, `transform: translate3d(0, -${height === 'auto' ? '100%' : height}, 0);`);
+          Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-bottom .nav-container`, `transform: translate3d(0, ${height === 'auto' ? '100%' : height}, 0);`);
+
+          // wrappers
           Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-left li.level-open > .nav-wrapper`, `transform: translate3d(-${Settings.levelSpacing}px,0,0)`, mediaquery);
           Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-right li.level-open > .nav-wrapper`, `transform: translate3d(${Settings.levelSpacing}px,0,0)`, mediaquery);
           Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-top li.level-open > .nav-wrapper`, `transform: translate3d(0,-${Settings.levelSpacing}px,0)`, mediaquery);
