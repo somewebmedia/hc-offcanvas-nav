@@ -16,29 +16,17 @@
   const $html = $(document.getElementsByTagName('html')[0]);
   const $document = $(document);
 
-  const hasScrollBar = () => {
-    return document.documentElement.scrollHeight > document.documentElement.clientHeight;
-  };
+  const hasScrollBar = () => document.documentElement.scrollHeight > document.documentElement.clientHeight;
 
-  const isIos = (() => {
-    return ((/iPad|iPhone|iPod/.test(navigator.userAgent)) || (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))) && !window.MSStream;
-  })();
+  const isIos = (() => ((/iPad|iPhone|iPod/.test(navigator.userAgent)) || (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))) && !window.MSStream)();
 
-  const isTouchDevice = (() => {
-    return 'ontouchstart' in window || navigator.maxTouchPoints || (window.DocumentTouch && document instanceof DocumentTouch);
-  })();
+  const isTouchDevice = (() => 'ontouchstart' in window || navigator.maxTouchPoints || (window.DocumentTouch && document instanceof DocumentTouch))();
 
-  const isNumeric = (n) => {
-    return !isNaN(parseFloat(n)) && isFinite(n);
-  };
+  const isNumeric = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
-  const toMs = (s) => {
-    return parseFloat(s) * (/\ds$/.test(s) ? 1000 : 1);
-  };
+  const toMs = (s) => parseFloat(s) * (/\ds$/.test(s) ? 1000 : 1);
 
-  const ID = () => {
-    return Math.random().toString(36).substr(2);
-  };
+  const ID = () => Math.random().toString(36).substr(2);
 
   const stopPropagation = (e) => e.stopPropagation();
 
@@ -160,9 +148,7 @@
     }
   };
 
-  const getAxis = (position) => {
-    return ['left', 'right'].indexOf(position) !== -1 ? 'x' : 'y';
-  };
+  const getAxis = (position) => ['left', 'right'].indexOf(position) !== -1 ? 'x' : 'y';
 
   const setTransform = (() => {
     const transform = browserPrefix('transform');
@@ -1167,9 +1153,7 @@
 
         // Public methods
 
-        self.settings = (option) => {
-          return option ? Settings[option] : Object.assign({}, Settings);
-        };
+        self.settings = (option) => option ? Settings[option] : Object.assign({}, Settings);
 
         self.isOpen = isOpen;
 
