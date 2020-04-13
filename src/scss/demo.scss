@@ -1,4 +1,3 @@
-$hc-offcanvas-nav-container-width: 280px;
 $background: #243949;
 $white: #fffce1;
 $yellow: #dab977;
@@ -477,6 +476,19 @@ main {
     &.disabled > .nav-item-wrapper .nav-item::before {
       @include mi;
       content: 'block';
+    }
+  }
+
+  &.nav-position-top,
+  &.nav-position-bottom {
+
+    ul.bottom-nav {
+      position: relative;
+      border-top: none;
+    }
+
+    .nav-wrapper-0 > .nav-content {
+      padding-bottom: 0;
     }
   }
 
