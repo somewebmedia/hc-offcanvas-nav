@@ -874,7 +874,6 @@
 
             if (level === 0) {
               closeNav();
-              // put focus back to trigger
               untrapFocus();
             }
             else {
@@ -933,8 +932,8 @@
 
         function checkboxChange() {
           const $checkbox = $(this);
-          const l = $checkbox.attr('data-level');
-          const i = $checkbox.attr('data-index');
+          const l = $checkbox.data('level');
+          const i = $checkbox.data('index');
 
           if ($checkbox.prop('checked')) {
             openLevel(l, i);
@@ -957,7 +956,7 @@
             return isOpen() ? 0 : false;
           }
           else {
-            return $nav_container.find('.hc-chk').filter(`[value=${_openLevels[_openLevels.length - 1]}]`).attr('data-level');
+            return $nav_container.find('.hc-chk').filter(`[value=${_openLevels[_openLevels.length - 1]}]`).data('level');
           }
         }
 
@@ -971,7 +970,7 @@
             return;
           }
 
-          if (isNumeric(l)) {
+          if (typeof l === 'number') {
             $checkbox = $(`#${navUniqId}-${l}-${i}`);
 
             if (!$checkbox.length) {
@@ -991,21 +990,21 @@
           }
 
           // open sub levels as well
-          if ($checkbox.length) {
+          if ($checkbox && $checkbox.length) {
             let levels = [];
-            l = $checkbox.attr('data-level');
-            i = $checkbox.attr('data-index');
+            l = $checkbox.data('level');
+            i = $checkbox.data('index');
 
             if (l > 1) {
               // get parent levels to open
               $checkbox.parents('.nav-wrapper').each(function() {
                 const $this = $(this);
-                const level = $this.attr('data-level');
+                const level = $this.data('level');
 
                 if (level > 0) {
                   levels.push({
                     level: level,
-                    index: $this.attr('data-index')
+                    index: $this.data('index')
                   });
                 }
               });
@@ -1190,6 +1189,9 @@
 
         const _closeLevel = (l, i, transform) => {
           const $checkbox = $(`#${navUniqId}-${l}-${i}`);
+
+          if (!$checkbox.length) return;
+
           const uniqid = $checkbox.val();
           const $li = $checkbox.parent('li');
           const $wrap = $li.closest('.nav-wrapper');
@@ -1221,12 +1223,14 @@
         function closeLevel(l, i) {
           for (let level = l; level <= Object.keys(_indexes).length; level++) {
             if (level == l && typeof i !== 'undefined') {
-              // close specified level
+              // close specified level with index
               _closeLevel(l, i, true);
             }
             else {
-              if ((l !== 0 && !Settings.closeOpenLevels) || (l === 0 && Settings.closeOpenLevels)) {
-                // also close all sub sub levels
+              if (l === 0 && !Settings.closeOpenLevels) {
+                // do nothing
+              } else {
+                // close all sub sub levels
                 for (let index = 0; index < _indexes[level]; index++) {
                   _closeLevel(level, index, level == l);
                 }
