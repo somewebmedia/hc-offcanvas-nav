@@ -289,6 +289,7 @@
         // this is our nav
         const $nav = $('<nav role="navigation">').on('click', stopPropagation); // prevent menu close on self click
         const $nav_container = $('<div class="nav-container">').appendTo($nav);
+
         let $toggle = null;
         let $push_content = null;
 
@@ -306,7 +307,6 @@
         let _closeLevelsTimeout = null;
         let _indexes = {}; // object with level indexes
         const _openLevels = []; // array with current open levels ids
-
         let _keyboard = false;
         const _focusEls = []; // array to store keyboard accessed items
 
@@ -326,37 +326,7 @@
             .on('click', toggleNav);
         }
 
-        // ARIA for toggle
-        $toggle
-          .attr('role', 'button')
-          .attr('aria-controls', navUniqId);
-
-        // make nav opening keyboard accessible
-        $toggle.on('keydown', (e) => {
-          if (e.key === 'Enter' || e.keyCode === 13) {
-            // trap focus inside nav
-            setTimeout(() => {
-              trapFocus(0, 0);
-            }, 0);
-          }
-        });
-
-        // close levels on escape
-        $document.on('keydown', (e) => {
-          if (isOpen() && (e.key === 'Escape' || e.keyCode === 27)) {
-            const level = whatLevelIsOpen();
-
-            if (level === 0) {
-              closeNav();
-            }
-            else {
-              closeLevel(level);
-              trapFocus(null, level-1);
-            }
-          }
-        });
-
-        function trapFocus(n, l, i) {
+        const trapFocus = (n, l, i) => {
           if (typeof l !== 'number' || (typeof n !== 'number' && !_focusEls.length)) {
             return;
           }
@@ -448,10 +418,6 @@
           // clear our 'none' inline transition
           $nav_container.css('transition', '');
 
-          pageContentTransition();
-        };
-
-        const pageContentTransition = () => {
           _transitionProperty = $nav_container.css('transition-property').split(',')[0];
           _transitionDuration = toMs($nav_container.css('transition-duration').split(',')[0]);
           _transitionFunction = $nav_container.css('transition-timing-function').split(',')[0];
@@ -618,7 +584,7 @@
 
                 let uniqid = null;
 
-                // save unique identifier for remembering open menus
+                // save unique identifier for remembering open sub menus
                 if ($subnav.length) {
                   if (!$li.data('hc-uniqid')) {
                     uniqid = ID();
@@ -851,11 +817,12 @@
                 const $children_menus = $content.children('ul');
                 const backLabel = (Settings.levelTitleAsBack ? (backTitle || Settings.labelBack) : Settings.labelBack) || '';
                 let $back = $(`<li class="nav-back"><a href="#" role="menuitem" tabindex="0">${backLabel}<span></span></a></li>`);
+                const closeThisLevel = () => closeLevel(level, backIndex);
 
                 $back
                   .children('a')
-                  .on('click', preventClick(() => closeLevel(level, backIndex)))
-                  .on('keydown', function(e) {
+                  .on('click', preventClick(closeThisLevel))
+                  .on('keydown', (e) => {
                     if (e.key === 'Enter' || e.keyCode === 13) {
                       // remember we are accessing via keyboard
                       _keyboard = true;
@@ -891,6 +858,37 @@
             }
           }
         };
+
+        const checkEsc = (e) => {
+          if (isOpen() && (e.key === 'Escape' || e.keyCode === 27)) {
+            const level = whatLevelIsOpen();
+
+            if (level === 0) {
+              closeNav();
+            }
+            else {
+              closeLevel(level);
+              trapFocus(null, level-1);
+            }
+          }
+        };
+
+        $toggle
+          // ARIA for toggle
+          .attr('role', 'button')
+          .attr('aria-controls', navUniqId)
+          // make nav opening keyboard accessible
+          .on('keydown', (e) => {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+              // trap focus inside nav
+              setTimeout(() => {
+                trapFocus(0, 0);
+              }, 0);
+            }
+          });
+
+        // close levels on escape
+        $document.on('keydown', checkEsc);
 
         // init nav
         initNav();
@@ -1122,14 +1120,14 @@
           else open();
         }
 
-        function openLevel(l, i, transform = true) {
+        function openLevel(l, i, transition = true) {
           const $checkbox = $(`#${navUniqId}-${l}-${i}`);
           const uniqid = $checkbox.val();
           const $li = $checkbox.parent('li');
           const $wrap = $li.closest('.nav-wrapper');
           const $subWrap = $li.children('.nav-wrapper');
 
-          if (transform === false) {
+          if (transition === false) {
             // disable level transition
             $subWrap.css('transition', 'none');
           }
@@ -1139,7 +1137,7 @@
           $li.addClass('level-open');
           $li.children('.nav-item-wrapper').children('[aria-controls]').attr('aria-expanded', true);
 
-          if (transform === false) {
+          if (transition === false) {
             setTimeout(() => {
               // re-enable level transition after nav open
               $subWrap.css('transition', '');
