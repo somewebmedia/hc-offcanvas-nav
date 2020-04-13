@@ -210,7 +210,7 @@
         disableAt:          false,
         pushContent:        false,
         expanded:           false,
-        position:           'left', // left, right, top
+        position:           'left', // left, right, top, bottom
 
         levelOpen:          'overlap', // overlap, expand, none/false
         levelSpacing:       40,
@@ -280,21 +280,17 @@
         const Styles = printStyle(`hc-offcanvas-${navCount}-style`);
         const keydownEventName = 'keydown.hc-offcanvas-nav';
 
-        let $toggle;
-
-        // add classes to original menu so we know it's connected to our copy
-        $originalNav.addClass(`hc-nav ${navUniqId}`);
-
         // this is our nav
         const $nav = $('<nav role="navigation">').on('click', stopPropagation); // prevent menu close on self click
         const $nav_container = $('<div class="nav-container">').appendTo($nav);
+        let $toggle = null;
         let $push_content = null;
 
         let Model = {};
 
-        let _open = false;
-        let _initedExpanded = false;
-        let _top = 0;
+        let _open = false; // is nav currently open
+        let _initExpanded = false; // should nav be opened on init
+        let _top = 0; // to remember scroll position
         let _containerWidth = 0;
         let _containerHeight = 0;
         let _transitionProperty;
@@ -307,13 +303,17 @@
         let _keyboard = false;
         const _focusEls = []; // array to store keyboard accessed items
 
-        // toggle
+        // add classes to original menu so we know it's connected to our copy
+        $originalNav.addClass(`hc-nav ${navUniqId}`);
+
         if (!Settings.customToggle) {
+          // our toggle
           $toggle = $(`<a href="#" aria-label="Open Menu" class="hc-nav-trigger ${navUniqId}"><span></span></a>`)
             .on('click', toggleNav);
           $originalNav.after($toggle);
         }
         else {
+          // user toggle
           $toggle = $(Settings.customToggle)
             .addClass(`hc-nav-trigger ${navUniqId}`)
             .on('click', toggleNav);
@@ -376,7 +376,7 @@
           if (!$focusable.length) {
             return;
           }
-          console.log($focusable, l, i)
+
           const $first = $focusable.first();
           const $last = $focusable.last();
 
@@ -420,7 +420,7 @@
 
         const untrapFocus = () => {
           $document.off(keydownEventName);
-          $toggle[0].focus();
+          $toggle.focus();
         };
 
         const calcNav = () => {
@@ -560,7 +560,7 @@
 
               $ul.children('li').each(function() {
                 const $li = $(this);
-                const customContent = typeof $li.data('nav-custom-content') !== 'undefined';
+                const customContent = typeof $li.attr('data-nav-custom-content') !== 'undefined';
                 const $content = customContent ? $li.children() : $li.children().filter(function() {
                   const $this = $(this);
                   return $this.is(':not(ul)') && !$this.find('ul').length;
@@ -588,7 +588,7 @@
                 nav.items.push({
                   id: uniqid,
                   classes: $li.attr('class') || null,
-                  $content: $content,
+                  content: $content,
                   subnav: $subnav.length ? getModel($subnav, uniqid) : [],
                   custom: customContent
                 });
@@ -636,7 +636,7 @@
               }
 
               $.each(nav.items, (i_item, item) => {
-                const $item_content = item.$content;
+                const $item_content = item.content;
 
                 // item has custom content
                 if (item.custom) {
@@ -869,9 +869,9 @@
           $body.append($nav);
         }
 
-        // show opened nav
+        // opened nav right away
         if (Settings.expanded === true) {
-          _initedExpanded = true;
+          _initExpanded = true;
           openNav();
         }
 
@@ -879,8 +879,8 @@
 
         function checkboxChange() {
           const $checkbox = $(this);
-          const l = Number($checkbox.attr('data-level'));
-          const i = Number($checkbox.attr('data-index'));
+          const l = $checkbox.attr('data-level');
+          const i = $checkbox.attr('data-index');
 
           if ($checkbox.prop('checked')) {
             openLevel(l, i);
@@ -903,14 +903,15 @@
             return isOpen() ? 0 : false;
           }
           else {
-            return $nav_container.find('.hc-chk').filter(`[value=${_openLevels[_openLevels.length - 1]}]`).data('level');
+            return $nav_container.find('.hc-chk').filter(`[value=${_openLevels[_openLevels.length - 1]}]`).attr('data-level');
           }
         }
 
         function open(l, i = 0) {
           openNav();
 
-          if (areLevelsOpenable() && typeof l === 'number') {
+          // open sub levels
+          if (isNumeric(l) && areLevelsOpenable()) {
             const $checkbox = $(`#${navUniqId}-${l}-${i}`);
 
             if (!$checkbox.length) {
@@ -924,12 +925,12 @@
               // get parent levels to open
               $checkbox.parents('.nav-wrapper').each(function() {
                 const $this = $(this);
-                const level = $this.data('level');
+                const level = $this.attr('data-level');
 
                 if (level > 0) {
                   levels.push({
                     level: level,
-                    index: $this.data('index')
+                    index: $this.attr('data-index')
                   });
                 }
               });
@@ -982,9 +983,10 @@
             setTransform($push_content, transformVal, Settings.position);
           }
 
-          if (_initedExpanded) {
+          if (_initExpanded) {
+            // reset flag
+            _initExpanded = false;
             // don't trigger open event if nav is initially expanded
-            _initedExpanded = false;
             return;
           }
 
