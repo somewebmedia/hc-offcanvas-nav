@@ -177,25 +177,35 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
   }
 
   .nav-next,
-  li.nav-back span {
-    &::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 8px;
-      height: 8px;
-      margin-left: -2px;
-      box-sizing: border-box;
-      border-top: 2px solid #fff;
-      border-left: 2px solid #fff;
-      transform-origin: center;
+  li.nav-back {
+    span {
+      &::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 8px;
+        margin-left: -2px;
+        box-sizing: border-box;
+        border-top: 2px solid #fff;
+        border-left: 2px solid #fff;
+        transform-origin: center;
+      }
     }
   }
 
   .nav-next {
-    &::before {
-      transform: translate(-50%, -50%) rotate(135deg);
+    span {
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      bottom: 0;
+
+      &::before {
+        transform: translate(-50%, -50%) rotate(135deg);
+      }
     }
   }
 
@@ -224,10 +234,12 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     }
 
     .nav-next {
-      &::before {
-        margin-left: 0;
-        margin-right: -2px;
-        transform: translate(-50%, -50%) rotate(-45deg);
+      span {
+        &::before {
+          margin-left: 0;
+          margin-right: -2px;
+          transform: translate(-50%, -50%) rotate(-45deg);
+        }
       }
     }
 
@@ -251,10 +263,12 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     }
 
     .nav-next {
-      &::before {
-        margin-left: 0;
-        margin-right: -2px;
-        transform: translate(-50%, -50%) rotate(-135deg);
+      span {
+        &::before {
+          margin-left: 0;
+          margin-right: -2px;
+          transform: translate(-50%, -50%) rotate(-135deg);
+        }
       }
     }
 
@@ -278,10 +292,12 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     }
 
     .nav-next {
-      &::before {
-        margin-left: 0;
-        margin-right: -2px;
-        transform: translate(-50%, -50%) rotate(45deg);
+      span {
+        &::before {
+          margin-left: 0;
+          margin-right: -2px;
+          transform: translate(-50%, -50%) rotate(45deg);
+        }
       }
     }
 
@@ -326,20 +342,23 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
         &.level-open {
           background: darken($hc-offcanvas-nav-background-color, 4%);
 
-          a {
-            border-bottom: 1px solid darken($hc-offcanvas-nav-background-color, 8%);
+          & > .nav-item-wrapper > {
 
-            &:hover {
-              background: darken($hc-offcanvas-nav-background-color, 3%);
+            a {
+              border-bottom: 1px solid darken($hc-offcanvas-nav-background-color, 8%);
+
+              &:hover {
+                background: darken($hc-offcanvas-nav-background-color, 3%);
+              }
             }
-          }
 
-          & > .nav-item {
-
-            .nav-next {
-              &::before {
-                margin-top: 2px;
-                transform: translate(-50%, -50%) rotate(45deg);
+            .nav-next,
+            a > .nav-next {
+              span {
+                &::before {
+                  margin-top: 2px;
+                  transform: translate(-50%, -50%) rotate(45deg);
+                }
               }
             }
           }
@@ -347,9 +366,11 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
       }
 
       .nav-next {
-        &::before {
-          margin-top: -2px;
-          transform: translate(-50%, -50%) rotate(-135deg);
+        span {
+          &::before {
+            margin-top: -2px;
+            transform: translate(-50%, -50%) rotate(-135deg);
+          }
         }
       }
     }

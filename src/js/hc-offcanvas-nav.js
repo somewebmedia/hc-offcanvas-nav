@@ -793,7 +793,7 @@
 
                     // item has no actual link
                     if (!$a.attr('href') || $a.attr('href') === '#') {
-                      $('<span class="nav-next">').appendTo($a);
+                      $('<span class="nav-next"><span>').appendTo($a);
 
                       attachToLink($a);
                     }
@@ -801,7 +801,7 @@
                     else {
                       attachToLink(
                         // create "next" link separately
-                        $(`<a href="#" class="nav-next" aria-label="${nav_title} Submenu" role="menuitem" tabindex="0">`)
+                        $(`<a href="#" class="nav-next" aria-label="${nav_title} Submenu" role="menuitem" tabindex="0"><span>`)
                           .on('click', stopPropagation)
                           .insertAfter($a)
                       );

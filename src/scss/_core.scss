@@ -326,9 +326,9 @@ body.hc-nav-open {
       text-align: right;
     }
 
-    .nav-next,
-    li.nav-back span,
-    li.nav-close span {
+    .nav-next span,
+    .nav-back span,
+    .nav-close span {
       left: 0;
       right: unset;
     }
