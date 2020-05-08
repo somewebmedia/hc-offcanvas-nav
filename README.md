@@ -257,7 +257,8 @@ Nav.on('close.once', function(event, settings) {
 
 | Attr | Accepts | HTML Element | Description |
 |------|---------|--------------|-------------|
-| **data-nav-active** | | `<ul>` | Will open specified sub menu the next time nav opens. Works with [`expanded`](#options) option.  |
+| **data-nav-active** | | `<ul>` | Will open specified sub menu the next time nav opens. Works with [`expanded`](#options) option. |
+| **data-nav-highlight** | | `<li>` | Highlight list item. |
 | **data-nav-custom-content** | | `<li>` | Attached on the list items. Will clone item's content as is. |
 | **data-nav-close** | bool | `<a>` | Attached on the item links. Tells the nav if it needs to be closed on click or not. |
 
