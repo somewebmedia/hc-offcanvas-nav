@@ -268,7 +268,7 @@ Nav.on('close.once', function(event, settings) {
     <li data-nav-custom-content>
       <div>Some custom content</div>
     </li>
-    <li><a href="#">Home</a></li>
+    <li data-nav-highlight><a href="#">Home</a></li>
     <li>
       <a href="#">About</a>
       <ul data-nav-active>
