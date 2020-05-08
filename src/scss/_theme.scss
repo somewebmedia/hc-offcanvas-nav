@@ -51,6 +51,10 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     position: relative;
   }
 
+  .nav-highlight {
+    background: darken($hc-offcanvas-nav-background-color, 4%);
+  }
+
   .nav-close,
   .nav-next,
   .nav-back {

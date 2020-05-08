@@ -604,8 +604,9 @@
                   id: uniqid,
                   classes: $li.attr('class') || null,
                   content: $content,
+                  custom: customContent,
                   subnav: $subnav.length ? getModel($subnav, uniqid) : [],
-                  custom: customContent
+                  highlight: typeof $li.attr('data-nav-highlight') !== 'undefined'
                 });
               });
 
@@ -718,6 +719,11 @@
                   .addClass(item.classes)
                   .append($a)
                   .appendTo($menu);
+
+                // is nav item highlighted?
+                if (item.highlight) {
+                  $item.addClass('nav-highlight');
+                }
 
                 // wrap item link
                 $a.wrap('<div class="nav-item-wrapper">');
