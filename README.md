@@ -284,6 +284,66 @@ Nav.on('close.once', function(event, settings) {
 ```
 
 
+### WordPress data attributes integration
+
+If you want to make your WordPress theme nav data ready, just place this code to your `functions.php` file and it should work out of the box. <strong>Do not assign this custom Walker to your `wp_nav_menu` arguments!</strong> And don't worry if you already use your own custom Walker, this code will take care of everything.
+
+```php
+$hc_nav_menu_walker;
+
+class HC_Walker_Nav_Menu extends Walker_Nav_Menu {
+
+  public function start_lvl(&$output, $depth = 0, $args = array()) {
+    global $hc_nav_menu_walker;
+    $hc_nav_menu_walker->start_lvl($output, $depth, $args);
+  }
+
+  public function end_lvl(&$output, $depth = 0, $args = array()) {
+    global $hc_nav_menu_walker;
+    $hc_nav_menu_walker->end_lvl($output, $depth, $args);
+  }
+
+  public function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
+    global $hc_nav_menu_walker;
+
+    $item_output = '';
+
+    $hc_nav_menu_walker->start_el($item_output, $item, $depth, $args, $id);
+
+    if ($item->current_item_parent) {
+      $item_output = preg_replace('/<li/', '<li data-nav-active', $item_output);
+    }
+
+    if ($item->current) {
+      $item_output = preg_replace('/<li/', '<li data-nav-highlight', $item_output);
+    }
+
+    $output .= $item_output;
+  }
+
+  public function end_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
+    global $hc_nav_menu_walker;
+    $hc_nav_menu_walker->end_el($output, $item, $depth, $args, $id);
+  }
+}
+
+add_filter('wp_nav_menu_args', function($args) {
+  global $hc_nav_menu_walker;
+
+  if (!empty($args['walker'])) {
+    $hc_nav_menu_walker = $args['walker'];
+  }
+  else {
+    $hc_nav_menu_walker = new Walker_Nav_Menu();
+  }
+
+  $args['walker'] = new HC_Walker_Nav_Menu();
+
+  return $args;
+});
+```
+
+
 
 ## Dev Building
 
