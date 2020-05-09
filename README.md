@@ -311,11 +311,11 @@ class HC_Walker_Nav_Menu extends Walker_Nav_Menu {
     $hc_nav_menu_walker->start_el($item_output, $item, $depth, $args, $id);
 
     if ($item->current_item_parent) {
-      $item_output = preg_replace('/<li/', '<li data-nav-active', $item_output);
+      $item_output = preg_replace('/<li/', '<li data-nav-active', $item_output, 1);
     }
 
     if ($item->current) {
-      $item_output = preg_replace('/<li/', '<li data-nav-highlight', $item_output);
+      $item_output = preg_replace('/<li/', '<li data-nav-highlight', $item_output, 1);
     }
 
     $output .= $item_output;
