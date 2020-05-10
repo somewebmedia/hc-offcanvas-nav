@@ -993,10 +993,10 @@
             }
           }
           else if (_nextActiveLevel) {
-            // get level to open from ul[data-nav-active]
+            // get level to open from [data-nav-active]
             $checkbox = $nav_container.find('.hc-chk').filter(`[value=${_nextActiveLevel}]`);
             // reset flag
-            if (Settings.closeActiveLevel) {
+            if (Settings.closeActiveLevel || !Settings.closeOpenLevels) {
               _nextActiveLevel = null;
             }
           }
