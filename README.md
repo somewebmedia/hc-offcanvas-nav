@@ -93,6 +93,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | **position** | `'left'` | str | Position on which the menu will open. Available options: `'left'`, `'right'`, `'top'` and `'bottom'`. |
 | **levelOpen** | `'overlap'` | str | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
 | **closeOpenLevels** | `true` | bool | Should all open sub levels be closed when the nav closes. |
+| **closeActiveLevel** | `false` | bool | Should initially active sub level (see [`data-nav-active`](#data-attributes)) be cleared when the nav closes. |
 | **levelSpacing** | `40` | int | If levels are overlaped, this is the spacing between them, if they are expanding or always open, this is the text indent of the submenus. |
 | **levelTitles** | `true` | bool | Show titles for submenus, which is the parent item name. Works only for overlaped levels. |
 | **navTitle** | `null` | str | Main navigation (first level) title. |
@@ -257,7 +258,7 @@ Nav.on('close.once', function(event, settings) {
 
 | Attr | Accepts | HTML Element | Description |
 |------|---------|--------------|-------------|
-| **data-nav-active** | | `<ul>` | Will open specified sub menu the next time nav opens. Works with [`expanded`](#options) option. |
+| **data-nav-active** | | `<ul>`, `<li>` | The next time nav opens it will open specified sub menu (or sub menu whose parent `<li>` element has the attribute). Works with [`expanded`](#options) option. |
 | **data-nav-highlight** | | `<li>` | Highlight list item. |
 | **data-nav-custom-content** | | `<li>` | Attached on the list items. Will clone item's content as is. |
 | **data-nav-close** | bool | `<a>` | Attached on the item links. Tells the nav if it needs to be closed on click or not. |
@@ -269,9 +270,9 @@ Nav.on('close.once', function(event, settings) {
       <div>Some custom content</div>
     </li>
     <li data-nav-highlight><a href="#">Home</a></li>
-    <li>
+    <li data-nav-active>
       <a href="#">About</a>
-      <ul data-nav-active>
+      <ul data-nav-active><!-- or active attribute can be here -->
         <li><a href="#">Team</a></li>
         <li><a href="#">Project</a></li>
         <li><a href="#">Services</a></li>
