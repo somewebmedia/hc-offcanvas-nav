@@ -566,10 +566,10 @@
                 items: []
               };
 
-              // this submenu should be opened on next open
+              // this submenu should be open next
               if (typeof $ul.attr('data-nav-active') !== 'undefined') {
                 _nextActiveLevel = id;
-                // remove data attr
+                // remove data attribute
                 $ul.removeAttr('data-nav-active');
               }
 
@@ -597,6 +597,13 @@
                   else {
                     uniqid = $li.data('hc-uniqid');
                   }
+                }
+
+                // submenu of this list element should be open next
+                if (typeof $li.attr('data-nav-active') !== 'undefined') {
+                  _nextActiveLevel = uniqid;
+                  // remove data attribute
+                  $li.removeAttr('data-nav-active');
                 }
 
                 // add elements to this level
