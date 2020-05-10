@@ -212,26 +212,22 @@
       const defaults = {
         width:              280,
         height:             'auto',
-
         disableAt:          false,
         pushContent:        false,
         expanded:           false,
         position:           'left', // left, right, top, bottom
-
         levelOpen:          'overlap', // overlap, expand, none/false
         levelSpacing:       40,
         levelTitles:        true,
         closeOpenLevels:    true,
-
+        closeActiveLevel:   false,
         navTitle:           null,
         navClass:           '',
         disableBody:        true,
         closeOnClick:       true,
         customToggle:       null,
-
         bodyInsert:         'prepend', // prepend/append
         removeOriginalNav:  false,
-
         rtl:                false,
         insertClose:        true,
         insertBack:         true,
@@ -1000,7 +996,9 @@
             // get level to open from ul[data-nav-active]
             $checkbox = $nav_container.find('.hc-chk').filter(`[value=${_nextActiveLevel}]`);
             // reset flag
-            _nextActiveLevel = null;
+            if (Settings.closeActiveLevel) {
+              _nextActiveLevel = null;
+            }
           }
           else if (Settings.closeOpenLevels === false) {
             // get last checked level
