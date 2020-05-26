@@ -17,6 +17,17 @@
   const $html = $(document.getElementsByTagName('html')[0]);
   const $document = $(document);
 
+  let supportsPassive = false;
+  try {
+    const opts = Object.defineProperty({}, 'passive', {
+      get: function() {
+        supportsPassive = {passive: true};
+      }
+    });
+    window.addEventListener('testPassive', null, opts);
+    window.removeEventListener('testPassive', null, opts);
+  } catch (e) {}
+
   const hasScrollBar = () => document.documentElement.scrollHeight > document.documentElement.clientHeight;
 
   const isIos = (() => ((/iPad|iPhone|iPod/.test(navigator.userAgent)) || (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))) && !window.MSStream)();
@@ -158,7 +169,7 @@
 
     return ($el, val, position) => {
       if (transform) {
-        if (val === 0) {
+        if (!val) {
           $el.css(transform, '');
         }
         else {
@@ -225,6 +236,7 @@
         navClass:           '',
         disableBody:        true,
         closeOnClick:       true,
+        swipeGestures:      true,
         customToggle:       null,
         bodyInsert:         'prepend', // prepend/append
         removeOriginalNav:  false,
@@ -306,6 +318,7 @@
         const _openLevels = []; // array with current open levels ids
         let _keyboard = false;
         const _focusEls = []; // array to store keyboard accessed items
+        let xStart = null; // the X touch point
 
         // add classes to original menu so we know it's connected to our copy
         $originalNav.addClass(`hc-nav-original ${navUniqId}`);
@@ -892,6 +905,150 @@
           }
         };
 
+        const touchCaptureNav = (transVal) => {
+          $nav.css('visibility', 'visible');
+          $nav_container.css(browserPrefix('transition'), 'none');
+          setTransform($nav_container, transVal, Settings.position);
+
+          if ($push_content) {
+            $push_content.css(browserPrefix('transition'), 'none');
+            setTransform($push_content, _containerWidth - Math.abs(transVal), Settings.position);
+          }
+        };
+
+        const touchReleaseNav = (action) => {
+          $nav_container.css(browserPrefix('transition'), '');
+          setTransform($nav_container, false);
+
+          if ($push_content) {
+            $push_content.css(browserPrefix('transition'), '');
+            setTransform($push_content, false);
+          }
+
+          if (action == 'open') {
+            openNav();
+          }
+          else {
+            closeNav();
+
+            setTimeout(() => {
+              $nav.css('visibility', '');
+            }, _transitionDuration);
+          }
+        };
+
+        const touchStart = (target) => {
+          return (e) => {
+            e.stopPropagation();
+            xStart = e.touches[0].clientX;
+
+            // temporary attach touch listeners
+            if (target == 'doc') {
+              document.addEventListener('touchmove', touchMoveOpen, supportsPassive);
+              document.addEventListener('touchend', touchEndOpen, supportsPassive);
+            }
+            else {
+              $nav[0].addEventListener('touchmove', touchMoveClose, supportsPassive);
+              $nav[0].addEventListener('touchend', touchEndClose, supportsPassive);
+            }
+          };
+        };
+
+        const touchEndOpen = (e) => {
+          const lastTouch = e.changedTouches[e.changedTouches.length-1];
+          const xDiff = xStart - lastTouch.clientX;
+          const diffTrashold = 100;
+          const maxStart = 10;
+
+          if (!xDiff) {
+            return;
+          }
+
+          if (Math.abs(xDiff) > diffTrashold) {
+            if (
+              (Settings.position == 'left' && xDiff < 0 && xStart < maxStart) || // swipe right
+              (Settings.position == 'right' && xDiff > 0 && xStart > $document.width() - maxStart) // swipe left
+            ) {
+              touchReleaseNav('open');
+            }
+          }
+          else {
+            touchReleaseNav('close');
+          }
+
+          // reset touch points
+          xStart = null;
+
+          // remove touch listeners from document
+          document.removeEventListener('touchmove', touchMoveOpen);
+          document.removeEventListener('touchend', touchEndOpen);
+        };
+
+        const touchMoveOpen = (e) => {
+          if (!xStart) {
+            return;
+          }
+
+          e.stopPropagation();
+
+          const xDiff = xStart - e.touches[0].clientX;
+          const maxStart = 10;
+
+          if (Math.abs(xDiff) <= _containerWidth) {
+            if (
+              (Settings.position == 'left' && xDiff < 0 && xStart < maxStart) || // swipe right
+              (Settings.position == 'right' && xDiff > 0 && xStart > $document.width() - maxStart) // swipe left
+            ) {
+              touchCaptureNav(-(_containerWidth - Math.abs(xDiff)));
+            }
+          }
+        };
+
+        const touchEndClose = (e) => {
+          e.stopPropagation();
+
+          const lastTouch = e.changedTouches[e.changedTouches.length-1];
+          const xDiff = xStart - lastTouch.clientX;
+          const diffTrashold = 100;
+
+          if (Math.abs(xDiff) > diffTrashold) {
+            if (
+              (Settings.position == 'left' && xDiff > 0) || // swipe right
+              (Settings.position == 'right' && xDiff < 0) // swipe left
+            ) {
+              touchReleaseNav('close');
+            }
+          }
+          else {
+            touchReleaseNav('open');
+          }
+
+          // reset touch points
+          xStart = null;
+
+          // remove touch listeners from nav
+          $nav[0].removeEventListener('touchmove', touchMoveClose);
+          $nav[0].removeEventListener('touchend', touchEndClose);
+        };
+
+        const touchMoveClose = (e) => {
+          if (!xStart) {
+            return;
+          }
+
+          e.stopPropagation();
+
+          const xDiff = xStart - e.touches[0].clientX;
+
+          if (
+            (Settings.position == 'left' && xDiff > 0) || // swipe right
+            (Settings.position == 'right' && xDiff < 0) // swipe left
+          ) {
+            touchCaptureNav(-Math.abs(xDiff));
+          }
+        };
+
+        // finish toggle
         $toggle
           // ARIA
           .attr('role', 'button')
@@ -935,6 +1092,13 @@
         if (Settings.expanded === true) {
           _initExpanded = true; // set flag
           open();
+        }
+
+        if (Settings.swipeGestures) {
+          // open touch event on document swipe
+          document.addEventListener('touchstart', touchStart('doc'), supportsPassive);
+          // close touch event on nav swipe
+          $nav[0].addEventListener('touchstart', touchStart('nav'), supportsPassive);
         }
 
         // Private methods
@@ -1041,6 +1205,11 @@
         }
 
         function openNav() {
+          // check if already open
+          if (isOpen()) {
+            return;
+          }
+
           _open = true;
 
           $nav
@@ -1097,7 +1266,7 @@
           _open = false;
 
           if ($push_content) {
-            setTransform($push_content, 0);
+            setTransform($push_content, false);
           }
 
           $nav.removeClass(navOpenClass).attr('aria-hidden', true);
