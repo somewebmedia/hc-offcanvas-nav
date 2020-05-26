@@ -230,6 +230,7 @@
         height:             'auto',
         disableAt:          false,
         pushContent:        false,
+        swipeGestures:      true,
         expanded:           false,
         position:           'left', // left, right, top, bottom
         levelOpen:          'overlap', // overlap, expand, none/false
@@ -241,7 +242,6 @@
         navClass:           '',
         disableBody:        true,
         closeOnClick:       true,
-        swipeGestures:      true,
         customToggle:       null,
         bodyInsert:         'prepend', // prepend/append
         removeOriginalNav:  false,

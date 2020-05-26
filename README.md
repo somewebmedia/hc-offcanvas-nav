@@ -89,6 +89,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | **height** | `'auto'` | int / str | Height of the nav. Used for `top` and `bottom` positions. |
 | **disableAt** | `false` | int / bool | Resolution below which to display the mobile menu, and hide the regular. |
 | **pushContent** | `false` | bool / str / jQuery obj | Content element (string selector or jQuery object) that will be pushed when the navigation is open. |
+| **swipeGestures** | `true`| bool | Enable open/close swipe gestures like in native apps. |
 | **expanded** | `false`| bool | Initialize menu in expanded mode. It won't push content. |
 | **position** | `'left'` | str | Position on which the menu will open. Available options: `'left'`, `'right'`, `'top'` and `'bottom'`. |
 | **levelOpen** | `'overlap'` | str | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
