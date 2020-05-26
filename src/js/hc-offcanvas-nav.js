@@ -21,7 +21,7 @@
   try {
     const opts = Object.defineProperty({}, 'passive', {
       get: function() {
-        supportsPassive = {passive: true};
+        supportsPassive = {passive: false};
       }
     });
     window.addEventListener('testPassive', null, opts);
@@ -43,6 +43,11 @@
   const ID = () => Math.random().toString(36).substr(2);
 
   const stopPropagation = (e) => e.stopPropagation();
+
+  const preventDefault = (e) => e.preventDefault();
+
+  const disableScroll = () => window.addEventListener('touchmove', preventDefault, supportsPassive);
+  const enableScroll = () => window.removeEventListener('touchmove', preventDefault, supportsPassive);
 
   const preventClick = (cb) => {
     return (e) => {
@@ -169,17 +174,17 @@
 
     return ($el, val, position) => {
       if (transform) {
-        if (!val) {
+        if (val === false) {
           $el.css(transform, '');
         }
         else {
           if (getAxis(position) === 'x') {
-            const x = position === 'left' ? val : -val;
-            $el.css(transform, x ? `translate3d(${x}px,0,0)` : '');
+            const x = position === 'left' ? val : 0 - val;
+            $el.css(transform, `translate3d(${x}px,0,0)`);
           }
           else {
-            const y = position === 'top' ? val : -val;
-            $el.css(transform, y ? `translate3d(0,${y}px,0)` : '');
+            const y = position === 'top' ? val : 0 - val;
+            $el.css(transform, `translate3d(0,${y}px,0)`);
           }
         }
       }
@@ -318,7 +323,10 @@
         const _openLevels = []; // array with current open levels ids
         let _keyboard = false;
         const _focusEls = []; // array to store keyboard accessed items
-        let xStart = null; // the X touch point
+        let _xStart = null; // the X touch point
+        let _yStart = null; // the Y touch point
+        let _touchMoved = false;
+        let _touchNavTriggered = false;
 
         // add classes to original menu so we know it's connected to our copy
         $originalNav.addClass(`hc-nav-original ${navUniqId}`);
@@ -892,7 +900,7 @@
 
         const checkEsc = (e) => {
           if (isOpen() && (e.key === 'Escape' || e.keyCode === 27)) {
-            const level = whatLevelIsOpen();
+            const level = whatLevelIsActive();
 
             if (level === 0) {
               closeNav();
@@ -905,146 +913,194 @@
           }
         };
 
-        const touchCaptureNav = (transVal) => {
+        /* Touch swipe gestures */
+
+        const touchCaptureNav = (transNav, transContent) => {
+          disableScroll();
           $nav.css('visibility', 'visible');
           $nav_container.css(browserPrefix('transition'), 'none');
-          setTransform($nav_container, transVal, Settings.position);
+          setTransform($nav_container, transNav, Settings.position);
 
           if ($push_content) {
             $push_content.css(browserPrefix('transition'), 'none');
-            setTransform($push_content, _containerWidth - Math.abs(transVal), Settings.position);
+            setTransform($push_content, transContent, Settings.position);
           }
         };
 
-        const touchReleaseNav = (action) => {
+        const touchReleaseNav = (action, timeoutVsb = true, transNav = false, transContent = false) => {
+          enableScroll();
           $nav_container.css(browserPrefix('transition'), '');
-          setTransform($nav_container, false);
+          setTransform($nav_container, transNav, Settings.position);
 
           if ($push_content) {
             $push_content.css(browserPrefix('transition'), '');
-            setTransform($push_content, false);
+            setTransform($push_content, transContent, Settings.position);
           }
 
           if (action == 'open') {
-            openNav();
+            open();
           }
           else {
             closeNav();
 
-            setTimeout(() => {
+            if (timeoutVsb) {
+              setTimeout(() => {
+                $nav.css('visibility', '');
+              }, _transitionDuration);
+            }
+            else {
               $nav.css('visibility', '');
-            }, _transitionDuration);
+            }
           }
         };
 
         const touchStart = (target) => {
           return (e) => {
-            e.stopPropagation();
-            xStart = e.touches[0].clientX;
+            if (Settings.position != 'left' && Settings.position != 'right') {
+              return;
+            }
+
+            _xStart = e.touches[0].clientX;
+            _yStart = e.touches[0].clientY;
 
             // temporary attach touch listeners
             if (target == 'doc') {
-              document.addEventListener('touchmove', touchMoveOpen, supportsPassive);
-              document.addEventListener('touchend', touchEndOpen, supportsPassive);
+              if (!_touchNavTriggered) {
+                document.addEventListener('touchmove', touchMove_open, supportsPassive);
+                document.addEventListener('touchend', touchEnd_open, supportsPassive);
+              }
             }
             else {
-              $nav[0].addEventListener('touchmove', touchMoveClose, supportsPassive);
-              $nav[0].addEventListener('touchend', touchEndClose, supportsPassive);
+              _touchNavTriggered = true;
+              $nav_container[0].addEventListener('touchmove', touchMove_close, supportsPassive);
+              $nav_container[0].addEventListener('touchend', touchEnd_close, supportsPassive);
             }
           };
         };
 
-        const touchEndOpen = (e) => {
-          const lastTouch = e.changedTouches[e.changedTouches.length-1];
-          const xDiff = xStart - lastTouch.clientX;
-          const diffTrashold = 100;
-          const maxStart = 10;
+        const touchEnd_open = (e) => {
+          // remove touch listeners from document
+          document.removeEventListener('touchmove', touchMove_open);
+          document.removeEventListener('touchend', touchEnd_open);
 
-          if (!xDiff) {
+          if (!_touchMoved) {
             return;
           }
 
-          if (Math.abs(xDiff) > diffTrashold) {
-            if (
-              (Settings.position == 'left' && xDiff < 0 && xStart < maxStart) || // swipe right
-              (Settings.position == 'right' && xDiff > 0 && xStart > $document.width() - maxStart) // swipe left
-            ) {
-              touchReleaseNav('open');
-            }
+          const lastTouch = e.changedTouches[e.changedTouches.length-1];
+          let xDiff = 0 - (_xStart - lastTouch.clientX);
+          const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
+          const swipeWidth = _containerWidth + levelSpacing;
+          const diffTrashold = 70;
+
+          if (Settings.position == 'left') {
+            xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
+          }
+          else {
+            xDiff = Math.abs(Math.min(Math.max(xDiff, -swipeWidth), 0));
+          }
+
+          if (!xDiff) {
+            touchReleaseNav('close', false);
+          }
+          else if (xDiff > diffTrashold) {
+            touchReleaseNav('open');
           }
           else {
             touchReleaseNav('close');
           }
 
-          // reset touch points
-          xStart = null;
-
-          // remove touch listeners from document
-          document.removeEventListener('touchmove', touchMoveOpen);
-          document.removeEventListener('touchend', touchEndOpen);
+          // reset touch
+          _xStart = null;
+          _yStart = null;
+          _touchMoved = false;
         };
 
-        const touchMoveOpen = (e) => {
-          if (!xStart) {
-            return;
-          }
+        const touchMove_open = (e) => {
+          let xDiff = 0 - (_xStart - e.touches[0].clientX);
+          const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
+          const swipeWidth = _containerWidth + levelSpacing;
+          const maxStart = 20;
 
-          e.stopPropagation();
-
-          const xDiff = xStart - e.touches[0].clientX;
-          const maxStart = 10;
-
-          if (Math.abs(xDiff) <= _containerWidth) {
-            if (
-              (Settings.position == 'left' && xDiff < 0 && xStart < maxStart) || // swipe right
-              (Settings.position == 'right' && xDiff > 0 && xStart > $document.width() - maxStart) // swipe left
-            ) {
-              touchCaptureNav(-(_containerWidth - Math.abs(xDiff)));
-            }
-          }
-        };
-
-        const touchEndClose = (e) => {
-          e.stopPropagation();
-
-          const lastTouch = e.changedTouches[e.changedTouches.length-1];
-          const xDiff = xStart - lastTouch.clientX;
-          const diffTrashold = 100;
-
-          if (Math.abs(xDiff) > diffTrashold) {
-            if (
-              (Settings.position == 'left' && xDiff > 0) || // swipe right
-              (Settings.position == 'right' && xDiff < 0) // swipe left
-            ) {
-              touchReleaseNav('close');
-            }
+          if (Settings.position == 'left') {
+            xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
           }
           else {
-            touchReleaseNav('open');
+            xDiff = Math.abs(Math.min(Math.max(xDiff, -swipeWidth), 0));
           }
 
-          // reset touch points
-          xStart = null;
-
-          // remove touch listeners from nav
-          $nav[0].removeEventListener('touchmove', touchMoveClose);
-          $nav[0].removeEventListener('touchend', touchEndClose);
+          if (
+            (Settings.position == 'left' && _xStart < maxStart) || // swipe right
+            (Settings.position == 'right' && _xStart > $document.width() - maxStart) // swipe left
+          ) {
+            _touchMoved = true;
+            touchCaptureNav(0 - (_containerWidth - xDiff), Math.abs(xDiff));
+          }
         };
 
-        const touchMoveClose = (e) => {
-          if (!xStart) {
+        const touchEnd_close = (e) => {
+          // remove touch listeners from nav
+          $nav_container[0].removeEventListener('touchmove', touchMove_close);
+          $nav_container[0].removeEventListener('touchend', touchEnd_close);
+          _touchNavTriggered = false;
+
+          if (!_touchMoved) {
             return;
           }
 
-          e.stopPropagation();
+          const lastTouch = e.changedTouches[e.changedTouches.length-1];
+          let xDiff = 0 - (_xStart - lastTouch.clientX);
+          const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
+          const swipeWidth = _containerWidth + levelSpacing;
+          const diffTrashold = 50;
 
-          const xDiff = xStart - e.touches[0].clientX;
+          if (Settings.position == 'left') {
+            xDiff = Math.abs(Math.min(Math.max(xDiff, -swipeWidth), 0));
+          }
+          else {
+            xDiff = Math.abs(Math.min(Math.max(xDiff, 0), swipeWidth));
+          }
+
+          if (xDiff == swipeWidth) {
+            touchReleaseNav('close', false);
+          }
+          else if (xDiff > diffTrashold) {
+            touchReleaseNav('close');
+          }
+          else {
+            touchReleaseNav('open', true, levelSpacing, swipeWidth);
+          }
+
+          // reset touch
+          _xStart = null;
+          _yStart = null;
+          _touchMoved = false;
+        };
+
+        const touchMove_close = (e) => {
+          let xDiff = 0 - (_xStart - e.touches[0].clientX);
+          let yDiff = 0 - (_yStart - e.touches[0].clientY);
+
+          if (Math.abs(xDiff) < Math.abs(yDiff)) {
+            return;
+          }
+
+          const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
+          const swipeWidth = _containerWidth + levelSpacing;
+
+          if (Settings.position == 'left') {
+            xDiff = Math.min(Math.max(xDiff, -swipeWidth), 0);
+          }
+          else {
+            xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
+          }
 
           if (
-            (Settings.position == 'left' && xDiff > 0) || // swipe right
-            (Settings.position == 'right' && xDiff < 0) // swipe left
+            (Settings.position == 'left' && xDiff < 0) || // swipe right
+            (Settings.position == 'right' && xDiff > 0) // swipe left
           ) {
-            touchCaptureNav(-Math.abs(xDiff));
+            _touchMoved = true;
+            touchCaptureNav(-Math.abs(xDiff) + levelSpacing, swipeWidth - Math.abs(xDiff));
           }
         };
 
@@ -1095,10 +1151,11 @@
         }
 
         if (Settings.swipeGestures) {
+          // close touch event on nav swipe
+          // trigger before document touch
+          $nav_container[0].addEventListener('touchstart', touchStart('nav'), supportsPassive);
           // open touch event on document swipe
           document.addEventListener('touchstart', touchStart('doc'), supportsPassive);
-          // close touch event on nav swipe
-          $nav[0].addEventListener('touchstart', touchStart('nav'), supportsPassive);
         }
 
         // Private methods
@@ -1124,13 +1181,10 @@
           return _open;
         }
 
-        function whatLevelIsOpen() {
-          if (!_openLevels.length) {
-            return isOpen() ? 0 : false;
-          }
-          else {
-            return $nav_container.find('.hc-chk').filter(`[value=${_openLevels[_openLevels.length - 1]}]`).data('level');
-          }
+        function whatLevelIsActive() {
+          return _openLevels.length
+            ? $nav_container.find('.hc-chk').filter(`[value=${_openLevels[_openLevels.length - 1]}]`).data('level')
+            : 0;
         }
 
         function open(l, i) {
