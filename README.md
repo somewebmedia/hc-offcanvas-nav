@@ -14,9 +14,10 @@ jQuery plugin for creating off-canvas multi-level navigations, using ARIA. [Demo
 - Endless nesting of navigation elements
 - Custom content inside menu items
 - Push/Slide DOM elements of choice
+- Touch swipe guestures
 - Different navigation positions
 - Flexible, simple markup
-- A number of exposed Options, Methods and Events
+- A number of exposed [Options](#options), [Methods](#methods) and [Events](#events)
 - Cross-browser compatibility
 - Full ARIA keyboard support
   - It relies on <a href="https://www.w3.org/TR/wai-aria-practices/#dialog_modal"><abbr title="Accessible Rich Internet Application">ARIA</abbr> Design pattern for Dialogs</a>
