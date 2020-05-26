@@ -164,7 +164,7 @@ header {
   }
 
   .toggle {
-    @include hc-hamburger('default', 35px, 24px, 4px, darken($background, 7%), .25s);
+    @include hc-hamburger('default', 35px, 26px, 4px, darken($background, 7%), .25s);
     position: relative;
     width: auto;
     top: auto;
@@ -173,11 +173,12 @@ header {
     display: block;
     cursor: pointer;
     box-sizing: content-box;
-    font-size: 20px;
+    font-size: 18px;
     padding-left: 55px;
-    line-height: 24px;
+    line-height: 22px;
     margin-top: 55px;
     color: #fff;
+    text-align: left;
     text-decoration: none;
 
     &:hover {
@@ -190,12 +191,13 @@ header {
       }
     }
 
-    div {
-      display: inline-block;
-      margin-right: 15px;
+    i {
+      font-size: 10px;
+      display: block;
+      line-height: 10px;
+      opacity: .7;
     }
   }
-
 }
 
 footer {
