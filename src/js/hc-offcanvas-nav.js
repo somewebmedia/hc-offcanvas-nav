@@ -344,6 +344,22 @@
             .on('click', toggleNav);
         }
 
+        $toggle
+          // ARIA
+          .attr('role', 'button')
+          .attr('aria-controls', navUniqId)
+          // make nav opening keyboard accessible
+          .on('keydown', (e) => {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+              // trap focus inside nav
+              setTimeout(() => {
+                trapFocus(0, 0);
+              }, 0);
+            }
+          });
+
+        /* ARIA Keyboard Focus */
+
         const trapFocus = (n, l, i) => {
           if (typeof l !== 'number' || (typeof n !== 'number' && !_focusEls.length)) {
             return;
@@ -420,6 +436,8 @@
             $toggle.focus();
           }, _transitionDuration);
         };
+
+        /* Build methods */
 
         const calcNav = () => {
           // remove transition from the nav container so we can update the nav without flickering
@@ -898,22 +916,31 @@
           }
         };
 
-        const checkEsc = (e) => {
-          if (isOpen() && (e.key === 'Escape' || e.keyCode === 27)) {
-            const level = whatLevelIsActive();
+        /* Touch swipe gestures */
 
-            if (level === 0) {
-              closeNav();
-              untrapFocus();
+        const touchStart = (target) => {
+          return (e) => {
+            if (Settings.position != 'left' && Settings.position != 'right') {
+              return;
+            }
+
+            _xStart = e.touches[0].clientX;
+            _yStart = e.touches[0].clientY;
+
+            // temporary attach touch listeners
+            if (target == 'doc') {
+              if (!_touchNavTriggered) {
+                document.addEventListener('touchmove', touchMove_open, supportsPassive);
+                document.addEventListener('touchend', touchEnd_open, supportsPassive);
+              }
             }
             else {
-              closeLevel(level);
-              trapFocus(null, level-1);
+              _touchNavTriggered = true;
+              $nav_container[0].addEventListener('touchmove', touchMove_close, supportsPassive);
+              $nav_container[0].addEventListener('touchend', touchEnd_close, supportsPassive);
             }
-          }
+          };
         };
-
-        /* Touch swipe gestures */
 
         const touchCaptureNav = (transNav, transContent) => {
           disableScroll();
@@ -938,7 +965,7 @@
           }
 
           if (action == 'open') {
-            open();
+            openNav();
           }
           else {
             closeNav();
@@ -954,28 +981,26 @@
           }
         };
 
-        const touchStart = (target) => {
-          return (e) => {
-            if (Settings.position != 'left' && Settings.position != 'right') {
-              return;
-            }
+        const touchMove_open = (e) => {
+          let xDiff = 0 - (_xStart - e.touches[0].clientX);
+          const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
+          const swipeWidth = _containerWidth + levelSpacing;
+          const maxStart = 20;
 
-            _xStart = e.touches[0].clientX;
-            _yStart = e.touches[0].clientY;
+          if (Settings.position == 'left') {
+            xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
+          }
+          else {
+            xDiff = Math.abs(Math.min(Math.max(xDiff, -swipeWidth), 0));
+          }
 
-            // temporary attach touch listeners
-            if (target == 'doc') {
-              if (!_touchNavTriggered) {
-                document.addEventListener('touchmove', touchMove_open, supportsPassive);
-                document.addEventListener('touchend', touchEnd_open, supportsPassive);
-              }
-            }
-            else {
-              _touchNavTriggered = true;
-              $nav_container[0].addEventListener('touchmove', touchMove_close, supportsPassive);
-              $nav_container[0].addEventListener('touchend', touchEnd_close, supportsPassive);
-            }
-          };
+          if (
+            (Settings.position == 'left' && _xStart < maxStart) || // swipe right
+            (Settings.position == 'right' && _xStart > $document.width() - maxStart) // swipe left
+          ) {
+            _touchMoved = true;
+            touchCaptureNav(0 - (_containerWidth - xDiff), Math.abs(xDiff));
+          }
         };
 
         const touchEnd_open = (e) => {
@@ -1016,25 +1041,30 @@
           _touchMoved = false;
         };
 
-        const touchMove_open = (e) => {
+        const touchMove_close = (e) => {
           let xDiff = 0 - (_xStart - e.touches[0].clientX);
+          let yDiff = 0 - (_yStart - e.touches[0].clientY);
+
+          if (Math.abs(xDiff) < Math.abs(yDiff)) {
+            return;
+          }
+
           const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
           const swipeWidth = _containerWidth + levelSpacing;
-          const maxStart = 20;
 
           if (Settings.position == 'left') {
-            xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
+            xDiff = Math.min(Math.max(xDiff, -swipeWidth), 0);
           }
           else {
-            xDiff = Math.abs(Math.min(Math.max(xDiff, -swipeWidth), 0));
+            xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
           }
 
           if (
-            (Settings.position == 'left' && _xStart < maxStart) || // swipe right
-            (Settings.position == 'right' && _xStart > $document.width() - maxStart) // swipe left
+            (Settings.position == 'left' && xDiff < 0) || // swipe right
+            (Settings.position == 'right' && xDiff > 0) // swipe left
           ) {
             _touchMoved = true;
-            touchCaptureNav(0 - (_containerWidth - xDiff), Math.abs(xDiff));
+            touchCaptureNav(-Math.abs(xDiff) + levelSpacing, swipeWidth - Math.abs(xDiff));
           }
         };
 
@@ -1077,50 +1107,7 @@
           _touchMoved = false;
         };
 
-        const touchMove_close = (e) => {
-          let xDiff = 0 - (_xStart - e.touches[0].clientX);
-          let yDiff = 0 - (_yStart - e.touches[0].clientY);
-
-          if (Math.abs(xDiff) < Math.abs(yDiff)) {
-            return;
-          }
-
-          const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
-          const swipeWidth = _containerWidth + levelSpacing;
-
-          if (Settings.position == 'left') {
-            xDiff = Math.min(Math.max(xDiff, -swipeWidth), 0);
-          }
-          else {
-            xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
-          }
-
-          if (
-            (Settings.position == 'left' && xDiff < 0) || // swipe right
-            (Settings.position == 'right' && xDiff > 0) // swipe left
-          ) {
-            _touchMoved = true;
-            touchCaptureNav(-Math.abs(xDiff) + levelSpacing, swipeWidth - Math.abs(xDiff));
-          }
-        };
-
-        // finish toggle
-        $toggle
-          // ARIA
-          .attr('role', 'button')
-          .attr('aria-controls', navUniqId)
-          // make nav opening keyboard accessible
-          .on('keydown', (e) => {
-            if (e.key === 'Enter' || e.keyCode === 13) {
-              // trap focus inside nav
-              setTimeout(() => {
-                trapFocus(0, 0);
-              }, 0);
-            }
-          });
-
-        // close levels on escape
-        $document.on('keydown', checkEsc);
+        /* Setup our nav */
 
         // init nav
         initNav();
@@ -1147,7 +1134,7 @@
         // opened nav right away
         if (Settings.expanded === true) {
           _initExpanded = true; // set flag
-          open();
+          openNav();
         }
 
         if (Settings.swipeGestures) {
@@ -1158,7 +1145,25 @@
           document.addEventListener('touchstart', touchStart('doc'), supportsPassive);
         }
 
-        // Private methods
+        // close levels on escape
+        $document.on('keydown', checkEsc);
+
+        /* Private methods */
+
+        function checkEsc(e) {
+          if (isOpen() && (e.key === 'Escape' || e.keyCode === 27)) {
+            const level = whatLevelIsActive();
+
+            if (level === 0) {
+              closeNav();
+              untrapFocus();
+            }
+            else {
+              closeLevel(level);
+              trapFocus(null, level-1);
+            }
+          }
+        };
 
         function checkboxChange() {
           const $checkbox = $(this);
@@ -1187,14 +1192,14 @@
             : 0;
         }
 
-        function open(l, i) {
+        function openNav(l, i) {
           // check if already open
           if (isOpen() && typeof i === 'undefined') {
             return;
           }
 
           // open main nav
-          openNav();
+          _openNav();
 
           if (!areLevelsOpenable()) {
             return;
@@ -1258,7 +1263,7 @@
           }
         }
 
-        function openNav() {
+        function _openNav() {
           // check if already open
           if (isOpen()) {
             return;
@@ -1378,7 +1383,7 @@
           e.stopPropagation();
 
           if (_open) closeNav();
-          else open();
+          else openNav();
         }
 
         function openLevel(l, i, transition = true) {
@@ -1490,13 +1495,13 @@
           }
         }
 
-        // Public methods
+        /* Public methods */
 
         self.getSettings = () => Object.assign({}, Settings);
 
         self.isOpen = isOpen;
 
-        self.open = open;
+        self.open = openNav;
 
         self.close = closeNav;
 
