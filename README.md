@@ -88,11 +88,11 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 |----------|---------|------|-------------|
 | **width** | `280` | int / str | Width of the nav. Used for `left` and `right` positions. |
 | **height** | `'auto'` | int / str | Height of the nav. Used for `top` and `bottom` positions. |
-| **disableAt** | `false` | int / bool | Resolution below which to display the mobile menu, and hide the regular. |
+| **disableAt** | `false` | int / bool | Resolution above which to hide the offcanvas menu, and show the original. |
 | **pushContent** | `false` | bool / str / jQuery obj | Content element (string selector or jQuery object) that will be pushed when the navigation is open. |
-| **swipeGestures** | `true`| bool | Enable open/close swipe gestures like in native apps. |
 | **expanded** | `false`| bool | Initialize menu in expanded mode. It won't push content. |
 | **position** | `'left'` | str | Position on which the menu will open. Available options: `'left'`, `'right'`, `'top'` and `'bottom'`. |
+| **swipeGestures** | `true`| bool | Enable open/close swipe gestures like in native apps. Works only for `left` and `right` positions. |
 | **levelOpen** | `'overlap'` | str | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
 | **closeOpenLevels** | `true` | bool | Should all open sub levels be closed when the nav closes. |
 | **closeActiveLevel** | `false` | bool | Should initially active sub level (see [`data-nav-active`](#data-attributes)) be cleared when the nav closes. |
