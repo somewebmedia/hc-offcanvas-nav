@@ -34,7 +34,7 @@ const compileJs = () => {
 };
 
 const compileScss = () => {
-  return src(['./src/scss/*.scss', '!./src/scss/demo.scss'])
+  return src(['./src/scss/*.scss'])
     .pipe(sass({
       'includePaths': ['node_modules'],
       'outputStyle': argv.dev ? 'development' : 'compressed'
@@ -44,7 +44,7 @@ const compileScss = () => {
 };
 
 const compileDemo = () => {
-  return src(['./src/scss/demo.scss'])
+  return src(['./docs/demo.scss'])
     .pipe(sass({
       'includePaths': ['node_modules'],
       'outputStyle': argv.dev ? 'development' : 'compressed'
@@ -62,8 +62,10 @@ const defaultTask = parallel(compileJs, compileScss, compileDemo);
 const watchFiles = () => {
   const watch_scss = glob.sync('./src/scss/*.scss');
   const watch_js = glob.sync('./src/js/*.js');
+  const watch_demo = glob.sync('./docs/demo.scss');
 
-  watch(watch_scss, parallel(compileScss, compileDemo));
+  watch(watch_scss, compileScss);
+  watch(watch_demo, compileDemo);
   watch(watch_js, compileJs);
 };
 

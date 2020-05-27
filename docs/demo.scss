@@ -2,8 +2,8 @@ $background: #243949;
 $white: #fffce1;
 $yellow: #dab977;
 
-@import './hc-offcanvas-nav';
-@import './mixins';
+@import '../src/scss/hc-offcanvas-nav';
+@import '../src/scss/mixins';
 
 @mixin mi {
   font-family: 'Material Icons';
