@@ -42,12 +42,11 @@
 
   const ID = () => Math.random().toString(36).substr(2);
 
-  const stopPropagation = (e) => e.stopPropagation();
-
-  const preventDefault = (e) => e.preventDefault();
-
   const disableScroll = () => window.addEventListener('touchmove', preventDefault, supportsPassive);
   const enableScroll = () => window.removeEventListener('touchmove', preventDefault, supportsPassive);
+
+  const stopPropagation = (e) => e.stopPropagation();
+  const preventDefault = (e) => e.preventDefault();
 
   const preventClick = (cb) => {
     return (e) => {
@@ -808,7 +807,7 @@
                       .on('change', checkboxChange)
                       .prependTo($item);
 
-                    function attachToLink($el) {
+                    const attachToLink = ($el) => {
                       $el
                         .on('click', () => {
                           // trigger checkbox to toggle level
@@ -850,7 +849,7 @@
                       attachToLink(
                         // create "next" link separately
                         $(`<a href="#" class="nav-next" aria-label="${nav_title} Submenu" role="menuitem" tabindex="0"><span>`)
-                          .on('click', stopPropagation)
+                          .on('click', preventClick())
                           .insertAfter($a)
                       );
                     }
