@@ -160,8 +160,8 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
           width: 6px;
           height: 6px;
           margin-top: -3px;
-          border-top: 2px solid #fff;
-          border-left: 2px solid #fff;
+          border-top: 2px solid $hc-offcanvas-nav-text-color;
+          border-left: 2px solid $hc-offcanvas-nav-text-color;
         }
 
         &::before {
@@ -192,8 +192,8 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
         height: 8px;
         margin-left: -2px;
         box-sizing: border-box;
-        border-top: 2px solid #fff;
-        border-left: 2px solid #fff;
+        border-top: 2px solid $hc-offcanvas-nav-text-color;
+        border-left: 2px solid $hc-offcanvas-nav-text-color;
         transform-origin: center;
       }
     }
