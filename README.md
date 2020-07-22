@@ -94,20 +94,20 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | **position** | `'left'` | str | Position on which the menu will open. Available options: `'left'`, `'right'`, `'top'` and `'bottom'`. |
 | **swipeGestures** | `true`| bool | Enable open/close swipe gestures like in native apps. Works only for `left` and `right` positions. |
 | **levelOpen** | `'overlap'` | str | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
-| **closeOpenLevels** | `true` | bool | Should all open sub levels be closed when the nav closes. |
-| **closeActiveLevel** | `false` | bool | Should initially active sub level (see [`data-nav-active`](#data-attributes)) be cleared when the nav closes. |
 | **levelSpacing** | `40` | int | If levels are overlaped, this is the spacing between them, if they are expanding or always open, this is the text indent of the submenus. |
 | **levelTitles** | `true` | bool | Show titles for submenus, which is the parent item name. Works only for overlaped levels. |
 | **navTitle** | `null` | str | Main navigation (first level) title. |
 | **navClass** | `''` | str | Custom navigation class. |
 | **disableBody** | `true` | bool | Disable body scroll when navigation is open. |
+| **closeOpenLevels** | `true` | bool | Should all open sub levels be closed when the nav closes. |
+| **closeActiveLevel** | `false` | bool | Should initially active sub level (see [`data-nav-active`](#data-attributes)) be cleared when the nav closes. |
 | **closeOnClick** | `true` | bool | Close the navigation when links are clicked. |
 | **customToggle** | `null` | str / jQuery obj | Custom navigation toggle element. |
 | **insertClose** | `true` | bool / int | Insert navigation close button. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
 | **insertBack** | `true` | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. Works only for overlaped levels. |
-| **levelTitleAsBack** | `true` | bool | Use level titles as back labels. |
 | **labelClose** | `'Close'` | str | Label for the close button. |
 | **labelBack** | `'Back'` | str | Label for the back buttons. |
+| **levelTitleAsBack** | `true` | bool | Use level titles as back labels. |
 | **rtl** | `false` | bool | Set the content direction to right-to-left. |
 | **bodyInsert** | `'prepend'` | str | Choose to prepend or append navigation to body. |
 | **removeOriginalNav** | `false` | bool | Remove original menu from the DOM. Don't use this if planning to update the nav! |
@@ -232,10 +232,15 @@ Nav.close();
 | Event | Description |
 |-------|-------------|
 | **open** | Triggers each time when the nav is opened. |
+| **open.level** | Triggers each time when any level is opened. |
 | **close** | Triggers each time when the nav is closed. |
 | **close.once** | Triggers only the first time the nav is closed, and than it detaches itself. |
+| **close.level** | Triggers each time when any level is closed. |
 
-All events return Event object, and the plugin Settings object.
+All events return Event object as first argument.
+
+`open`, `close` and `close.once` return the plugin Settings object as second argument.
+`open.level` and `close.level` return the newly opened level and index as 2nd and 3rd argument.
 
 ```js
 var Nav = $('#main-nav').hcOffcanvasNav();
@@ -253,6 +258,14 @@ Nav.on('close.once', function(event, settings) {
     position: settings.position === 'left' ? 'right' : 'left'
   });
 });
+
+Nav.on('open.level', (e, l, i) => {
+  localStorage.setItem('NavLevel', l);
+  localStorage.setItem('NavIndex', i);
+}).on('close.level', (e, l, i) => {
+  localStorage.setItem('NavLevel', l);
+  localStorage.setItem('NavIndex', i);
+})
 ```
 
 
