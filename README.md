@@ -239,7 +239,7 @@ Nav.close();
 
 All events return Event object as first argument.
 
-`open`, `close` and `close.once` return the plugin Settings object as second argument.
+`open`, `close` and `close.once` return the plugin Settings object as second argument.<br>
 `open.level` and `close.level` return the newly opened level and index as 2nd and 3rd argument.
 
 ```js
