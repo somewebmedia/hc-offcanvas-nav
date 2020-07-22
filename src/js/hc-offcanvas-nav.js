@@ -982,7 +982,7 @@
 
         const touchMove_open = (e) => {
           let xDiff = 0 - (_xStart - e.touches[0].clientX);
-          const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
+          const levelSpacing = Settings.levelOpen === 'overlap' ? activeLevel() * Settings.levelSpacing : 0;
           const swipeWidth = _containerWidth + levelSpacing;
           const maxStart = 20;
 
@@ -1013,7 +1013,7 @@
 
           const lastTouch = e.changedTouches[e.changedTouches.length-1];
           let xDiff = 0 - (_xStart - lastTouch.clientX);
-          const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
+          const levelSpacing = Settings.levelOpen === 'overlap' ? activeLevel() * Settings.levelSpacing : 0;
           const swipeWidth = _containerWidth + levelSpacing;
           const diffTrashold = 70;
 
@@ -1048,7 +1048,7 @@
             return;
           }
 
-          const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
+          const levelSpacing = Settings.levelOpen === 'overlap' ? activeLevel() * Settings.levelSpacing : 0;
           const swipeWidth = _containerWidth + levelSpacing;
 
           if (Settings.position == 'left') {
@@ -1079,7 +1079,7 @@
 
           const lastTouch = e.changedTouches[e.changedTouches.length-1];
           let xDiff = 0 - (_xStart - lastTouch.clientX);
-          const levelSpacing = Settings.levelOpen === 'overlap' ? whatLevelIsActive() * Settings.levelSpacing : 0;
+          const levelSpacing = Settings.levelOpen === 'overlap' ? activeLevel() * Settings.levelSpacing : 0;
           const swipeWidth = _containerWidth + levelSpacing;
           const diffTrashold = 50;
 
@@ -1151,7 +1151,7 @@
 
         function checkEsc(e) {
           if (isOpen() && (e.key === 'Escape' || e.keyCode === 27)) {
-            const level = whatLevelIsActive();
+            const level = activeLevel();
 
             if (level === 0) {
               closeNav();
@@ -1185,9 +1185,15 @@
           return _open;
         }
 
-        function whatLevelIsActive() {
+        function activeLevel() {
           return _openLevels.length
             ? $nav_container.find('.hc-chk').filter(`[value=${_openLevels[_openLevels.length - 1]}]`).data('level')
+            : 0;
+        }
+
+        function activeIndex() {
+          return _openLevels.length
+            ? $nav_container.find('.hc-chk').filter(`[value=${_openLevels[_openLevels.length - 1]}]`).data('index')
             : 0;
         }
 
@@ -1206,7 +1212,8 @@
 
           let $checkbox;
 
-          if (typeof l === 'number' && typeof i === 'number') {
+          if ((typeof l === 'number' || isNumeric(l)) && (typeof i === 'number' || isNumeric(i))) {
+
             $checkbox = $(`#${navUniqId}-${l}-${i}`);
 
             if (!$checkbox.length) {
@@ -1311,7 +1318,7 @@
 
           setTimeout(() => {
             // trigger open event
-            self.trigger('open', $.extend({}, Settings));
+            self.trigger('open.$', $.extend({}, Settings));
           }, _transitionDuration);
         }
 
@@ -1427,6 +1434,9 @@
             }
           }
 
+          // trigger level open event
+          self.trigger('open.level', [l, i]);
+
           if (_keyboard) {
             // trap focus inside level when keyboard accessing
             trapFocus(0, l, i);
@@ -1485,6 +1495,9 @@
               }
             }
           }
+
+          // trigger level open event
+          self.trigger('close.level', [l-1, activeIndex()]);
 
           if (_keyboard) {
             // trap focus back one level when keyboard accessing
