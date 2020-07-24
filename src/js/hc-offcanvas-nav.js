@@ -243,6 +243,7 @@
         closeOnClick:       true,
         customToggle:       null,
         bodyInsert:         'prepend', // prepend/append
+        keepClasses:        true,
         removeOriginalNav:  false,
         rtl:                false,
         insertClose:        true,
@@ -682,7 +683,12 @@
             }
 
             $.each(menu, (i_nav, nav) => {
-              const $menu = $(`<ul role="menu" aria-level="${level+1}">`).addClass(nav.classes).appendTo($content);
+              const $menu = $(`<ul role="menu" aria-level="${level+1}">`).appendTo($content);
+
+              // keep original menu classes
+              if (Settings.keepClasses) {
+                $menu.addClass(nav.classes);
+              }
 
               if (i_nav === 0 && title) {
                 $menu.attr('aria-label', title);
@@ -698,9 +704,13 @@
                 // item has custom content
                 if (item.custom) {
                   const $custom_item = $(`<li class="custom-content">`)
-                    .addClass(item.classes)
                     .append($(`<div class="nav-item nav-item-custom">`)
                     .append($item_content.clone(true, true)));
+
+                  // keep original menu item classes
+                  if (Settings.keepClasses) {
+                    $custom_item.addClass(item.classes);
+                  }
 
                   // insert item
                   $menu.append($custom_item);
@@ -757,9 +767,13 @@
 
                 // our nav item
                 const $item = $(`<li>`)
-                  .addClass(item.classes)
                   .append($a)
                   .appendTo($menu);
+
+                // keep original menu item classes
+                if (Settings.keepClasses) {
+                  $item.addClass(item.classes);
+                }
 
                 // is nav item highlighted?
                 if (item.highlight) {
