@@ -110,6 +110,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | **levelTitleAsBack** | `true` | bool | Use level titles as back labels. |
 | **rtl** | `false` | bool | Set the content direction to right-to-left. |
 | **bodyInsert** | `'prepend'` | str | Choose to prepend or append navigation to body. |
+| **keepClasses** | `true` | bool | Should original menus and their items classes be preserved or excluded. |
 | **removeOriginalNav** | `false` | bool | Remove original menu from the DOM. Don't use this if planning to update the nav! |
 
 
