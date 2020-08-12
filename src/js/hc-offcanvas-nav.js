@@ -457,9 +457,9 @@
           // clear our 'none' inline transition
           $nav_container.css('transition', '');
 
-          _transitionProperty = $nav_container.css('transition-property').split(',')[0];
-          _transitionDuration = toMs($nav_container.css('transition-duration').split(',')[0]);
-          _transitionFunction = $nav_container.css('transition-timing-function').split(',')[0];
+          _transitionProperty = $nav_container.css('transition-property');
+          _transitionDuration = toMs($nav_container.css('transition-duration'));
+          _transitionFunction = $nav_container.css('transition-timing-function');
 
           if (Settings.pushContent && $push_content && _transitionProperty) {
             Styles.add(getElementCssTag(Settings.pushContent), `transition: ${_transitionProperty} ${_transitionDuration}ms ${_transitionFunction}`);
