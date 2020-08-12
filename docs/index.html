@@ -300,7 +300,7 @@
 
           // demo settings update
 
-          const update = (settings) => {
+          const update = function(settings) {
             if (Nav.isOpen()) {
               Nav.on('close.once', function() {
                 Nav.update(settings);
