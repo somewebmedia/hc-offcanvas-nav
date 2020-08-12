@@ -118,7 +118,6 @@ body.hc-nav-open {
   .nav-wrapper {
     &::after {
       content: '';
-      position: fixed;
       z-index: 9990;
       top: 0;
       left: 0;
@@ -130,6 +129,18 @@ body.hc-nav-open {
       visibility: hidden;
       opacity: 0;
       transition: visibility 0s ease $hc-offcanvas-nav-transition-duration, opacity $hc-offcanvas-nav-transition-duration ease;
+    }
+  }
+
+  &.disable-body {
+    &::after {
+      position: fixed;
+    }
+  }
+
+  .nav-wrapper {
+    &::after {
+      position: absolute;
     }
   }
 
