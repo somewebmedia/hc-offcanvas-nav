@@ -29,7 +29,7 @@ const compileJs = () => {
         comments: saveLicense
       }
     }))
-    .pipe(dest('./docs/'))
+    .pipe(dest('./docs/')) // demo
     .pipe(dest('./dist/'));
 };
 
@@ -43,7 +43,7 @@ const compileScss = () => {
     .pipe(dest('./dist/'));
 };
 
-const compileDemo = () => {
+const compileDemoScss = () => {
   return src(['./docs/demo.scss'])
     .pipe(sass({
       'includePaths': ['node_modules'],
@@ -57,15 +57,15 @@ const runDemo = () => {
   return src('./docs/index.html').pipe(open());
 };
 
-const defaultTask = parallel(compileJs, compileScss, compileDemo);
+const defaultTask = parallel(compileJs, compileScss, compileDemoScss);
 
 const watchFiles = () => {
   const watch_scss = glob.sync('./src/scss/*.scss');
   const watch_js = glob.sync('./src/js/*.js');
   const watch_demo = glob.sync('./docs/demo.scss');
 
-  watch(watch_scss, compileScss);
-  watch(watch_demo, compileDemo);
+  watch(watch_scss, parallel(compileScss, compileDemoScss));
+  watch(watch_demo, compileDemoScss);
   watch(watch_js, compileJs);
 };
 
