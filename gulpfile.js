@@ -9,6 +9,8 @@ const babel = require('gulp-babel');
 const through = require('through2');
 const path = require('path');
 const argv = require('yargs').argv;
+const bump = require('gulp-bump');
+const replace = require('gulp-replace');
 
 const compileJs = () => {
   return src(['./src/js/*.js'])
@@ -57,6 +59,35 @@ const runDemo = () => {
   return src('./docs/index.html').pipe(open());
 };
 
+const bumpPackage = () => {
+  return src('./*.json')
+    .pipe(bump(argv.ver && argv.ver.indexOf('.') > -1 ? {version: argv.ver} : {type: argv.ver || 'patch'}))
+    .pipe(dest('./'));
+};
+
+const bumpJs = () => {
+  const package = require('./package.json');
+
+  return src(['./src/js/*.js'])
+    .pipe(replace(/ \* Version: ([\d\.]+)/g, () => {
+      return ` * Version: ${package.version}`;
+    }))
+    .pipe(dest('./src/js/'))
+};
+
+const bumpHtml = () => {
+  const package = require('./package.json');
+
+  return src(['./docs/*.html'])
+    .pipe(replace(/\?ver=([\d\.]+)/g, () => {
+      return `?ver=${package.version}`;
+    }))
+    .pipe(replace(/v<span>([\d\.]+)/g, () => {
+      return `v<span>${package.version}`;
+    }))
+    .pipe(dest('./docs/'))
+};
+
 const defaultTask = parallel(compileJs, compileScss, compileDemoScss);
 
 const watchFiles = () => {
@@ -71,4 +102,5 @@ const watchFiles = () => {
 
 module.exports.default = defaultTask;
 module.exports.watch = series(defaultTask, watchFiles);
+module.exports.bump = series(bumpPackage, bumpJs, bumpHtml, compileJs);
 module.exports.demo = series(defaultTask, runDemo);
