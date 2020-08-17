@@ -1019,7 +1019,7 @@
                   if (
                     $item_link.tagName === 'A' &&
                     $item_link.dataset.navClose !== 'false' &&
-                    (!$item_link.getAttribute('disabled') || $item_link.getAttribute('disabled') === 'false')
+                    ($item_link.getAttribute('disabled') === null || $item_link.getAttribute('disabled') === 'false')
                   ) {
                     $item_link.addEventListener('click', closeNav);
                   }
@@ -1030,7 +1030,7 @@
                   if (
                     $item_link.tagName === 'A' &&
                     $item_link.dataset.navClose !== 'false' &&
-                    (!$item_link.getAttribute('disabled') || $item_link.getAttribute('disabled') === 'false') &&
+                    ($item_link.getAttribute('disabled') === null || $item_link.getAttribute('disabled') === 'false') &&
                     (!item.subnav.length || ($item_link.getAttribute('href') && $item_link.getAttribute('href').charAt(0) !== '#'))
                   ) {
                     $item_link.addEventListener('click', closeNav);
