@@ -3,7 +3,7 @@ HC Off-canvas Nav
 
 [![Version](https://img.shields.io/npm/v/hc-offcanvas-nav.svg)](https://www.npmjs.com/package/hc-offcanvas-nav) [![Downloads](https://img.shields.io/npm/dt/hc-offcanvas-nav.svg)](https://www.npmjs.com/package/hc-offcanvas-nav)
 
-jQuery plugin for creating off-canvas multi-level navigations, using ARIA. [Demo](https://somewebmedia.github.io/hc-offcanvas-nav/)
+JavaScript library for creating off-canvas multi-level navigations, using ARIA. Dependency free, but lso works as a jQuery plugin. [Demo](https://somewebmedia.github.io/hc-offcanvas-nav/)
 
 <img src="https://somewebmedia.github.io/hc-offcanvas-nav/hc-offcanvas-nav.png" width="440">
 
@@ -40,19 +40,30 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 
 ## Usage
 
-#### Call the plugin
+#### Vanilla JS
 
-```html
-<link rel="stylesheet" href="/path/to/hc-offcanvas-nav.css">
-<script src="/path/to/jquery.js"></script>
-<script src="/path/to/hc-offcanvas-nav.js"></script>
-<script>
-  jQuery(document).ready(function($) {
-    $('#main-nav').hcOffcanvasNav({
-      disableAt: 1024
-    });
+```js
+var Nav = new hcOffcanvasNav('#main-nav', {
+  disableAt: 1024
+  customToggle: '.toggle',
+  navTitle: 'All Categories',
+  levelTitles: true,
+  levelTitleAsBack: true
+});
+```
+
+#### jQuery
+
+```js
+jQuery(document).ready(function($) {
+  $('#main-nav').hcOffcanvasNav({
+    disableAt: 1024
+    customToggle: '.toggle',
+    navTitle: 'All Categories',
+    levelTitles: true,
+    levelTitleAsBack: true
   });
-</script>
+});
 ```
 
 #### Example HTML menu structure
@@ -89,7 +100,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | **width** | `280` | int / str | Width of the nav. Used for `left` and `right` positions. |
 | **height** | `'auto'` | int / str | Height of the nav. Used for `top` and `bottom` positions. |
 | **disableAt** | `false` | int / bool | Resolution above which to hide the offcanvas menu, and show the original. |
-| **pushContent** | `false` | bool / str / jQuery obj | Content element (string selector or jQuery object) that will be pushed when the navigation is open. |
+| **pushContent** | `null` | str / Element obj | Content element (string selector or HTML Element object) that will be pushed when the navigation is open. |
 | **expanded** | `false`| bool | Initialize menu in expanded mode. It won't push content. |
 | **position** | `'left'` | str | Position on which the menu will open. Available options: `'left'`, `'right'`, `'top'` and `'bottom'`. |
 | **swipeGestures** | `true`| bool | Enable open/close swipe gestures like in native apps. Works only for `left` and `right` positions. |
@@ -102,7 +113,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 | **closeOpenLevels** | `true` | bool | Should all open sub levels be closed when the nav closes. |
 | **closeActiveLevel** | `false` | bool | Should initially active sub level (see [`data-nav-active`](#data-attributes)) be cleared when the nav closes. |
 | **closeOnClick** | `true` | bool | Close the navigation when links are clicked. |
-| **customToggle** | `null` | str / jQuery obj | Custom navigation toggle element. |
+| **customToggle** | `null` | str / Element obj | Custom navigation toggle element. |
 | **insertClose** | `true` | bool / int | Insert navigation close button. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
 | **insertBack** | `true` | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. Works only for overlaped levels. |
 | **labelClose** | `'Close'` | str | Label for the close button. |
@@ -119,8 +130,17 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 
 The HC Off-canvas Nav API offers a couple of methods to control the offcanvas and are publicly available to all active instances.
 
+#### Vanilla JS
+
 ```js
-var Nav = $('#main-nav').hcOffcanvasNav();
+var Nav = new hcOffcanvasNav();
+```
+
+#### jQuery
+
+```js
+var $nav = $('#main-nav').hcOffcanvasNav();
+var Nav = $nav.data('hcOffcanvasNav');
 ```
 
 ### .getSettings()
@@ -228,6 +248,28 @@ Closes the nav if open.
 Nav.close();
 ```
 
+### .on(eventName, cb)
+
+Attach [Event](#events) listener to the nav.
+
+```js
+Nav.on('close', function() {
+  // do something on close
+});
+```
+
+### .off(eventName, cb)
+
+Remove [Event](#events) listener from the nav.
+
+```js
+// remove specific function
+Nav.off('close', onCloseFunction);
+
+// remove all event listeners
+Nav.off('close');
+```
+
 ## Events
 
 | Event | Description |
@@ -238,34 +280,32 @@ Nav.close();
 | **close.once** | Triggers only the first time the nav is closed, and than it detaches itself. |
 | **close.level** | Triggers each time when any level is closed. |
 
-All events return Event object as first argument.
-
-`open`, `close` and `close.once` return the plugin Settings object as second argument.<br>
-`open.level` and `close.level` return the newly opened level and index as 2nd and 3rd argument.
+All events return Event object as first argument, and the plugin Settings object as second argument.<br>
+`open.level` and `close.level` return the newly opened level and index under the `Event.data` property.
 
 ```js
-var Nav = $('#main-nav').hcOffcanvasNav();
-
 // change nav open position after each close
-Nav.on('close', function(event, settings) {
+Nav.on('close', function(e, settings) {
   Nav.update({
     position: settings.position === 'left' ? 'right' : 'left'
   });
 });
 
 // will change nav open position only once
-Nav.on('close.once', function(event, settings) {
+Nav.on('close.once', function(e, settings) {
   Nav.update({
     position: settings.position === 'left' ? 'right' : 'left'
   });
 });
 
-Nav.on('open.level', (e, l, i) => {
-  localStorage.setItem('NavLevel', l);
-  localStorage.setItem('NavIndex', i);
-}).on('close.level', (e, l, i) => {
-  localStorage.setItem('NavLevel', l);
-  localStorage.setItem('NavIndex', i);
+Nav.on('open.level', (e, settings) => {
+  localStorage.setItem('NavLevel', e.data.currentLevel);
+  localStorage.setItem('NavIndex', e.data.currentIndex);
+});
+
+Nav.on('close.level', (e, settings) => {
+  localStorage.setItem('NavLevel', e.data.currentLevel);
+  localStorage.setItem('NavIndex', e.data.currentIndex);
 })
 ```
 
