@@ -3,19 +3,16 @@
 <html>
 
   <head>
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
     <meta property="og:site_name" content="Some Web Media"/>
     <meta property="og:title" content="HC Off-canvas Nav – jQuery plugin for creating toggled off-canvas multi-level navigations">
     <meta property="og:description" content="jQuery plugin for creating toggled off-canvas multi-level navigations, allowing endless nesting of submenu elements.">
     <meta property="og:url" content="https://somewebmedia.github.io/hc-offcanvas-nav/">
     <meta property="og:image" content="https://somewebmedia.github.io/hc-offcanvas-nav/hc-offcanvas-nav.png">
-
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:200,300,400,600,700">
     <link rel="stylesheet" href="demo.css?ver=4.2.6">
-
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
     <script src="hc-offcanvas-nav.js?ver=4.2.6"></script>
   </head>
@@ -261,25 +258,22 @@
 
       <script>
         (function($) {
-          var $main_nav = $('#main-nav');
-          var $toggle = $('.toggle');
+          'use strict';
 
-          var defaultOptions = {
+          // call our plugin
+          var Nav = new hcOffcanvasNav('#main-nav', {
             disableAt: false,
-            customToggle: $toggle,
+            customToggle: '.toggle',
             levelSpacing: 40,
             navTitle: 'All Categories',
             levelTitles: true,
             levelTitleAsBack: true,
             pushContent: '#container',
             insertClose: 2
-          };
-
-          // call our plugin
-          var Nav = $main_nav.hcOffcanvasNav(defaultOptions);
+          });
 
           // add new items to original nav
-          $main_nav.find('li.add').children('a').on('click', function() {
+          $('#main-nav').find('li.add').children('a').on('click', function() {
             var $this = $(this);
             var $li = $this.parent();
             var items = eval('(' + $this.attr('data-add') + ')');
@@ -295,7 +289,7 @@
               $this.attr('data-add', JSON.stringify(items));
             }
 
-            Nav.update(true);
+            Nav.update(true); // update DOM
           });
 
           // demo settings update

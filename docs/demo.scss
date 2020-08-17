@@ -376,6 +376,12 @@ main {
 
   h2 {
     font-weight: 400;
+
+    & + ul > li.search {
+      .nav-item {
+        padding-top: 0;
+      }
+    }
   }
 
   a {
@@ -398,9 +404,6 @@ main {
     }
 
     &.search {
-      .nav-item {
-        padding-top: 0;
-      }
 
       input[type="text"] {
         width: 100%;

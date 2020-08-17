@@ -3,9 +3,8 @@
 <html>
 
   <head>
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:200,300,400,600,700">
     <link rel="stylesheet" href="demo.css?ver=4.2.6">
@@ -22,7 +21,6 @@
       }
     </style>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.0/knockout-min.js"></script>
     <script src="hc-offcanvas-nav.js?ver=4.2.6"></script>
   </head>
@@ -55,7 +53,8 @@
       </script>
 
       <script>
-        (function($) {
+        (function() {
+          'use strict';
 
           var Nav;
 
@@ -94,13 +93,6 @@
 
               // update nav
               Nav.update(true);
-
-              // or you can update the nav when it closes
-              /*Nav.on('close', (e) => {
-                Nav.update(true);
-                Nav.off('close');
-              });*/
-
             }.bind(self);
           };
 
@@ -130,12 +122,12 @@
 
           ko.applyBindings(new NavigationModel(pages));
 
-          Nav = $('#nav').hcOffcanvasNav({
+          Nav = new hcOffcanvasNav('#nav', {
             disableAt: false,
             levelTitles: true,
             closeOnClick: false
           });
-        })(jQuery);
+        })();
       </script>
 
     </div>
