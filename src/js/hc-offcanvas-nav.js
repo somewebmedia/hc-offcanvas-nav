@@ -464,7 +464,7 @@
       width:              280,
       height:             'auto',
       disableAt:          false,
-      pushContent:        false,
+      pushContent:        null,
       swipeGestures:      true,
       expanded:           false,
       position:           'left', // left, right, top, bottom
