@@ -1292,7 +1292,7 @@
         let xDiff = 0 - (_xStart - e.touches[0].clientX);
         const levelSpacing = Settings.levelOpen === 'overlap' ? activeLevel() * Settings.levelSpacing : 0;
         const swipeWidth = _containerWidth + levelSpacing;
-        const maxStart = 20;
+        const maxStart = 30; // from the edge of the screen
 
         if (Settings.position === 'left') {
           xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
@@ -1323,7 +1323,7 @@
         let xDiff = 0 - (_xStart - lastTouch.clientX);
         const levelSpacing = Settings.levelOpen === 'overlap' ? activeLevel() * Settings.levelSpacing : 0;
         const swipeWidth = _containerWidth + levelSpacing;
-        const diffTrashold = 70;
+        const diffTrashold = 50; // swipe distance required
 
         if (Settings.position === 'left') {
           xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
