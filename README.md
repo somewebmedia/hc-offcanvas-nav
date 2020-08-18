@@ -215,12 +215,12 @@ Above code will open the nested menu in the example structure bellow:
           </ul>
         </li>
         <li>
-          
+
           <ul><!-- Level: 2, Index: 1 -->
             <li></li>
             <li></li>
           </ul>
-          
+
         </li>
       </ul>
     </li>
@@ -349,6 +349,7 @@ If you want to make your WordPress theme nav data ready, just place this code to
 /*
  * Adds menu data support for HC Off-canvas Nav
  */
+
 $hc_nav_menu_walker;
 
 class HC_Walker_Nav_Menu extends Walker_Nav_Menu {
