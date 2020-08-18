@@ -346,6 +346,9 @@ Nav.on('close.level', (e, settings) => {
 If you want to make your WordPress theme nav data ready, just place this code to your `functions.php` file and it should work out of the box. <strong>Do not assign this custom Walker to your `wp_nav_menu` arguments!</strong> And don't worry if you already use your own custom Walker, this code will take care of everything.
 
 ```php
+/*
+ * Adds menu data support for HC Off-canvas Nav
+ */
 $hc_nav_menu_walker;
 
 class HC_Walker_Nav_Menu extends Walker_Nav_Menu {
