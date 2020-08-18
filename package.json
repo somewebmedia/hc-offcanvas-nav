@@ -1,13 +1,13 @@
 {
   "name": "hc-offcanvas-nav",
   "version": "5.0.2",
-  "description": "jQuery plugin for creating off-canvas multi-level navigations",
+  "description": "JavaScript library for creating off-canvas multi-level navigations",
   "homepage": "https://somewebmedia.github.io/hc-offcanvas-nav/",
   "main": "dist/hc-offcanvas-nav.js",
   "sass": "src/scss/hc-offcanvas-nav.scss",
   "author": {
     "name": "Some Web Media",
-    "url": "http://somewebmedia.com"
+    "url": "https://github.com/somewebmedia"
   },
   "license": "MIT",
   "repository": {

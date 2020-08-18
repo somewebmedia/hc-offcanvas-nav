@@ -5,7 +5,7 @@
  * Author: Some Web Media
  * Author URL: https://github.com/somewebmedia/
  * Plugin URL: https://github.com/somewebmedia/hc-offcanvas-nav
- * Description: jQuery plugin for creating off-canvas multi-level navigations
+ * Description: JavaScript library for creating off-canvas multi-level navigations
  * License: MIT
  */
 
@@ -451,7 +451,9 @@
 
   let navCount = 0;
 
-  const hcOffcanvasNav = (elem, options = {}) => {
+  const hcOffcanvasNav = (elem, options) => {
+    options = options || {};
+
     // use querySelector if string is passed
     if (typeof elem === 'string') {
       elem = elem.charAt(0) === '#' && elem.indexOf(' ') === -1 ? document.querySelector(elem) : document.querySelectorAll(elem);
