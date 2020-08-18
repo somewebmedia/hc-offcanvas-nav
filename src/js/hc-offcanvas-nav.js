@@ -30,425 +30,6 @@
   const document = window.document;
   const html = document.getElementsByTagName('html')[0];
 
-  let supportsPassive = false;
-  try {
-    const opts = Object.defineProperty({}, 'passive', {
-      get: function() {
-        supportsPassive = {passive: false};
-      }
-    });
-    window.addEventListener('testPassive', null, opts);
-    window.removeEventListener('testPassive', null, opts);
-  } catch (e) {}
-
-  const hasScrollBar = () => document.documentElement.scrollHeight > document.documentElement.clientHeight;
-
-  const isIos = (() => ((/iPad|iPhone|iPod/.test(navigator.userAgent)) || (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))) && !window.MSStream)();
-
-  const isTouchDevice = (() => 'ontouchstart' in window || navigator.maxTouchPoints || (window.DocumentTouch && document instanceof DocumentTouch))();
-
-  const isNumeric = (n) => !isNaN(parseFloat(n)) && isFinite(n);
-
-  const formatSizeVal = (n) => (n === 'auto') ? n : isNumeric(n) ? `${n}px` : n;
-
-  const toMs = (s) => parseFloat(s) * (/\ds$/.test(s) ? 1000 : 1);
-
-  const ID = () => Math.random().toString(36).substr(2);
-
-  const disableScroll = () => window.addEventListener('touchmove', preventDefault, supportsPassive);
-  const enableScroll = () => window.removeEventListener('touchmove', preventDefault, supportsPassive);
-
-  const stopPropagation = (e) => e.stopPropagation();
-  const preventDefault = (e) => e.preventDefault();
-
-  const preventClick = (cb) => {
-    return (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (typeof cb === 'function') cb();
-    };
-  };
-
-  const browserPrefix = (prop) => {
-    const prefixes = ['Webkit', 'Moz', 'Ms', 'O'];
-    const thisBody = document.body || document.documentElement;
-    const thisStyle = thisBody.style;
-    const Prop = prop.charAt(0).toUpperCase() + prop.slice(1);
-
-    if (typeof thisStyle[prop] !== 'undefined') {
-      return prop;
-    }
-
-    for (let i = 0; i < prefixes.length; i++) {
-      if (typeof thisStyle[prefixes[i] + Prop] !== 'undefined') {
-        return prefixes[i] + Prop;
-      }
-    }
-
-    return false;
-  };
-
-  var matches = (el, selector) => {
-    return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
-  };
-
-  const children = (el, selector) => {
-    if (el instanceof Element) {
-      return selector ? Array.prototype.filter.call(el.children, (child) => matches(child, selector)) : el.children;
-    }
-    else {
-      let children = [];
-
-      Array.prototype.forEach.call(el, (n) => {
-        children = selector
-          ? children.concat(Array.prototype.filter.call(n.children, (child) => matches(child, selector)))
-          : children.concat(Array.prototype.slice.call(n.children));
-      });
-
-      return children;
-    }
-  };
-
-  const wrap = (el, wrapper) => {
-    el.parentNode.insertBefore(wrapper, el);
-    wrapper.appendChild(el);
-  };
-
-  const data = (el, prop, val) => {
-    if (typeof el.hcOffcanvasNav === 'undefined') {
-      el.hcOffcanvasNav = {};
-    }
-
-    if (typeof val !== 'undefined') {
-      el.hcOffcanvasNav[prop] = val;
-    }
-    else {
-      return el.hcOffcanvasNav[prop];
-    }
-  };
-
-  if (!Element.prototype.closest) {
-    Element.prototype.closest = function(s) {
-      let el = this;
-      do {
-        if (Element.prototype.matches.call(el, s)) return el;
-        el = el.parentElement || el.parentNode;
-      } while (el !== null && el.nodeType === 1);
-      return null;
-    };
-  }
-
-  if (!Array.prototype.flat) {
-    Object.defineProperty(Array.prototype, 'flat', {
-      configurable: true,
-      value: function flat () {
-        var depth = isNaN(arguments[0]) ? 1 : Number(arguments[0]);
-
-        return depth ? Array.prototype.reduce.call(this, function (acc, cur) {
-          if (Array.isArray(cur)) {
-            acc.push.apply(acc, flat.call(cur, depth - 1));
-          } else {
-            acc.push(cur);
-          }
-
-          return acc;
-        }, []) : Array.prototype.slice.call(this);
-      },
-      writable: true
-    });
-  }
-
-  const cloneNodeWithEvents = (el, withEvents, deepWithEvents) => {
-    const cloned = el.cloneNode(deepWithEvents || false);
-    const srcElements = el instanceof Element ? [el].concat(Array.prototype.slice.call(el.getElementsByTagName('*'))) : [];
-    const destElements = cloned instanceof Element ? [cloned].concat(Array.prototype.slice.call(cloned.getElementsByTagName('*'))) : [];
-
-    const cloneCopyEvent = (src, dest) => {
-      for (let s = 0; s < src.length; s++) {
-        if (hasListener(src[s])) {
-          for (const type in src[s]._eventListeners) {
-            for (let i = 0; i < src[s]._eventListeners[type].length; i++) {
-              dest[i].addEventListener(type, src[s]._eventListeners[type][i].fn, src[s]._eventListeners[type][i].options);
-            }
-          }
-        }
-      }
-    };
-
-    if (!withEvents) {
-      srcElements.shift();
-      destElements.shift();
-    }
-
-    if (deepWithEvents) {
-      cloneCopyEvent(srcElements, destElements);
-    }
-
-    return cloned;
-  };
-
-  const customEventObject = (type, target, currentTarget, args) => {
-    function Event(type) {
-      this.bubbles = false;
-      this.cancelable = false;
-      this.composed = false;
-      this.currentTarget = currentTarget;
-      this.data = args ? {} : null;
-      this.defaultPrevented = false;
-      this.eventPhase = 0;
-      this.isTrusted = false;
-      this.target = target;
-      this.timeStamp = Date.now();
-      this.type = type;
-
-      for (const prop in args) {
-        this.data[prop] = args[prop];
-      }
-    }
-
-    return new Event(type);
-  };
-
-  const hasListener = (el, type) => {
-    return (type ? (el._eventListeners || {})[type] : el._eventListeners) || false;
-  };
-
-  const addRemoveListener = (op, add) => {
-    const f = EventTarget.prototype[op + 'EventListener'];
-
-    return function (type, cb, opts) {
-      if (!this) return;
-
-      const name = type.split('.')[0];
-
-      this._eventListeners = this._eventListeners || {};
-
-      if (op === 'add') {
-        this._eventListeners[type] = this._eventListeners[type] || [];
-
-        const lstn = {fn: cb};
-
-        if (opts) {
-          lstn.options = opts;
-        }
-
-        this._eventListeners[type].push(lstn);
-
-        // call native addEventListener
-        f.call(this, name, cb, opts);
-      }
-      else {
-        // remove single event listener
-        if (typeof cb === 'function') {
-          // call native addEventListener
-          f.call(this, name, cb, opts);
-
-          for (const e in this._eventListeners) {
-            this._eventListeners[e] = this._eventListeners[e].filter((l) => {
-              return l.fn !== cb;
-            });
-
-            if (!this._eventListeners[e].length) {
-              delete this._eventListeners[e];
-            }
-          }
-        }
-        else {
-          // remove all event listeners
-          if (this._eventListeners[type]) {
-            for (let i = this._eventListeners[type].length; i--;) {
-              // call native addEventListener
-              f.call(this, name, this._eventListeners[type][i].fn, this._eventListeners[type][i].options);
-
-              this._eventListeners[type].splice(i, 1);
-            }
-
-            if (!this._eventListeners[type].length) {
-              delete this._eventListeners[type];
-            }
-          }
-        }
-      }
-
-      return;
-    };
-  };
-
-  EventTarget.prototype.addEventListener = addRemoveListener('add');
-  EventTarget.prototype.removeEventListener = addRemoveListener('remove');
-
-  const createElement = (tag, props = {}, content) => {
-    const el = document.createElement(tag);
-
-    for (const p in props) {
-      if (p !== 'class') {
-        el.setAttribute(p, props[p]);
-      }
-      else {
-        el.className = props[p];
-      }
-    }
-
-    if (content) {
-      if (!Array.isArray(content)) {
-        content = [content];
-      }
-
-      for (let i = 0; i < content.length; i++) {
-        if (typeof content[i] === 'object' && content[i].length && !content[i].nodeType) {
-          for (let l = 0; l < content[i].length; l++) {
-            el.appendChild(content[i][l]);
-          }
-        }
-        else {
-          el.appendChild(typeof content[i] === 'string' ? document.createTextNode(content[i]) : content[i]);
-        }
-      }
-    }
-
-    return el;
-  };
-
-  const getElementCssTag = (el) => {
-    return typeof el === 'string'
-      ? el
-      : el.getAttribute('id')
-        ? `#${el.getAttribute('id')}`
-        : el.getAttribute('class')
-          ? el.tagName.toLowerCase() + '.' + el.getAttribute('class').replace(/\s+/g, '.')
-          : getElementCssTag(el.parentNode) + ' > ' + el.tagName.toLowerCase();
-  };
-
-  const printStyle = (id) => {
-    const $style = createElement('style', {id: id});
-    let rules = {};
-    let media = {};
-
-    document.head.appendChild($style);
-
-    const parseRules = (text) => {
-      if (text.substr(-1) !== ';') {
-        text += text.substr(-1) !== ';' ? ';' : '';
-      }
-      return text;
-    };
-
-    return {
-      reset: () => {
-        rules = {};
-        media = {};
-      },
-      add: (selector, declarations, query) => {
-        selector = selector.trim();
-        declarations = declarations.trim();
-
-        if (query) {
-          query = query.trim();
-          media[query] = media[query] || {};
-          media[query][selector] = parseRules(declarations);
-        }
-        else {
-          rules[selector] = parseRules(declarations);
-        }
-      },
-      remove: (selector, query) => {
-        selector = selector.trim();
-
-        if (query) {
-          query = query.trim();
-          if (typeof media[query][selector] !== 'undefined') {
-            delete media[query][selector];
-          }
-        }
-        else {
-          if (typeof rules[selector] !== 'undefined') {
-            delete rules[selector];
-          }
-        }
-      },
-      insert: () => {
-        let cssText = '';
-
-        for (let breakpoint in media) {
-          cssText += `@media screen and (${breakpoint}) {\n`;
-
-          for (let key in media[breakpoint]) {
-            cssText += `${key} { ${media[breakpoint][key]} }\n`;
-          }
-
-          cssText += '}\n';
-        }
-
-        for (let key in rules) {
-          cssText += `${key} { ${rules[key]} }\n`;
-        }
-
-        $style.innerHTML = cssText;
-      }
-    };
-  };
-
-  const insertAt = ($insert, n, $parent) => {
-    const $children = children($parent);
-    const count = $children.length;
-    const i = n > -1
-      ? Math.max(0, Math.min(n - 1, count))
-      : Math.max(0, Math.min(count + n + 1, count));
-
-    if (i === 0) {
-      $parent.insertBefore($insert, $parent.firstChild);
-    } else {
-      $children[i - 1].insertAdjacentElement('afterend', $insert);
-    }
-  };
-
-  const getAxis = (position) => ['left', 'right'].indexOf(position) !== -1 ? 'x' : 'y';
-
-  const setTransform = (() => {
-    const transform = browserPrefix('transform');
-
-    return ($el, val, position) => {
-      if (transform) {
-        if (val === false) {
-          $el.style.transform = '';
-        }
-        else {
-          if (getAxis(position) === 'x') {
-            const x = position === 'left' ? val : 0 - val;
-            $el.style.transform = `translate3d(${x}px,0,0)`;
-          }
-          else {
-            const y = position === 'top' ? val : 0 - val;
-            $el.style.transform = `translate3d(0,${y}px,0)`;
-          }
-        }
-      }
-      else {
-        $el.style.position = val;
-      }
-    };
-  })();
-
-  const deprecated = (() => {
-    const pluginName = 'HC Off-canvas Nav';
-
-    return (what, instead, type) => {
-      console.warn(
-        '%c' + pluginName + ':'
-        + '%c ' + type
-        + "%c '"+ what + "'"
-        + '%c is now deprecated and will be removed in the future. Use'
-        + "%c '" + instead + "'"
-        + '%c option instead. See details about plugin usage at https://github.com/somewebmedia/hc-offcanvas-nav.',
-        'color: #fa253b',
-        'color: default',
-        'color: #5595c6',
-        'color: default',
-        'color: #5595c6',
-        'color: default');
-    };
-  })();
-
   let navCount = 0;
 
   const hcOffcanvasNav = (elem, options) => {
@@ -461,6 +42,8 @@
 
     // check if element exist
     if (!elem) return false;
+
+    const Helpers = hcOffcanvasNav.Helpers;
 
     const defaults = {
       width:              280,
@@ -493,7 +76,7 @@
 
     // show deprecated messages
     if (typeof options.maxWidth !== 'undefined') {
-      deprecated('maxWidth', 'disableAt', 'option');
+      Helpers.deprecated('maxWidth', 'disableAt', 'option');
       options.disableAt = options.maxWidth;
     }
 
@@ -533,14 +116,14 @@
       navCount++;
 
       const navUniqId = `hc-nav-${navCount}`;
-      const Styles = printStyle(`hc-offcanvas-${navCount}-style`);
+      const Styles = Helpers.printStyle(`hc-offcanvas-${navCount}-style`);
       const keydownEventName = 'keydown.hcOffcanvasNav';
 
       // this is our new nav element
-      const $nav = createElement('nav', {role: 'navigation'});
-      const $nav_container = createElement('div', {class: 'nav-container'});
+      const $nav = Helpers.createElement('nav', {role: 'navigation'});
+      const $nav_container = Helpers.createElement('div', {class: 'nav-container'});
 
-      $nav.addEventListener('click', stopPropagation);
+      $nav.addEventListener('click', Helpers.stopPropagation);
       $nav.appendChild($nav_container);
 
       let $toggle = null;
@@ -569,11 +152,11 @@
 
       if (!Settings.customToggle) {
         // our toggle
-        $toggle = createElement('a', {
+        $toggle = Helpers.createElement('a', {
           href: '#',
           class: `hc-nav-trigger ${navUniqId}`,
           'aria-label': 'Open Menu'
-        }, createElement('span'));
+        }, Helpers.createElement('span'));
 
         $toggle.addEventListener('click', toggleNav);
         $originalNav.insertAdjacentElement('afterend', $toggle);
@@ -622,10 +205,10 @@
         let $focusable = Array.prototype.filter.call($nav_container.querySelectorAll('.nav-wrapper'), (el) => {
           return el.getAttribute('data-level') == l && (typeof i !== 'number' || (typeof i === 'number' && el.getAttribute('data-index') == i));
         })[0];
-        $focusable = children($focusable, '.nav-content')[0];
-        $focusable = children($focusable, 'ul');
-        $focusable = children($focusable, 'li');
-        $focusable = children($focusable, ':not(.nav-wrapper)');
+        $focusable = Helpers.children($focusable, '.nav-content')[0];
+        $focusable = Helpers.children($focusable, 'ul');
+        $focusable = Helpers.children($focusable, 'li');
+        $focusable = Helpers.children($focusable, ':not(.nav-wrapper)');
         $focusable = Array.prototype.map.call($focusable, (el) => {
           return Array.prototype.slice.call(el.querySelectorAll(focusableSelector));
         }).flat();
@@ -703,11 +286,11 @@
         $nav_container.style.transition = '';
 
         _transitionProperty = window.getComputedStyle($nav_container).transitionProperty;
-        _transitionDuration = toMs(window.getComputedStyle($nav_container).transitionDuration);
+        _transitionDuration = Helpers.toMs(window.getComputedStyle($nav_container).transitionDuration);
         _transitionFunction = window.getComputedStyle($nav_container).transitionTimingFunction;
 
         if (Settings.pushContent && $push_content && _transitionProperty) {
-          Styles.add(getElementCssTag($push_content), `transition: ${_transitionProperty} ${_transitionDuration}ms ${_transitionFunction}`);
+          Styles.add(Helpers.getElementCssTag($push_content), `transition: ${_transitionProperty} ${_transitionDuration}ms ${_transitionFunction}`);
         }
 
         Styles.insert();
@@ -717,8 +300,8 @@
       const initNav = (reinit) => {
         const toggleDisplay = window.getComputedStyle($toggle).display;
         const mediaquery = Settings.disableAt ? `max-width: ${Settings.disableAt - 1}px` : false;
-        const width = formatSizeVal(Settings.width);
-        const height = formatSizeVal(Settings.height);
+        const width = Helpers.formatSizeVal(Settings.width);
+        const height = Helpers.formatSizeVal(Settings.height);
 
         if (width.indexOf('px') !== -1) {
           _containerWidth = parseInt(width);
@@ -794,8 +377,8 @@
           'nav-levels-' + Settings.levelOpen || 'none',
           'nav-position-' + Settings.position,
           Settings.disableBody ? 'disable-body' : '',
-          isIos ? 'is-ios' : '',
-          isTouchDevice ? 'touch-device' : '',
+          Helpers.isIos ? 'is-ios' : '',
+          Helpers.isTouchDevice ? 'touch-device' : '',
           wasOpen ? navOpenClass : '',
           Settings.rtl ? 'rtl' : ''
         ].join(' ').trim();
@@ -863,12 +446,12 @@
 
               // save unique identifier for remembering open sub menus
               if ($subnav.length) {
-                if (!data($li, 'hc-uniqid')) {
-                  uniqid = ID();
-                  data($li, 'hc-uniqid', uniqid);
+                if (!Helpers.data($li, 'hc-uniqid')) {
+                  uniqid = Math.random().toString(36).substr(2);
+                  Helpers.data($li, 'hc-uniqid', uniqid);
                 }
                 else {
-                  uniqid = data($li, 'hc-uniqid');
+                  uniqid = Helpers.data($li, 'hc-uniqid');
                 }
               }
 
@@ -910,24 +493,24 @@
         createDom(Model, $nav_container, 0, Settings.navTitle);
 
         function createDom(menu, $container, level, title, backIndex, backTitle) {
-          const $wrapper = createElement('div', {
+          const $wrapper = Helpers.createElement('div', {
             class: `nav-wrapper nav-wrapper-${level}`,
             'data-level': level,
             'data-index': backIndex || 0
           });
-          const $content = createElement('div', {class: 'nav-content'});
+          const $content = Helpers.createElement('div', {class: 'nav-content'});
 
-          $wrapper.addEventListener('click', stopPropagation);
+          $wrapper.addEventListener('click', Helpers.stopPropagation);
           $wrapper.appendChild($content);
           $container.appendChild($wrapper);
 
           // titles
           if (title) {
-            $content.insertBefore(createElement('h2', {}, title), $content.firstChild);
+            $content.insertBefore(Helpers.createElement('h2', {}, title), $content.firstChild);
           }
 
           menu.forEach((nav, i_nav) => {
-            const $menu = createElement('ul', {
+            const $menu = Helpers.createElement('ul', {
               role: 'menu',
               'aria-level': level + 1
             });
@@ -953,9 +536,9 @@
               // item has custom content
               if (item.custom) {
 
-                const $custom_item = createElement('li', {class: 'custom-content'},
-                  createElement('div', {class: 'nav-item nav-item-custom'}, Array.prototype.map.call($item_content, (el) => {
-                    return cloneNodeWithEvents(el, true, true);
+                const $custom_item = Helpers.createElement('li', {class: 'custom-content'},
+                  Helpers.createElement('div', {class: 'nav-item nav-item-custom'}, Array.prototype.map.call($item_content, (el) => {
+                    return Helpers.clone(el, true, true);
                   }))
                 );
 
@@ -978,14 +561,14 @@
               let $item_link;
 
               if ($original_link) {
-                $item_link = cloneNodeWithEvents($original_link, false, true);
+                $item_link = Helpers.clone($original_link, false, true);
                 $item_link.classList.add('nav-item');
               }
               else {
-                $item_link = createElement(item.subnav.length ? 'a' : 'span', {
+                $item_link = Helpers.createElement(item.subnav.length ? 'a' : 'span', {
                   class: 'nav-item'
                 }, Array.prototype.map.call($item_content, (el) => {
-                  return cloneNodeWithEvents(el, true, true);
+                  return Helpers.clone(el, true, true);
                 }));
               }
 
@@ -1003,7 +586,7 @@
                   e.stopPropagation();
 
                   // trigger original click event
-                  if (hasListener($original_link, 'click')) {
+                  if (Helpers.hasListener($original_link, 'click')) {
                     $original_link.click();
                   }
                 });
@@ -1011,7 +594,7 @@
 
               if ($item_link.getAttribute('href') === '#') {
                 // prevent page jumping
-                $item_link.addEventListener('click', preventDefault);
+                $item_link.addEventListener('click', Helpers.preventDefault);
               }
 
               // close nav on item click
@@ -1041,7 +624,7 @@
               }
 
               // our nav item
-              const $item = createElement('li');
+              const $item = Helpers.createElement('li');
 
               $item.appendChild($item_link);
               $menu.appendChild($item);
@@ -1057,7 +640,7 @@
               }
 
               // wrap item link
-              wrap($item_link, createElement('div', {class: 'nav-item-wrapper'}));
+              Helpers.wrap($item_link, Helpers.createElement('div', {class: 'nav-item-wrapper'}));
 
               // indent levels in expanded levels
               if (Settings.levelSpacing && (Settings.levelOpen === 'expand' || (Settings.levelOpen === false || Settings.levelOpen === 'none'))) {
@@ -1089,7 +672,7 @@
                 else {
                   const index = _indexes[nextLevel];
 
-                  const $checkbox = createElement('input', {
+                  const $checkbox = Helpers.createElement('input', {
                     type: 'checkbox',
                     id: `${navUniqId}-${nextLevel}-${index}`,
                     class: 'hc-chk',
@@ -1099,7 +682,7 @@
                     value: uniqid
                   });
 
-                  $checkbox.addEventListener('click', stopPropagation);
+                  $checkbox.addEventListener('click', Helpers.stopPropagation);
                   $checkbox.addEventListener('change', checkboxChange);
                   $item.insertBefore($checkbox, $item.firstChild);
 
@@ -1143,20 +726,20 @@
 
                   // item has no actual link
                   if (!$item_link.getAttribute('href') || $item_link.getAttribute('href') === '#') {
-                    $item_link.appendChild(createElement('span', {class: 'nav-next'}, createElement('span')));
+                    $item_link.appendChild(Helpers.createElement('span', {class: 'nav-next'}, Helpers.createElement('span')));
                     attachToLink($item_link);
                   }
                   // item has valid link, create our next link
                   else {
-                    const $a_next = createElement('a', {
+                    const $a_next = Helpers.createElement('a', {
                       href: '#',
                       class: 'nav-next',
                       'aria-label': `${nav_title} Submenu`,
                       role: 'menuitem',
                       tabindex: 0
-                    }, createElement('span'));
+                    }, Helpers.createElement('span'));
 
-                    $a_next.addEventListener('click', preventClick());
+                    $a_next.addEventListener('click', Helpers.preventClick());
                     $item_link.parentNode.insertBefore($a_next, $item_link.nextSibling)
                     attachToLink($a_next);
                   }
@@ -1172,17 +755,17 @@
           // insert back links
           if (level && typeof backIndex !== 'undefined') {
             if (Settings.insertBack !== false && Settings.levelOpen === 'overlap') {
-              const $children_menus = children($content, 'ul');
+              const $children_menus = Helpers.children($content, 'ul');
               const backLabel = (Settings.levelTitleAsBack ? (backTitle || Settings.labelBack) : Settings.labelBack) || '';
-              const $back_a = createElement('a', {href: '#', role: 'menuitem', tabindex: 0}, [
+              const $back_a = Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0}, [
                 backLabel,
-                createElement('span')
+                Helpers.createElement('span')
               ]);
-              const $back = createElement('li', {class: 'nav-back'}, $back_a);
+              const $back = Helpers.createElement('li', {class: 'nav-back'}, $back_a);
               const closeThisLevel = () => closeLevel(level, backIndex);
 
-              wrap($back_a, createElement('div', {class: 'nav-item-wrapper'}));
-              $back_a.addEventListener('click', preventClick(closeThisLevel));
+              Helpers.wrap($back_a, Helpers.createElement('div', {class: 'nav-item-wrapper'}));
+              $back_a.addEventListener('click', Helpers.preventClick(closeThisLevel));
               $back_a.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.keyCode === 13) {
                   // remember we are accessing via keyboard
@@ -1193,22 +776,22 @@
               if (Settings.insertBack === true) {
                 $children_menus[0].insertBefore($back, $children_menus[0].firstChild);
               }
-              else if (isNumeric(Settings.insertBack)) {
-                insertAt($back, Settings.insertBack, $children_menus);
+              else if (Helpers.isNumeric(Settings.insertBack)) {
+                Helpers.insertAt($back, Settings.insertBack, $children_menus);
               }
             }
           }
 
           // insert close link
           if (level === 0 && Settings.insertClose !== false) {
-            const $nav_ul = children($content, 'ul');
-            const $close = createElement('li', {class: 'nav-close'},
-              createElement('a', {href: '#', role: 'menuitem', tabindex: 0}, Settings.labelClose || '')
+            const $nav_ul = Helpers.children($content, 'ul');
+            const $close = Helpers.createElement('li', {class: 'nav-close'},
+              Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0}, Settings.labelClose || '')
             );
             const $close_a = $close.querySelector('li > a');
 
-            wrap($close_a, createElement('div', {class: 'nav-item-wrapper'}));
-            $close_a.addEventListener('click', preventClick(closeNav));
+            Helpers.wrap($close_a, Helpers.createElement('div', {class: 'nav-item-wrapper'}));
+            $close_a.addEventListener('click', Helpers.preventClick(closeNav));
             $close_a.addEventListener('keydown', (e) => {
               if (e.key === 'Enter' || e.keyCode === 13) {
                 untrapFocus();
@@ -1218,8 +801,8 @@
             if (Settings.insertClose === true) {
               $nav_ul[0].insertBefore($close, $nav_ul[0].firstChild);
             }
-            else if (isNumeric(Settings.insertClose)) {
-              insertAt($close, Settings.insertClose, $nav_ul);
+            else if (Helpers.isNumeric(Settings.insertClose)) {
+              Helpers.insertAt($close, Settings.insertClose, $nav_ul);
             }
           }
         }
@@ -1239,38 +822,38 @@
           // temporary attach touch listeners
           if (target === 'doc') {
             if (!_touchNavTriggered) {
-              document.addEventListener('touchmove', touchMove_open, supportsPassive);
-              document.addEventListener('touchend', touchEnd_open, supportsPassive);
+              document.addEventListener('touchmove', touchMove_open, Helpers.supportsPassive);
+              document.addEventListener('touchend', touchEnd_open, Helpers.supportsPassive);
             }
           }
           else {
             _touchNavTriggered = true;
-            $nav_container.addEventListener('touchmove', touchMove_close, supportsPassive);
-            $nav_container.addEventListener('touchend', touchEnd_close, supportsPassive);
+            $nav_container.addEventListener('touchmove', touchMove_close, Helpers.supportsPassive);
+            $nav_container.addEventListener('touchend', touchEnd_close, Helpers.supportsPassive);
           }
         };
       };
 
       const touchCaptureNav = (transNav, transContent) => {
-        disableScroll();
+        window.addEventListener('touchmove', preventDefault, Helpers.supportsPassive); // disable scroll
         $nav.style.visibility = 'visible';
-        $nav_container.style[browserPrefix('transition')] = 'none';
-        setTransform($nav_container, transNav, Settings.position);
+        $nav_container.style[Helpers.browserPrefix('transition')] = 'none';
+        Helpers.setTransform($nav_container, transNav, Settings.position);
 
         if ($push_content) {
-          $push_content.style[browserPrefix('transition')] = 'none';
-          setTransform($push_content, transContent, Settings.position);
+          $push_content.style[Helpers.browserPrefix('transition')] = 'none';
+          Helpers.setTransform($push_content, transContent, Settings.position);
         }
       };
 
       const touchReleaseNav = (action, timeoutVsb = true, transNav = false, transContent = false) => {
-        enableScroll();
-        $nav_container.style[browserPrefix('transition')] = '';
-        setTransform($nav_container, transNav, Settings.position);
+        window.removeEventListener('touchmove', preventDefault, Helpers.supportsPassive) // enable scroll
+        $nav_container.style[Helpers.browserPrefix('transition')] = '';
+        Helpers.setTransform($nav_container, transNav, Settings.position);
 
         if ($push_content) {
-          $push_content.style[browserPrefix('transition')] = '';
-          setTransform($push_content, transContent, Settings.position);
+          $push_content.style[Helpers.browserPrefix('transition')] = '';
+          Helpers.setTransform($push_content, transContent, Settings.position);
         }
 
         if (action === 'open') {
@@ -1453,9 +1036,9 @@
       if (Settings.swipeGestures) {
         // close touch event on nav swipe
         // trigger before document touch
-        $nav_container.addEventListener('touchstart', touchStart('nav'), supportsPassive);
+        $nav_container.addEventListener('touchstart', touchStart('nav'), Helpers.supportsPassive);
         // open touch event on document swipe
-        document.addEventListener('touchstart', touchStart('doc'), supportsPassive);
+        document.addEventListener('touchstart', touchStart('doc'), Helpers.supportsPassive);
       }
 
       // close levels on escape
@@ -1533,7 +1116,7 @@
 
         let $checkbox;
 
-        if ((typeof l === 'number' || isNumeric(l)) && (typeof i === 'number' || isNumeric(i))) {
+        if ((typeof l === 'number' || Helpers.isNumeric(l)) && (typeof i === 'number' || Helpers.isNumeric(i))) {
 
           $checkbox = document.querySelector(`#${navUniqId}-${l}-${i}`);
 
@@ -1625,9 +1208,9 @@
 
         if (Settings.disableBody) {
           // remember scroll position
-          _top = window.pageYOffset || document.getElementsByTagName('html')[0].scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
+          _top = window.pageYOffset || html.scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
 
-          if (hasScrollBar()) {
+          if (Helpers.hasScrollBar()) {
             html.classList.add('hc-nav-yscroll');
           }
 
@@ -1640,8 +1223,8 @@
         }
 
         if ($push_content) {
-          const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
-          setTransform($push_content, transformVal, Settings.position);
+          const transformVal = Helpers.getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
+          Helpers.setTransform($push_content, transformVal, Settings.position);
         }
 
         if (_initExpanded) {
@@ -1655,7 +1238,7 @@
           // trigger open event
           if ($nav._eventListeners.open) {
             $nav._eventListeners.open.forEach((ev) => {
-              ev.fn(customEventObject('open', $nav, $nav), Object.assign({}, Settings));
+              ev.fn(Helpers.customEventObject('open', $nav, $nav), Object.assign({}, Settings));
             });
           }
         }, _transitionDuration);
@@ -1670,7 +1253,7 @@
         _open = false;
 
         if ($push_content) {
-          setTransform($push_content, false);
+          Helpers.setTransform($push_content, false);
         }
 
         $nav.classList.remove(navOpenClass);
@@ -1720,14 +1303,14 @@
           // trigger "close" event
           if ($nav._eventListeners.close) {
             $nav._eventListeners.close.forEach((ev) => {
-              ev.fn(customEventObject('close', $nav, $nav), Object.assign({}, Settings));
+              ev.fn(Helpers.customEventObject('close', $nav, $nav), Object.assign({}, Settings));
             });
           }
 
           // only trigger this "close" event once and then remove it
           if ($nav._eventListeners['close.once']) {
             $nav._eventListeners['close.once'].forEach((ev) => {
-              ev.fn(customEventObject('close.once', $nav, $nav), Object.assign({}, Settings));
+              ev.fn(Helpers.customEventObject('close.once', $nav, $nav), Object.assign({}, Settings));
             });
           }
           $nav.removeEventListener('close.once');
@@ -1747,7 +1330,7 @@
         const uniqid = $checkbox.value;
         const $li = $checkbox.parentNode;
         const $wrap = $li.closest('.nav-wrapper');
-        const $sub_wrap = children($li, '.nav-wrapper')[0];
+        const $sub_wrap = Helpers.children($li, '.nav-wrapper')[0];
 
         if (transition === false) {
           // disable level transition
@@ -1775,19 +1358,19 @@
           // close on self click
           $wrap.addEventListener('click', () => closeLevel(l, i));
           // expand the nav
-          setTransform($nav_container, l * Settings.levelSpacing, Settings.position);
+          Helpers.setTransform($nav_container, l * Settings.levelSpacing, Settings.position);
 
           // push content
           if ($push_content) {
-            const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
-            setTransform($push_content, transformVal + l * Settings.levelSpacing, Settings.position);
+            const transformVal = Helpers.getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
+            Helpers.setTransform($push_content, transformVal + l * Settings.levelSpacing, Settings.position);
           }
         }
 
         // trigger level open event
         if ($nav._eventListeners['open.level']) {
           $nav._eventListeners['open.level'].forEach((ev) => {
-            ev.fn(customEventObject('open.level', $nav, $sub_wrap, {
+            ev.fn(Helpers.customEventObject('open.level', $nav, $sub_wrap, {
               currentLevel: l,
               currentIndex: i
             }), Object.assign({}, Settings));
@@ -1824,14 +1407,14 @@
         if (transform && Settings.levelOpen === 'overlap') {
           //level closed, remove wrapper click
           $wrap.removeEventListener('click');
-          $wrap.addEventListener('click', stopPropagation);
+          $wrap.addEventListener('click', Helpers.stopPropagation);
           // collapse the nav
-          setTransform($nav_container, (l - 1) * Settings.levelSpacing, Settings.position);
+          Helpers.setTransform($nav_container, (l - 1) * Settings.levelSpacing, Settings.position);
 
           // push back content
           if ($push_content) {
-            const transformVal = getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
-            setTransform($push_content, transformVal + (l - 1) * Settings.levelSpacing, Settings.position);
+            const transformVal = Helpers.getAxis(Settings.position) === 'x' ? _containerWidth : _containerHeight;
+            Helpers.setTransform($push_content, transformVal + (l - 1) * Settings.levelSpacing, Settings.position);
           }
         }
       };
@@ -1859,7 +1442,7 @@
           const $wrap = document.querySelector(`#${navUniqId}-${l}-${i}`).closest('.nav-wrapper');
 
           $nav._eventListeners['close.level'].forEach((ev) => {
-            ev.fn(customEventObject('close.level', $nav, $wrap, {
+            ev.fn(Helpers.customEventObject('close.level', $nav, $wrap, {
               currentLevel: l - 1,
               currentIndex: activeIndex()
             }), Object.assign({}, Settings));

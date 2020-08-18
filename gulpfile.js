@@ -3,6 +3,7 @@ const glob = require('glob');
 const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const uglify = require('gulp-uglify');
+const concat = require('gulp-concat');
 const open = require('gulp-open');
 const saveLicense = require('uglify-save-license');
 const babel = require('gulp-babel');
@@ -13,7 +14,11 @@ const bump = require('gulp-bump');
 const replace = require('gulp-replace');
 
 const compileJs = () => {
-  return src(['./src/js/*.js'])
+  return src([
+      './src/js/hc-offcanvas-nav.js',
+      './src/js/hc-offcanvas-nav.helpers.js'
+    ])
+    .pipe(concat('hc-offcanvas-nav.js'))
     .pipe(babel(
       {
         presets: [

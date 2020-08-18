@@ -23,6 +23,7 @@
     "gulp-autoprefixer": "^6.1.0",
     "gulp-babel": "^8.0.0",
     "gulp-bump": "^3.2.0",
+    "gulp-concat": "^2.6.1",
     "gulp-open": "^3.0.1",
     "gulp-replace": "^1.0.0",
     "gulp-sass": "^4.1.0",

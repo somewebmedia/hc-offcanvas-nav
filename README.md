@@ -16,6 +16,7 @@ JavaScript library for creating off-canvas multi-level navigations, using ARIA. 
 - Push/Slide DOM elements of choice
 - Touch swipe guestures
 - Different navigation positions
+- No dependencies
 - Flexible, simple markup
 - A number of exposed [Options](#options), [Methods](#methods) and [Events](#events)
 - Cross-browser compatibility
