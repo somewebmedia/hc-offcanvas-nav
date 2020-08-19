@@ -381,7 +381,7 @@
 
     return ($el, val, position) => {
       if (transform) {
-        if (val === false) {
+        if (val === false || val === '') {
           $el.style.transform = '';
         }
         else {

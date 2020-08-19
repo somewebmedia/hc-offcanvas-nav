@@ -519,7 +519,7 @@
 
             // keep original menu classes
             if (Settings.keepClasses && nav.classes) {
-              $menu.classList.add(...nav.classes.split(' '));
+              $menu.classList.add.apply($menu.classList, nav.classes.split(' '));
             }
 
             if (i_nav === 0 && title) {
@@ -544,7 +544,7 @@
 
                 // keep original menu item classes
                 if (Settings.keepClasses && item.classes) {
-                  $custom_item.classList.add(...item.classes.split(' '));
+                  $custom_item.classList.add.apply($custom_item.classList, item.classes.split(' '));
                 }
 
                 // insert item
