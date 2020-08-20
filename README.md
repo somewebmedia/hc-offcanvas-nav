@@ -54,6 +54,12 @@ In the script, including HC Off-canvas Nav will usually look like this:
 const hcOffcanvasNav = require('hc-offcanvas-nav');
 ```
 
+#### Babel
+
+```js
+import hcOffcanvasNav from 'hc-offcanvas-nav';
+```
+
 #### AMD (Asynchronous Module Definition)
 
 If using AMD, the module will be automatically defined as `hcOffcanvasNav`.
