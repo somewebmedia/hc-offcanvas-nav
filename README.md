@@ -39,17 +39,44 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 
 
 
+### Including HC Off-canvas Nav
+
+#### Script tag
+```html
+<script src="/path/to/hc-offcanvas-nav.js"></script>
+```
+
+#### Webpack/Browserify
+
+In the script, including HC Off-canvas Nav will usually look like this:
+
+```js
+const hcOffcanvasNav = require('hc-offcanvas-nav');
+```
+
+#### AMD (Asynchronous Module Definition)
+
+If using AMD, the module will be automatically defined as `hcOffcanvasNav`.
+
+
+
 ## Usage
+
+Be sure to call HC-Sticky once your menu element is available in the DOM.
 
 #### Vanilla JS
 
 ```js
-var Nav = new hcOffcanvasNav('#main-nav', {
-  disableAt: 1024
-  customToggle: '.toggle',
-  navTitle: 'All Categories',
-  levelTitles: true,
-  levelTitleAsBack: true
+document.addEventListener('DOMContentLoaded', function() {
+
+  var Nav = new hcOffcanvasNav('#main-nav', {
+    disableAt: 1024
+    customToggle: '.toggle',
+    navTitle: 'All Categories',
+    levelTitles: true,
+    levelTitleAsBack: true
+  });
+
 });
 ```
 
@@ -57,6 +84,7 @@ var Nav = new hcOffcanvasNav('#main-nav', {
 
 ```js
 jQuery(document).ready(function($) {
+
   $('#main-nav').hcOffcanvasNav({
     disableAt: 1024
     customToggle: '.toggle',
@@ -64,6 +92,7 @@ jQuery(document).ready(function($) {
     levelTitles: true,
     levelTitleAsBack: true
   });
+
 });
 ```
 
