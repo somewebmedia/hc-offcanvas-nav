@@ -146,7 +146,7 @@ jQuery(document).ready(function($) {
 | **customToggle** | `null` | str / Element obj | Custom navigation toggle element. |
 | **insertClose** | `true` | bool / int | Insert navigation close button. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
 | **insertBack** | `true` | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. Works only for overlaped levels. |
-| **labelClose** | `'Close'` | str | Label for the close button. |
+| **labelClose** | `'Close'` | str, Element obj | Label for the close button (which can also be HTML element object). |
 | **labelBack** | `'Back'` | str | Label for the back buttons. |
 | **levelTitleAsBack** | `true` | bool | Use level titles as back labels. |
 | **rtl** | `false` | bool | Set the content direction to right-to-left. |
