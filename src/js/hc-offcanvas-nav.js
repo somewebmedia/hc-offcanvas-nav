@@ -351,7 +351,7 @@
         // get page content
         if (!reinit || (reinit && checkForUpdate('pushContent'))) {
           if (Settings.pushContent instanceof Element) {
-            // we're good
+            $push_content = Settings.pushContent;
           }
           else if (typeof Settings.pushContent === 'string') {
             $push_content = document.querySelector(Settings.pushContent);
