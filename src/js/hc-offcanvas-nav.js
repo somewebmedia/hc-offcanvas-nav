@@ -1556,4 +1556,6 @@
 
   // browser global
   window.hcOffcanvasNav = window.hcOffcanvasNav || hcOffcanvasNav;
+
+  return hcOffcanvasNav;
 });
