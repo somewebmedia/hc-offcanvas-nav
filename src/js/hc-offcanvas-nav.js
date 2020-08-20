@@ -166,7 +166,7 @@
         if (typeof Settings.customToggle === 'string') {
           $toggle = document.querySelector(Settings.customToggle);
         }
-        else if (window.jQuery && Settings.customToggle instanceof jQuery && Settings.customToggle.length) {
+        else if (window.jQuery && Settings.customToggle instanceof window.jQuery && Settings.customToggle.length) {
           $toggle = Settings.customToggle[0];
         }
         else if (Settings.customToggle instanceof Element) {
@@ -356,7 +356,7 @@
           else if (typeof Settings.pushContent === 'string') {
             $push_content = document.querySelector(Settings.pushContent);
           }
-          else if (window.jQuery && Settings.pushContent instanceof jQuery && $push_content.length) {
+          else if (window.jQuery && Settings.pushContent instanceof window.jQuery && $push_content.length) {
             $push_content = Settings.pushContent[0];
           }
           else {
