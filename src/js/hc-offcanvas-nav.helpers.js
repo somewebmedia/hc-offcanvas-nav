@@ -281,6 +281,22 @@
     return el;
   };
 
+  const getElement = (el) => {
+    let node = null;
+
+    if (typeof el === 'string') {
+      node = document.querySelector(el);
+    }
+    else if (window.jQuery && el instanceof window.jQuery && el.length) {
+      node = el[0];
+    }
+    else if (el instanceof Element) {
+      node = el;
+    }
+
+    return node;
+  };
+
   const getElementCssTag = (el) => {
     return typeof el === 'string'
       ? el
@@ -440,6 +456,7 @@
     customEventObject,
     hasListener,
     createElement,
+    getElement,
     getElementCssTag,
     printStyle,
     insertAt,

@@ -163,15 +163,7 @@
       }
       else {
         // user toggle
-        if (typeof Settings.customToggle === 'string') {
-          $toggle = document.querySelector(Settings.customToggle);
-        }
-        else if (window.jQuery && Settings.customToggle instanceof window.jQuery && Settings.customToggle.length) {
-          $toggle = Settings.customToggle[0];
-        }
-        else if (Settings.customToggle instanceof Element) {
-          $toggle = Settings.customToggle;
-        }
+        $toggle = Helpers.getElement(Settings.customToggle);
 
         if ($toggle) {
           $toggle.classList.add('hc-nav-trigger', navUniqId);
@@ -350,18 +342,7 @@
 
         // get page content
         if (!reinit || (reinit && checkForUpdate('pushContent'))) {
-          if (Settings.pushContent instanceof Element) {
-            $push_content = Settings.pushContent;
-          }
-          else if (typeof Settings.pushContent === 'string') {
-            $push_content = document.querySelector(Settings.pushContent);
-          }
-          else if (window.jQuery && Settings.pushContent instanceof window.jQuery && $push_content.length) {
-            $push_content = Settings.pushContent[0];
-          }
-          else {
-            $push_content = null;
-          }
+          $push_content = Helpers.getElement(Settings.pushContent);
         }
 
         // remove transition from the nav container so we can update the nav without flickering
@@ -788,7 +769,7 @@
             const $close = Helpers.createElement('li', {class: 'nav-close'},
               Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0},
                 typeof Settings.labelClose === 'object'
-                  ? Settings.labelClose
+                  ? Helpers.getElement(Settings.labelClose)
                   : [Settings.labelClose || '', Helpers.createElement('span')]
               )
             );
