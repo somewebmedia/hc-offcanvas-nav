@@ -835,7 +835,7 @@
       };
 
       const touchCaptureNav = (transNav, transContent) => {
-        window.addEventListener('touchmove', preventDefault, Helpers.supportsPassive); // disable scroll
+        window.addEventListener('touchmove', Helpers.preventDefault, Helpers.supportsPassive); // disable scroll
         $nav.style.visibility = 'visible';
         $nav_container.style[Helpers.browserPrefix('transition')] = 'none';
         Helpers.setTransform($nav_container, transNav, Settings.position);
@@ -847,7 +847,7 @@
       };
 
       const touchReleaseNav = (action, timeoutVsb = true, transNav = false, transContent = false) => {
-        window.removeEventListener('touchmove', preventDefault, Helpers.supportsPassive) // enable scroll
+        window.removeEventListener('touchmove', Helpers.preventDefault, Helpers.supportsPassive) // enable scroll
         $nav_container.style[Helpers.browserPrefix('transition')] = '';
         Helpers.setTransform($nav_container, transNav, Settings.position);
 
@@ -877,7 +877,7 @@
         let xDiff = 0 - (_xStart - e.touches[0].clientX);
         const levelSpacing = Settings.levelOpen === 'overlap' ? activeLevel() * Settings.levelSpacing : 0;
         const swipeWidth = _containerWidth + levelSpacing;
-        const maxStart = 30; // from the edge of the screen
+        const maxStart = 50; // from the edge of the screen
 
         if (Settings.position === 'left') {
           xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
@@ -908,7 +908,7 @@
         let xDiff = 0 - (_xStart - lastTouch.clientX);
         const levelSpacing = Settings.levelOpen === 'overlap' ? activeLevel() * Settings.levelSpacing : 0;
         const swipeWidth = _containerWidth + levelSpacing;
-        const diffTrashold = 50; // swipe distance required
+        const diffTrashold = 70; // swipe distance required
 
         if (Settings.position === 'left') {
           xDiff = Math.min(Math.max(xDiff, 0), swipeWidth);
