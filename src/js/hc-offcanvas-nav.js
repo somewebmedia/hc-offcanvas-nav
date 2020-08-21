@@ -71,7 +71,12 @@
       insertBack:         true,
       levelTitleAsBack:   true,
       labelClose:         'Close',
-      labelBack:          'Back'
+      labelBack:          'Back',
+      ariaLabels: {
+        open:             'Open Menu',
+        close:            'Close Menu',
+        submenu:          'Submenu'
+      }
     };
 
     // show deprecated messages
@@ -155,7 +160,7 @@
         $toggle = Helpers.createElement('a', {
           href: '#',
           class: `hc-nav-trigger ${navUniqId}`,
-          'aria-label': 'Open Menu'
+          'aria-label': (Settings.ariaLabels || {}).open
         }, Helpers.createElement('span'));
 
         $toggle.addEventListener('click', toggleNav);
@@ -718,7 +723,7 @@
                     const $a_next = Helpers.createElement('a', {
                       href: '#',
                       class: 'nav-next',
-                      'aria-label': `Submenu: ${nav_title}`,
+                      'aria-label': `${(Settings.ariaLabels || {}).submenu}: ${nav_title}`,
                       role: 'menuitem',
                       tabindex: 0
                     }, Helpers.createElement('span'));
@@ -776,10 +781,9 @@
             );
             const $close = Helpers.createElement('li', {class: 'nav-close'}, $close_a);
 
-            // if no close label, set ARIA and title
+            // if no close label, set ARIA
             if (!Settings.labelClose || Settings.labelClose === '') {
-              $close_a.setAttribute('title', 'Close Menu');
-              $close_a.setAttribute('aria-label', 'Close Menu');
+              $close_a.setAttribute('aria-label', (Settings.ariaLabels || {}).close);
             }
 
             Helpers.wrap($close_a, Helpers.createElement('div', {class: 'nav-item-wrapper'}));
