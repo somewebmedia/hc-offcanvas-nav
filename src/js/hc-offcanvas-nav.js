@@ -362,7 +362,7 @@
           Helpers.isTouchDevice ? 'touch-device' : '',
           wasOpen ? navOpenClass : '',
           Settings.rtl ? 'rtl' : '',
-          Settings.labelClose === '' || !Settings.labelClose && Settings.insertClose ? 'close-no-label' : ''
+          !Settings.labelClose || Settings.labelClose === '' && Settings.insertClose ? 'close-no-label' : ''
         ].join(' ').trim().replace(/  +/g, ' ');
 
         $nav.removeEventListener('click');
@@ -718,7 +718,7 @@
                     const $a_next = Helpers.createElement('a', {
                       href: '#',
                       class: 'nav-next',
-                      'aria-label': `${nav_title} Submenu`,
+                      'aria-label': `Submenu: ${nav_title}`,
                       role: 'menuitem',
                       tabindex: 0
                     }, Helpers.createElement('span'));
@@ -769,14 +769,18 @@
           // insert close link
           if (level === 0 && Settings.insertClose !== false) {
             const $nav_ul = Helpers.children($content, 'ul');
-            const $close = Helpers.createElement('li', {class: 'nav-close'},
-              Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0, title: 'Close Menu'},
-                typeof Settings.labelClose === 'object'
-                  ? Helpers.getElement(Settings.labelClose)
-                  : [Settings.labelClose || '', Helpers.createElement('span')]
-              )
+            const $close_a = Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0},
+              typeof Settings.labelClose === 'object'
+                ? Helpers.getElement(Settings.labelClose)
+                : [Settings.labelClose || '', Helpers.createElement('span')]
             );
-            const $close_a = $close.querySelector('li > a');
+            const $close = Helpers.createElement('li', {class: 'nav-close'}, $close_a);
+
+            // if no close label, set ARIA and title
+            if (!Settings.labelClose || Settings.labelClose === '') {
+              $close_a.setAttribute('title', 'Close Menu');
+              $close_a.setAttribute('aria-label', 'Close Menu');
+            }
 
             Helpers.wrap($close_a, Helpers.createElement('div', {class: 'nav-item-wrapper'}));
             $close_a.addEventListener('click', Helpers.preventClick(closeNav));
