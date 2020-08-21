@@ -333,15 +333,8 @@ body.hc-nav-open {
   // RTL
   &.rtl {
 
-    li {
+    h2, li {
       text-align: right;
-    }
-
-    .nav-next span,
-    .nav-back span,
-    .nav-close span {
-      left: 0;
-      right: unset;
     }
   }
 }

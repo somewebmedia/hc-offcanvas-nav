@@ -177,6 +177,77 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     }
   }
 
+  &.close-no-label {
+
+    .nav-close:first-child {
+
+      a {
+        border: none;
+        background: none;
+        width: 45px;
+        height: 48px;
+      }
+
+      & + li {
+        & > .nav-item-wrapper {
+          & > a {
+            border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+          }
+        }
+      }
+    }
+
+    .nav-title + ul > .nav-close:first-child a {
+      position: absolute;
+      width: 45px;
+      height: 62px;
+      top: 0;
+      right: 0;
+      transform: translateY(-100%);
+    }
+
+    &.rtl {
+      .nav-title {
+        padding-left: 60px;
+      }
+    }
+
+    &:not(.rtl) {
+      .nav-title {
+        padding-right: 60px;
+      }
+    }
+
+    &.nav-position-left {
+      .nav-close:first-child {
+        .nav-item-wrapper {
+          display: flex;
+          flex-flow: row-reverse;
+        }
+      }
+
+      &.rtl {
+        .nav-title {
+          & + ul > .nav-close:first-child a {
+            left: 0;
+            right: auto;
+          }
+        }
+      }
+    }
+
+    &.nav-position-right {
+      &.rtl {
+        .nav-title {
+          & + ul > .nav-close:first-child a {
+            left: 0;
+            right: auto;
+          }
+        }
+      }
+    }
+  }
+
   a.nav-next {
     border-left: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
   }
@@ -217,6 +288,7 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
   li.nav-back {
     span {
       &::before {
+        margin-left: 2px;
         transform: translate(-50%, -50%) rotate(-45deg);
       }
     }
@@ -241,8 +313,7 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     .nav-next {
       span {
         &::before {
-          margin-left: 0;
-          margin-right: -2px;
+          margin-left: 2px;
           transform: translate(-50%, -50%) rotate(-45deg);
         }
       }
@@ -251,8 +322,7 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
     li.nav-back {
       span {
         &::before {
-          margin-left: 0;
-          margin-right: -2px;
+          margin-left: -2px;
           transform: translate(-50%, -50%) rotate(135deg);
         }
       }
@@ -389,11 +459,25 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
       border-right: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
     }
 
+    .nav-next,
+    .nav-back span {
+      left: 0;
+      right: auto;
+    }
+
     li {
       &.nav-parent {
         .nav-item {
-          padding-right: 17px;
-          padding-left: 58px;
+
+          &:last-child {
+            padding-left: 58px;
+            padding-right: 17px;
+          }
+
+          &:not(:last-child) {
+            margin-left: 44px;
+            margin-right: 0;
+          }
         }
       }
     }

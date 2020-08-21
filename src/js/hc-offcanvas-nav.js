@@ -361,8 +361,9 @@
           Helpers.isIos ? 'is-ios' : '',
           Helpers.isTouchDevice ? 'touch-device' : '',
           wasOpen ? navOpenClass : '',
-          Settings.rtl ? 'rtl' : ''
-        ].join(' ').trim();
+          Settings.rtl ? 'rtl' : '',
+          Settings.labelClose === '' || !Settings.labelClose && Settings.insertClose ? 'close-no-label' : ''
+        ].join(' ').trim().replace(/  +/g, ' ');
 
         $nav.removeEventListener('click');
         $nav.className = navClasses;
@@ -487,7 +488,9 @@
 
           // titles
           if (title) {
-            $content.insertBefore(Helpers.createElement('h2', {}, title), $content.firstChild);
+            $content.insertBefore(Helpers.createElement('h2', {
+              class: level === 0 ? 'nav-title' : 'level-title'
+            }, title), $content.firstChild);
           }
 
           menu.forEach((nav, i_nav) => {
@@ -767,7 +770,7 @@
           if (level === 0 && Settings.insertClose !== false) {
             const $nav_ul = Helpers.children($content, 'ul');
             const $close = Helpers.createElement('li', {class: 'nav-close'},
-              Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0},
+              Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0, title: 'Close Menu'},
                 typeof Settings.labelClose === 'object'
                   ? Helpers.getElement(Settings.labelClose)
                   : [Settings.labelClose || '', Helpers.createElement('span')]
