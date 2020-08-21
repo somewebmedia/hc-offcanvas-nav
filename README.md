@@ -156,12 +156,22 @@ For HC Off-canvas Nav to work as a jQuery plugin, jQuery has to be a property of
 | **insertBack** | `true` | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. Works only for overlaped levels. |
 | **labelClose** | `'Close'` | str, Element obj | Label for the close button (which can also be HTML element object). |
 | **labelBack** | `'Back'` | str | Label for the back buttons. |
+| **ariaLabels** | `{...}` | obj | Labels for the ARIA attributes. If using HC Off-canvas Nav in different language than English, you should translate all the properties. See the next section. |
 | **levelTitleAsBack** | `true` | bool | Use level titles as back labels. |
 | **rtl** | `false` | bool | Set the content direction to right-to-left. |
 | **bodyInsert** | `'prepend'` | str | Choose to prepend or append navigation to body. |
 | **keepClasses** | `true` | bool | Should original menus and their items classes be preserved or excluded. |
 | **removeOriginalNav** | `false` | bool | Remove original menu from the DOM. Don't use this if planning to update the nav! |
 
+ARIA labels for the `aria-label` attributes on specific elements which will provide a text alternative to the elements that have no visible text on the screen.
+
+```js
+ariaLabels: {
+  open:     'Open Menu',
+  close:    'Close Menu',
+  submenu:  'Submenu'
+}
+```
 
 
 ## Methods
