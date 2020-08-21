@@ -76,7 +76,7 @@ Be sure to call HC-Sticky once your menu element is available in the DOM.
 document.addEventListener('DOMContentLoaded', function() {
 
   var Nav = new hcOffcanvasNav('#main-nav', {
-    disableAt: 1024
+    disableAt: 1024,
     customToggle: '.toggle',
     navTitle: 'All Categories',
     levelTitles: true,
@@ -92,8 +92,8 @@ document.addEventListener('DOMContentLoaded', function() {
 jQuery(document).ready(function($) {
 
   $('#main-nav').hcOffcanvasNav({
-    disableAt: 1024
-    customToggle: '.toggle',
+    disableAt: 1024,
+    customToggle: $('.toggle')[0],
     navTitle: 'All Categories',
     levelTitles: true,
     levelTitleAsBack: true
@@ -101,6 +101,8 @@ jQuery(document).ready(function($) {
 
 });
 ```
+
+For HC Off-canvas Nav to work as a jQuery plugin, jQuery has to be a property of global `window` object, so be careful when using it in compbination with Babel/Webpack/Browserify and jQuery.
 
 #### Example HTML menu structure
 
