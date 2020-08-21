@@ -89,12 +89,13 @@ $hc-offcanvas-nav-text-color:                 #fff !default;
   }
 
   ul {
-    &:first-of-type:not(:first-child) {
+    &:first-of-type {
       & > li {
         &:first-child:not(.nav-back):not(.nav-close) {
-          & > a {
-            border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
-            margin-top: -1px;
+          & > .nav-item-wrapper {
+            & > a {
+              border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+            }
           }
         }
       }
