@@ -786,10 +786,11 @@
           if (level === 0 && Settings.insertClose !== false) {
             const $nav_ul = Helpers.children($content, 'ul');
             const $close = Helpers.createElement('li', {class: 'nav-close'},
-              Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0}, [
-                Settings.labelClose || '',
-                Helpers.createElement('span')
-              ])
+              Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0},
+                typeof Settings.labelClose === 'object'
+                  ? Settings.labelClose
+                  : [Settings.labelClose || '', Helpers.createElement('span')]
+              )
             );
             const $close_a = $close.querySelector('li > a');
 
