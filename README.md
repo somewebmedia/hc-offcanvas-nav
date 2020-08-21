@@ -93,7 +93,7 @@ jQuery(document).ready(function($) {
 
   $('#main-nav').hcOffcanvasNav({
     disableAt: 1024,
-    customToggle: $('.toggle')[0],
+    customToggle: $('.toggle'),
     navTitle: 'All Categories',
     levelTitles: true,
     levelTitleAsBack: true
