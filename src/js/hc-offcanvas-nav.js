@@ -269,32 +269,34 @@
         // remove transition from the nav container so we can update the nav without flickering
         $nav_container.style.transition = 'none';
 
-        const computed = window.getComputedStyle($nav_container);
+        // nav must be block so we can get rendered width
+        $nav.style.display = 'block';
 
-        _containerWidth = Helpers.formatSizeVal(computed.width);
-        _containerHeight = Helpers.formatSizeVal(computed.height);
+        const computedWidth = Helpers.formatSizeVal(_containerWidth = $nav_container.offsetWidth);
+        const computedHeight = Helpers.formatSizeVal(_containerHeight = $nav_container.offsetHeight);
 
         // fix 100% transform glitching
         Styles.add(
           `.hc-offcanvas-nav.${navUniqId}.nav-position-left .nav-container`,
-          `transform: translate3d(-${_containerWidth}, 0, 0)`
+          `transform: translate3d(-${computedWidth}, 0, 0)`
         );
         Styles.add(
           `.hc-offcanvas-nav.${navUniqId}.nav-position-right .nav-container`,
-          `transform: translate3d(${_containerWidth}, 0, 0)`
+          `transform: translate3d(${computedWidth}, 0, 0)`
         );
         Styles.add(
           `.hc-offcanvas-nav.${navUniqId}.nav-position-top .nav-container`,
-          `transform: translate3d(0, -${_containerHeight}, 0)`
+          `transform: translate3d(0, -${computedHeight}, 0)`
         );
         Styles.add(
           `.hc-offcanvas-nav.${navUniqId}.nav-position-bottom .nav-container`,
-          `transform: translate3d(0, ${_containerHeight}, 0)`
+          `transform: translate3d(0, ${computedHeight}, 0)`
         );
 
         Styles.insert();
 
-        // clear our 'none' inline transition
+        // clear our temp inline styles
+        $nav.style.display = '';
         $nav_container.style.transition = '';
 
         _transitionProperty = window.getComputedStyle($nav_container).transitionProperty;
@@ -316,11 +318,11 @@
         const height = Helpers.formatSizeVal(Settings.height);
         const spacing = Helpers.formatSizeVal(Settings.levelSpacing);
 
-        if (width.indexOf('px') !== -1) {
+        if (Helpers.isNumeric(width) || width.indexOf('px') !== -1) {
           _containerWidth = parseInt(width);
         }
 
-        if (height.indexOf('px') !== -1) {
+        if (Helpers.isNumeric(height) || height.indexOf('px') !== -1) {
           _containerHeight = parseInt(height);
         }
 
@@ -348,10 +350,22 @@
         }
 
         // container transform
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-left .nav-container`, `transform: translate3d(-${width}, 0, 0);`);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-right .nav-container`, `transform: translate3d(${width}, 0, 0);`);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-top .nav-container`, `transform: translate3d(0, -${height}, 0);`);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-bottom .nav-container`, `transform: translate3d(0, ${height}, 0);`);
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-position-left .nav-container`,
+          `transform: translate3d(-${width}, 0, 0);`
+        );
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-position-right .nav-container`,
+          `transform: translate3d(${width}, 0, 0);`
+        );
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-position-top .nav-container`,
+          `transform: translate3d(0, -${height}, 0);`
+        );
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-position-bottom .nav-container`,
+          `transform: translate3d(0, ${height}, 0);`
+        );
 
         // wrappers
         Styles.add(
@@ -1067,6 +1081,10 @@
 
       // close levels on escape
       document.addEventListener('keydown', checkEsc);
+
+      // re-calculate our nav if window is resized
+      const debounceResize = Helpers.debounce(calcNav, 500);
+      window.addEventListener('resize', debounceResize, Helpers.supportsPassive);
 
       /* Private methods */
 
