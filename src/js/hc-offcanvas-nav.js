@@ -269,14 +269,28 @@
         // remove transition from the nav container so we can update the nav without flickering
         $nav_container.style.transition = 'none';
 
-        _containerWidth = $nav_container.offsetWidth;
-        _containerHeight = $nav_container.offsetHeight;
+        const computed = window.getComputedStyle($nav_container);
+
+        _containerWidth = Helpers.formatSizeVal(computed.width);
+        _containerHeight = Helpers.formatSizeVal(computed.height);
 
         // fix 100% transform glitching
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-left .nav-container`, `transform: translate3d(-${_containerWidth}px, 0, 0)`);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-right .nav-container`, `transform: translate3d(${_containerWidth}px, 0, 0)`);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-top .nav-container`, `transform: translate3d(0, -${_containerHeight}px, 0)`);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-bottom .nav-container`, `transform: translate3d(0, ${_containerHeight}px, 0)`);
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-position-left .nav-container`,
+          `transform: translate3d(-${_containerWidth}, 0, 0)`
+        );
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-position-right .nav-container`,
+          `transform: translate3d(${_containerWidth}, 0, 0)`
+        );
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-position-top .nav-container`,
+          `transform: translate3d(0, -${_containerHeight}, 0)`
+        );
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-position-bottom .nav-container`,
+          `transform: translate3d(0, ${_containerHeight}, 0)`
+        );
 
         Styles.insert();
 
@@ -300,6 +314,7 @@
         const mediaquery = Settings.disableAt ? `max-width: ${Settings.disableAt - 1}px` : false;
         const width = Helpers.formatSizeVal(Settings.width);
         const height = Helpers.formatSizeVal(Settings.height);
+        const spacing = Helpers.formatSizeVal(Settings.levelSpacing);
 
         if (width.indexOf('px') !== -1) {
           _containerWidth = parseInt(width);
@@ -333,16 +348,28 @@
         }
 
         // container transform
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-left .nav-container`, `transform: translate3d(-${width === 'auto' ? '100%' : width}, 0, 0);`);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-right .nav-container`, `transform: translate3d(${width === 'auto' ? '100%' : width}, 0, 0);`);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-top .nav-container`, `transform: translate3d(0, -${height === 'auto' ? '100%' : height}, 0);`);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-bottom .nav-container`, `transform: translate3d(0, ${height === 'auto' ? '100%' : height}, 0);`);
+        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-left .nav-container`, `transform: translate3d(-${width}, 0, 0);`);
+        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-right .nav-container`, `transform: translate3d(${width}, 0, 0);`);
+        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-top .nav-container`, `transform: translate3d(0, -${height}, 0);`);
+        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-position-bottom .nav-container`, `transform: translate3d(0, ${height}, 0);`);
 
         // wrappers
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-left li.level-open > .nav-wrapper`, `transform: translate3d(-${Settings.levelSpacing}px,0,0)`, mediaquery);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-right li.level-open > .nav-wrapper`, `transform: translate3d(${Settings.levelSpacing}px,0,0)`, mediaquery);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-top li.level-open > .nav-wrapper`, `transform: translate3d(0,-${Settings.levelSpacing}px,0)`, mediaquery);
-        Styles.add(`.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-bottom li.level-open > .nav-wrapper`, `transform: translate3d(0,${Settings.levelSpacing}px,0)`, mediaquery);
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-left li.level-open > .nav-wrapper`,
+          `transform: translate3d(-${spacing}, 0, 0)`, mediaquery
+        );
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-right li.level-open > .nav-wrapper`,
+          `transform: translate3d(${spacing}, 0, 0)`, mediaquery
+        );
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-top li.level-open > .nav-wrapper`,
+          `transform: translate3d(0, -${spacing}, 0)`, mediaquery
+        );
+        Styles.add(
+          `.hc-offcanvas-nav.${navUniqId}.nav-levels-overlap.nav-position-bottom li.level-open > .nav-wrapper`,
+          `transform: translate3d(0, ${spacing}, 0)`, mediaquery
+        );
 
         Styles.insert();
 

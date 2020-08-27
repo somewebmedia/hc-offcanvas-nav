@@ -63,7 +63,7 @@
 
   const isNumeric = (n) => !isNaN(parseFloat(n)) && isFinite(n);
 
-  const formatSizeVal = (n) => (n === 'auto') ? n : isNumeric(n) ? `${n}px` : n;
+  const formatSizeVal = (n) => (n === 'auto') ? '100%' : isNumeric(n) && n !== 0 ? `${n}px` : n;
 
   const toMs = (s) => parseFloat(s) * (/\ds$/.test(s) ? 1000 : 1);
 
@@ -396,23 +396,18 @@
     const transform = browserPrefix('transform');
 
     return ($el, val, position) => {
-      if (transform) {
-        if (val === false || val === '') {
-          $el.style.transform = '';
-        }
-        else {
-          if (getAxis(position) === 'x') {
-            const x = position === 'left' ? val : 0 - val;
-            $el.style.transform = `translate3d(${x}px,0,0)`;
-          }
-          else {
-            const y = position === 'top' ? val : 0 - val;
-            $el.style.transform = `translate3d(0,${y}px,0)`;
-          }
-        }
+      if (val === false || val === '') {
+        $el.style.transform = '';
       }
       else {
-        $el.style.position = val;
+        if (getAxis(position) === 'x') {
+          const x = position === 'left' ? val : '-' + val;
+          $el.style.transform = `translate3d(${formatSizeVal(x)},0,0)`;
+        }
+        else {
+          const y = position === 'top' ? val : '-' + val;
+          $el.style.transform = `translate3d(0,${formatSizeVal(y)},0)`;
+        }
       }
     };
   })();
