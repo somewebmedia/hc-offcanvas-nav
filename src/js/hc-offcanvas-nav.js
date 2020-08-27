@@ -31,6 +31,7 @@
   const html = document.getElementsByTagName('html')[0];
 
   let navCount = 0;
+  const navOpenClass = 'nav-open';
 
   const hcOffcanvasNav = (elem, options) => {
     options = options || {};
@@ -71,12 +72,7 @@
       insertBack:         true,
       levelTitleAsBack:   true,
       labelClose:         'Close',
-      labelBack:          'Back',
-      ariaLabels: {
-        open:             'Open Menu',
-        close:            'Close Menu',
-        submenu:          'Submenu'
-      }
+      labelBack:          'Back'
     };
 
     // show deprecated messages
@@ -86,9 +82,14 @@
     }
 
     let Settings = Object.assign({}, defaults, options);
-    let UpdatedSettings = [];
 
-    const navOpenClass = 'nav-open';
+    Settings.ariaLabels = Object.assign({}, {
+      open:    'Open Menu',
+      close:   'Close Menu',
+      submenu: 'Submenu'
+    }, options.ariaLabels);
+
+    let UpdatedSettings = [];
 
     const checkForUpdate = (options) => {
       if (!UpdatedSettings.length) {
