@@ -19,6 +19,7 @@ body.hc-nav-open {
   top: 0;
   height: 100%;
   z-index: 9999;
+  text-align: left;
 
   &.is-ios {
     * {
@@ -106,10 +107,31 @@ body.hc-nav-open {
     cursor: pointer;
   }
 
-  .nav-item {
+  .nav-item-wrapper {
+    position: relative;
+  }
+
+  .nav-item-link {
     position: relative;
     display: block;
     box-sizing: border-box;
+  }
+
+  &:not(.user-is-tabbing) {
+    .nav-close-button,
+    .nav-item-wrapper a {
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .nav-close,
+  .nav-next,
+  .nav-back {
+    &:focus {
+      z-index: 10;
+    }
   }
 
   // Background overlay
@@ -332,9 +354,7 @@ body.hc-nav-open {
 
   // RTL
   &.rtl {
-
-    h2, li {
-      text-align: right;
-    }
+    text-align: right;
+    direction: rtl;
   }
 }

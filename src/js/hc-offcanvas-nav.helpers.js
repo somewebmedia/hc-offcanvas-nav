@@ -278,7 +278,9 @@
 
     for (const p in props) {
       if (p !== 'class') {
-        el.setAttribute(p, props[p]);
+        if (!(!props[p] && props[p] !== 0)) {
+          el.setAttribute(p, props[p]);
+        }
       }
       else {
         el.className = props[p];
@@ -385,7 +387,7 @@
           cssText += `@media screen and (${breakpoint}) {\n`;
 
           for (let key in media[breakpoint]) {
-            cssText += `${key} { ${media[breakpoint][key]} }\n`;
+            cssText += `  ${key} { ${media[breakpoint][key]} }\n`;
           }
 
           cssText += '}\n';
@@ -403,12 +405,16 @@
   const insertAt = ($insert, n, $parent) => {
     const $children = children($parent);
     const count = $children.length;
+
+    n = n === 'first' ? 0 : n;
+    n = n === 'last' ? count : n;
+
     const i = n > -1
-      ? Math.max(0, Math.min(n - 1, count))
-      : Math.max(0, Math.min(count + n + 1, count));
+      ? Math.max(0, Math.min(n, count))
+      : Math.max(0, Math.min(count + n, count));
 
     if (i === 0) {
-      $parent.insertBefore($insert, $parent.firstChild);
+      $parent[0].insertBefore($insert, $parent[0].firstChild);
     } else {
       $children[i - 1].insertAdjacentElement('afterend', $insert);
     }

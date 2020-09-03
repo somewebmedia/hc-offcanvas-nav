@@ -71,7 +71,7 @@
       insertClose:        true,
       insertBack:         true,
       levelTitleAsBack:   true,
-      labelClose:         'Close',
+      labelClose:         '',
       labelBack:          'Back'
     };
 
@@ -114,7 +114,7 @@
 
     const Plugin = function($originalNav) {
       if (!$originalNav.querySelector('ul') && $originalNav.tagName !== 'UL') {
-        console.error('%c! HC Offcanvas Nav:' + `%c Menu must contain <ul> element.`, 'color: #fa253b', 'color: default');
+        console.error('%c! HC Offcanvas Nav:' + `%c Navigation must contain <ul> element.`, 'color: #fa253b', 'color: default');
         return;
       }
 
@@ -215,6 +215,9 @@
         if (!$focusable) {
           return;
         }
+
+        // so we can keep the outline
+        $nav.classList.add('user-is-tabbing');
 
         const $first = $focusable[0];
         const $last = $focusable[$focusable.length - 1];
@@ -401,21 +404,22 @@
           'hc-offcanvas-nav',
           Settings.navClass || '',
           navUniqId,
-          Settings.navClass || '',
-          'nav-levels-' + Settings.levelOpen || 'none',
-          'nav-position-' + Settings.position,
+          'nav-levels-' + (Settings.levelOpen || 'none'),
+          `nav-position-${Settings.position}`,
           Settings.disableBody ? 'disable-body' : '',
           Helpers.isIos ? 'is-ios' : '',
           Helpers.isTouchDevice ? 'touch-device' : '',
           wasOpen ? navOpenClass : '',
           Settings.rtl ? 'rtl' : '',
-          !Settings.labelClose || Settings.labelClose === '' && Settings.insertClose ? 'close-no-label' : ''
         ].join(' ').trim().replace(/  +/g, ' ');
 
         $nav.removeEventListener('click');
         $nav.className = navClasses;
         $nav.setAttribute('aria-hidden', true);
         $nav.setAttribute('aria-labelledby', navUniqId);
+
+        // set css variable so we can use it in themes if needed
+        document.documentElement.style.setProperty('--nav-level-spacing', Settings.levelSpacing + 'px');
 
         // close menu on body click (nav::after)
         if (Settings.disableBody) {
@@ -436,13 +440,9 @@
 
         // get first level menus
         const $first_level = () => {
-          const $ul = Array.prototype.slice.call($originalNav.querySelectorAll('ul')); // original nav menus
-
-          if ($originalNav.tagName === 'UL') {
-            $ul.unshift($originalNav);
-          }
-
-          return [$ul[0]].concat(Array.prototype.filter.call($ul[0].parentNode.children, (child) => child !== $ul[0]));
+          return $originalNav.tagName === 'UL'
+            ? [$originalNav]
+            : Array.prototype.filter.call($originalNav.children, (child) => child.tagName === 'UL' || child instanceof HTMLHeadingElement);
         };
 
         // call
@@ -452,55 +452,79 @@
           const level = [];
 
           Array.prototype.forEach.call($menu, ($ul) => {
+            if ($ul.tagName !== 'UL' && !($ul instanceof HTMLHeadingElement)) {
+              return;
+            }
+
             const nav = {
+              tagName: $ul.tagName,
               id: id,
-              classes: $ul.getAttribute('class') || null,
+              htmlClass: $ul.getAttribute('class') || null,
               items: []
             };
 
-            // this submenu should be open next
-            if ($ul.getAttribute('data-nav-active') !== null) {
-              _nextActiveLevel = id;
-              // remove data attribute
-              $ul.removeAttribute('data-nav-active');
+            if ($ul instanceof HTMLHeadingElement) {
+              // this is a heading
+              nav.content = Helpers.clone($ul, false, true);
             }
-
-            Array.prototype.forEach.call($ul.children, ($li) => {
-              const customContent = $li.getAttribute('data-nav-custom-content') !== null;
-              const $content = customContent ? $li.children : Array.prototype.filter.call($li.children, (child) => child.tagName !== 'UL' && !child.querySelector('ul')).concat($li.children.length ? [] : [$li.firstChild]);
-              const $nested_navs = customContent ? [] : Array.prototype.slice.call($li.querySelectorAll('ul'));
-              const $subnav = !$nested_navs.length ? [] : [$nested_navs[0]].concat(Array.prototype.filter.call($nested_navs[0].parentNode.children, (child) => child.tagName === 'UL' && child !== $nested_navs[0]));
-
-              let uniqid = null;
-
-              // save unique identifier for remembering open sub menus
-              if ($subnav.length) {
-                if (!Helpers.data($li, 'hc-uniqid')) {
-                  uniqid = Math.random().toString(36).substr(2);
-                  Helpers.data($li, 'hc-uniqid', uniqid);
-                }
-                else {
-                  uniqid = Helpers.data($li, 'hc-uniqid');
-                }
-              }
-
-              // submenu of this list element should be open next
-              if ($li.getAttribute('data-nav-active') !== null) {
-                _nextActiveLevel = uniqid;
+            else {
+              // this submenu should be open next
+              if ($ul.getAttribute('data-nav-active') !== null) {
+                _nextActiveLevel = id;
                 // remove data attribute
-                $li.removeAttribute('data-nav-active');
+                $ul.removeAttribute('data-nav-active');
               }
 
-              // add elements to this level
-              nav.items.push({
-                id: uniqid,
-                classes: $li.getAttribute('class') || '',
-                content: $content,
-                custom: customContent,
-                subnav: $subnav.length ? getModel($subnav, uniqid) : [],
-                highlight: $li.getAttribute('data-nav-highlight') !== null
+              Array.prototype.forEach.call($ul.children, ($li) => {
+                const customContent = $li.getAttribute('data-nav-custom-content') !== null;
+                let $content = customContent ? $li.children : Array.prototype.filter.call($li.children, (child) => child.tagName !== 'UL' && !child.querySelector('ul')).concat($li.children.length ? [] : [$li.firstChild]);
+                const $nested_navs = customContent ? [] : Array.prototype.slice.call($li.querySelectorAll('ul'));
+                const $subnav = !$nested_navs.length ? [] : [$nested_navs[0]].concat(Array.prototype.filter.call($nested_navs[0].parentNode.children, (child) => child.tagName === 'UL' && child !== $nested_navs[0]));
+
+                let uniqid = null;
+
+                // if no content check for text
+                if (!$content.length) {
+                  let text = '';
+
+                  for (let i = 0; i < $li.childNodes.length; i++) {
+                    if ($li.childNodes[i].nodeType === Node.TEXT_NODE) {
+                      text += $li.childNodes[i].textContent.trim();
+                    }
+                  }
+
+                  $content = [document.createTextNode(text)];
+                }
+
+                // save unique identifier for remembering open sub menus
+                if ($subnav.length) {
+                  if (!Helpers.data($li, 'hc-uniqid')) {
+                    uniqid = Math.random().toString(36).substr(2);
+                    Helpers.data($li, 'hc-uniqid', uniqid);
+                  }
+                  else {
+                    uniqid = Helpers.data($li, 'hc-uniqid');
+                  }
+                }
+
+                // submenu of this list element should be open next
+                if ($li.getAttribute('data-nav-active') !== null) {
+                  _nextActiveLevel = uniqid;
+                  // remove data attribute
+                  $li.removeAttribute('data-nav-active');
+                }
+
+                // add elements to this level
+                nav.items.push({
+                  id: uniqid,
+                  htmlClass: $li.getAttribute('class') || '',
+                  content: $content,
+                  custom: customContent,
+                  subnav: $subnav.length ? getModel($subnav, uniqid) : [],
+                  highlight: $li.getAttribute('data-nav-highlight') !== null
+                });
               });
-            });
+            }
 
             level.push(nav);
           });
@@ -534,13 +558,18 @@
           $container.appendChild($wrapper);
 
           // titles
-          if (title) {
+          if (title && (level === 0 || (level > 0 && Settings.levelOpen === 'overlap'))) {
             $content.insertBefore(Helpers.createElement('h2', {
-              class: level === 0 ? 'nav-title' : 'level-title'
+              class: level === 0 ? 'nav-title' + (Settings.insertClose === true && !Settings.labelClose ? ' followed-empty-close' : '') : 'level-title'
             }, title), $content.firstChild);
           }
 
           menu.forEach((nav, i_nav) => {
+            if (nav.tagName !== 'UL') {
+              $content.appendChild(nav.content);
+              return;
+            }
+
             const $menu = Helpers.createElement('ul', {
               role: 'menu',
               'aria-level': level + 1
@@ -549,8 +578,8 @@
             $content.appendChild($menu);
 
             // keep original menu classes
-            if (Settings.keepClasses && nav.classes) {
-              $menu.classList.add.apply($menu.classList, nav.classes.split(' '));
+            if (Settings.keepClasses && nav.htmlClass) {
+              $menu.classList.add.apply($menu.classList, nav.htmlClass.split(' '));
             }
 
             if (i_nav === 0 && title) {
@@ -567,15 +596,15 @@
               // item has custom content
               if (item.custom) {
 
-                const $custom_item = Helpers.createElement('li', {class: 'custom-content'},
-                  Helpers.createElement('div', {class: 'nav-item nav-item-custom'}, Array.prototype.map.call($item_content, (el) => {
+                const $custom_item = Helpers.createElement('li', {class: 'nav-item nav-item-custom'},
+                  Helpers.createElement('div', {class: 'nav-custom-content'}, Array.prototype.map.call($item_content, (el) => {
                     return Helpers.clone(el, true, true);
                   }))
                 );
 
                 // keep original menu item classes
-                if (Settings.keepClasses && item.classes) {
-                  $custom_item.classList.add.apply($custom_item.classList, item.classes.split(' '));
+                if (Settings.keepClasses && item.htmlClass) {
+                  $custom_item.classList.add.apply($custom_item.classList, item.htmlClass.split(' '));
                 }
 
                 // insert item
@@ -586,18 +615,18 @@
               }
 
               const $original_link = Array.prototype.filter.call($item_content, (child) => {
-                return child.tagName === 'A' || (child.nodeType !== 3 && child.querySelector('a'));
+                return child.tagName === 'A' || (child.nodeType !== Node.TEXT_NODE && child.querySelector('a'));
               })[0];
 
               let $item_link;
 
               if ($original_link) {
                 $item_link = Helpers.clone($original_link, false, true);
-                $item_link.classList.add('nav-item');
+                $item_link.classList.add('nav-item-link');
               }
               else {
                 $item_link = Helpers.createElement(item.subnav.length ? 'a' : 'span', {
-                  class: 'nav-item'
+                  class: 'nav-item-link'
                 }, Array.prototype.map.call($item_content, (el) => {
                   return Helpers.clone(el, true, true);
                 }));
@@ -655,14 +684,16 @@
               }
 
               // our nav item
-              const $item = Helpers.createElement('li');
+              const $item = Helpers.createElement('li', {
+                class: 'nav-item'
+              });
 
               $item.appendChild($item_link);
               $menu.appendChild($item);
 
               // keep original menu item classes
-              if (Settings.keepClasses && item.classes) {
-                $item.className = item.classes;
+              if (Settings.keepClasses && item.htmlClass) {
+                $item.classList.add.apply($item.classList, item.htmlClass.split(' '));
               }
 
               // is nav item highlighted?
@@ -672,15 +703,6 @@
 
               // wrap item link
               Helpers.wrap($item_link, Helpers.createElement('div', {class: 'nav-item-wrapper'}));
-
-              // indent levels in expanded levels
-              if (Settings.levelSpacing && (Settings.levelOpen === 'expand' || (Settings.levelOpen === false || Settings.levelOpen === 'none'))) {
-                const indent = Settings.levelSpacing * level;
-
-                if (indent) {
-                  $menu.style.textIndent = `${indent}px`;
-                }
-              }
 
               // do subnav
               if (item.subnav.length) {
@@ -771,8 +793,14 @@
                     }, Helpers.createElement('span'));
 
                     $a_next.addEventListener('click', Helpers.preventClick());
-                    $item_link.parentNode.insertBefore($a_next, $item_link.nextSibling)
                     attachToLink($a_next);
+
+                    if (Settings.rtl) {
+                      $item_link.parentNode.appendChild($a_next);
+                    }
+                    else {
+                      $item_link.parentNode.insertBefore($a_next, $item_link.nextSibling);
+                    }
                   }
                 }
 
@@ -788,11 +816,11 @@
             if (Settings.insertBack !== false && Settings.levelOpen === 'overlap') {
               const $children_menus = Helpers.children($content, 'ul');
               const backLabel = (Settings.levelTitleAsBack ? (backTitle || Settings.labelBack) : Settings.labelBack) || '';
-              const $back_a = Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0}, [
+              const $back_a = Helpers.createElement('a', {href: '#', class: 'nav-back-button', role: 'menuitem', tabindex: 0}, [
                 backLabel,
                 Helpers.createElement('span')
               ]);
-              const $back = Helpers.createElement('li', {class: 'nav-back'}, $back_a);
+              const $back = Helpers.createElement('li', {class: 'nav-item nav-back'}, $back_a);
               const closeThisLevel = () => closeLevel(level, backIndex);
 
               Helpers.wrap($back_a, Helpers.createElement('div', {class: 'nav-item-wrapper'}));
@@ -804,31 +832,22 @@
                 }
               });
 
-              if (Settings.insertBack === true) {
-                $children_menus[0].insertBefore($back, $children_menus[0].firstChild);
-              }
-              else if (Helpers.isNumeric(Settings.insertBack)) {
-                Helpers.insertAt($back, Settings.insertBack, $children_menus);
-              }
+              Helpers.insertAt($back, Settings.insertBack === true ? 0 : Settings.insertBack, $children_menus);
             }
           }
 
-          // insert close link
+          // insert close button
           if (level === 0 && Settings.insertClose !== false) {
-            const $nav_ul = Helpers.children($content, 'ul');
-            const $close_a = Helpers.createElement('a', {href: '#', role: 'menuitem', tabindex: 0},
-              typeof Settings.labelClose === 'object'
-                ? Helpers.getElement(Settings.labelClose)
-                : [Settings.labelClose || '', Helpers.createElement('span')]
+            const $close_a = Helpers.createElement('a', {
+              href: '#',
+              class: 'nav-close-button' + (Settings.labelClose ? ' has-label' : ''),
+              role: 'menuitem',
+              tabindex: 0,
+              'aria-label': !Settings.labelClose ? (Settings.ariaLabels || {}).close : ''
+            },
+              [Settings.labelClose || '', Helpers.createElement('span')]
             );
-            const $close = Helpers.createElement('li', {class: 'nav-close'}, $close_a);
 
-            // if no close label, set ARIA
-            if (!Settings.labelClose || Settings.labelClose === '') {
-              $close_a.setAttribute('aria-label', (Settings.ariaLabels || {}).close);
-            }
-
-            Helpers.wrap($close_a, Helpers.createElement('div', {class: 'nav-item-wrapper'}));
             $close_a.addEventListener('click', Helpers.preventClick(closeNav));
             $close_a.addEventListener('keydown', (e) => {
               if (e.key === 'Enter' || e.keyCode === 13) {
@@ -836,10 +855,24 @@
               }
             });
 
-            if (Settings.insertClose === true) {
-              $nav_ul[0].insertBefore($close, $nav_ul[0].firstChild);
+            if (title && Settings.insertClose === true) {
+              // after nav title
+              $content.insertBefore(Helpers.createElement('div', {
+                class: 'nav-close'
+              }, $close_a), $content.children[1]);
             }
-            else if (Helpers.isNumeric(Settings.insertClose)) {
+            else if (Settings.insertClose === true) {
+              // before nav content
+              $content.insertBefore(Helpers.createElement('div', {
+                class: 'nav-close'
+              }, $close_a), $content.firstChild);
+            }
+            else {
+              // as menu item
+              const $nav_ul = Helpers.children($content, 'ul');
+              const $close = Helpers.createElement('li', {class: 'nav-item nav-close'}, $close_a);
+
+              Helpers.wrap($close_a, Helpers.createElement('div', {class: 'nav-item-wrapper'}));
               Helpers.insertAt($close, Settings.insertClose, $nav_ul);
             }
           }
@@ -1299,6 +1332,7 @@
         }
 
         $nav.classList.remove(navOpenClass);
+        $nav.classList.remove('user-is-tabbing');
         $nav.setAttribute('aria-hidden', true);
         $nav_container.removeAttribute('style');
         $toggle.classList.remove('toggle-open');
