@@ -1285,7 +1285,8 @@
           // remember scroll position
           _top = window.pageYOffset || html.scrollTop || document.documentElement.scrollTop || document.body.scrollTop;
 
-          if (Helpers.hasScrollBar()) {
+          if (document.documentElement.scrollHeight > document.documentElement.clientHeight) {
+            // has scroll bar
             html.classList.add('hc-nav-yscroll');
           }
 

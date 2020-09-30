@@ -32,17 +32,6 @@
     });
   }
 
-  let supportsPassive = false;
-  try {
-    const opts = Object.defineProperty({}, 'passive', {
-      get: function() {
-        supportsPassive = {passive: false};
-      }
-    });
-    window.addEventListener('testPassive', null, opts);
-    window.removeEventListener('testPassive', null, opts);
-  } catch (e) {}
-
   if (!Element.prototype.closest) {
     Element.prototype.closest = function(s) {
       let el = this;
@@ -83,7 +72,16 @@
       Element.prototype.webkitMatchesSelector;
   }
 
-  const hasScrollBar = () => document.documentElement.scrollHeight > document.documentElement.clientHeight;
+  let supportsPassive = false;
+  try {
+    const opts = Object.defineProperty({}, 'passive', {
+      get: function() {
+        supportsPassive = {passive: false};
+      }
+    });
+    window.addEventListener('testPassive', null, opts);
+    window.removeEventListener('testPassive', null, opts);
+  } catch (e) {}
 
   const isIos = (() => ((/iPad|iPhone|iPod/.test(navigator.userAgent)) || (!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))) && !window.MSStream)();
 
@@ -492,7 +490,6 @@
 
   hcOffcanvasNav.Helpers = {
     supportsPassive,
-    hasScrollBar,
     isIos,
     isTouchDevice,
     isNumeric,
