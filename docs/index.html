@@ -17,7 +17,7 @@
     <script src="hc-offcanvas-nav.js?ver=5.0.12"></script>
   </head>
 
-  <body>
+  <body class="theme-default">
 
     <div id="container">
 
@@ -28,13 +28,6 @@
           <nav id="main-nav">
 
             <ul class="first-nav">
-              <li class="search" data-nav-custom-content>
-                <div class="form-container">
-                  <form class="search-form" action="https://www.google.com/search" target="_blank" method="get">
-                    <input type="text" name="q" placeholder="Search..." autocomplete="off">
-                  </form>
-                </div>
-              </li>
               <li class="cryptocurrency">
                 <a href="https://www.google.com/search?q=Crypto" target="_blank">Cryptocurrency</a>
                 <ul>
@@ -45,9 +38,6 @@
                   </li>
                 </ul>
               </li>
-            </ul>
-
-            <ul class="second-nav">
               <li class="devices">
                 <span>Devices</span>
                 <ul>
@@ -102,7 +92,11 @@
                   <li><a href="#">Discover</a></li>
                   <li><a href="#">New Scientist</a></li>
                   <li><a href="#">Psychology Today</a></li>
+                  <li><a href="#">Man's Health</a></li>
                   <li><a href="#">Wired</a></li>
+                  <li><a href="#">Vogue</a></li>
+                  <li><a href="#">Elle</a></li>
+                  <li><a href="#">Cosmopolitan</a></li>
                 </ul>
               </li>
               <li class="store">
@@ -137,8 +131,13 @@
                   <li><a href="#">Grocery</a></li>
                 </ul>
               </li>
-              <li class="collections"><a href="#collections">Collections</a></li>
-              <li class="nolink">No Link</li>
+            </ul>
+
+            <h3>Examples</h3>
+
+            <ul class="second-nav">
+              <li class="collections"><a href="#collections">Collections <span>3</span></a></li>
+              <li class="nolink" data-nav-highlight>No Link</li>
               <li class="disabled"><a href="#" disabled>Disabled Link</a></li>
               <li class="add">
                 <a href="#" data-nav-close="false" data-add="['Charts', 'Logs', 'Tests', 'Profile']">Add Item</a>
@@ -192,7 +191,7 @@
 
           <div class="content">
 
-            <h4>Chose position</h4>
+            <h4>Position</h4>
 
             <div class="actions position">
 
@@ -206,7 +205,17 @@
 
             </div>
 
-            <h4>Levels open</h4>
+            <h4>Theme</h4>
+
+            <div class="actions theme">
+
+              <div><a href="#" data-demo="{theme:'default'}" class="thumb active" title="Default" style="background-image:url(theme-1.png);"></a></div>
+
+              <div><a href="#" data-demo="{theme:'carbon'}" class="thumb" title="Dark" style="background-image:url(theme-2.png);"></a></div>
+
+            </div>
+
+            <h4>Levels open type</h4>
 
             <div class="actions levels">
 
@@ -315,7 +324,12 @@
             var $siblings = $this.parent().siblings().children('a').removeClass('active');
             var settings = eval('(' + $this.data('demo') + ')');
 
-            update(settings);
+            if ('theme' in settings) {
+              $('body').removeClass().addClass('theme-' + settings['theme']);
+            }
+            else {
+              update(settings);
+            }
           });
 
           $('.actions').find('input').on('change', function() {

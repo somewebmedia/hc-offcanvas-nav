@@ -2,8 +2,16 @@ $background: #243949;
 $white: #fffce1;
 $yellow: #dab977;
 
-@import '../src/scss/hc-offcanvas-nav';
 @import '../src/scss/mixins';
+@import '../src/scss/core';
+
+body.theme-default {
+  @import '../src/scss/theme-default';
+}
+
+body.theme-carbon {
+  @import '../src/scss/theme-carbon';
+}
 
 @mixin mi {
   font-family: 'Material Icons';
@@ -25,7 +33,7 @@ $yellow: #dab977;
   width: 19px;
   height: 19px;
   margin-right: 15px;
-  font-size: 18px;
+  font-size: 23px;
   vertical-align: top;
   speak: never;
 }
@@ -41,12 +49,6 @@ html, body, div, span, header, ul, li, a {
 
 html {
   height: 100%;
-}
-
-body {
-  font-family: 'Raleway', sans-serif;
-  text-align: center;
-  color: $white;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -85,6 +87,9 @@ ol, ul {
   min-height: 100vh;
   height: 100%;
   background: linear-gradient(-134deg, #517FA4 0%, $background 100%);
+  font-family: 'Raleway', sans-serif;
+  text-align: center;
+  color: $white;
 }
 
 .wrapper {
@@ -269,6 +274,46 @@ main {
     margin: 0 -15px;
     text-align: center;
 
+    div {
+      padding: 0 15px 20px;
+      box-sizing: border-box;
+    }
+
+    @media screen and (min-width: 800px) {
+
+      &:not(.theme) {
+        display: flex;
+        flex-wrap: wrap;
+
+        div {
+          float: left;
+          flex: 1 1 33.33%;
+          max-width: 33.33%;
+        }
+
+        &.position {
+          div {
+            float: left;
+            flex: 1 1 25%;
+            max-width: 25%;
+          }
+        }
+      }
+
+      &.theme {
+
+        &::after {
+          content: '';
+          display: table;
+          clear: both;
+        }
+
+        div {
+          float: left;
+        }
+      }
+    }
+
     &.checkboxes {
       text-align: left;
       padding-top: 8px;
@@ -315,30 +360,6 @@ main {
         }
       }
     }
-
-    div {
-      padding: 0 15px 20px;
-      box-sizing: border-box;
-    }
-
-    @media screen and (min-width: 800px) {
-      display: flex;
-      flex-wrap: wrap;
-
-      div {
-        float: left;
-        flex: 1 1 33.33%;
-        max-width: 33.33%;
-      }
-
-      &.position {
-        div {
-          float: left;
-          flex: 1 1 25%;
-          max-width: 25%;
-        }
-      }
-    }
   }
 
   .button {
@@ -366,6 +387,20 @@ main {
       background: $yellow;
     }
   }
+
+  .thumb {
+    position: relative;
+    display: block;
+    width: 100px;
+    height: 100px;
+    border: 4px solid $white;
+    border-radius: 5px;
+    background-size: cover;
+
+    &.active {
+      border-color: $yellow;
+    }
+  }
 }
 
 .hc-offcanvas-nav {
@@ -375,38 +410,24 @@ main {
   }
 
   h2 {
-    font-weight: 400;
-
-    & + ul > li.search {
-      .nav-item {
+    & ~ ul > li.search {
+      .nav-custom-content {
         padding-top: 0;
       }
     }
   }
 
-  a {
-    font-size: 16px;
-  }
-
-  &.close-no-label {
-    .nav-close a:hover {
-      background: radial-gradient(
-        farthest-corner at top right,
-        darken($hc-offcanvas-nav-background-color, 6.5%),
-        rgba(0,0,0,0)
-      ) !important;
-    }
-  }
-
   &.rtl {
-    .nav-item {
-      display: flex;
-      flex-direction: row-reverse;
 
+    .nav-item-link {
       &::before {
         margin-left: 15px;
         margin-right: 0 !important;
       }
+    }
+
+    .nav-item.collections > .nav-item-wrapper .nav-item-link span {
+      float: left;
     }
   }
 
@@ -425,82 +446,76 @@ main {
       }
     }
 
-    &.search {
-
-      input[type="text"] {
-        width: 100%;
-        box-sizing: border-box;
-        border: none;
-        border-radius: 3px;
-        font-size: 14px;
-        color: #fff;
-        background: rgba(#fff, .12);
-        padding: 5px 10px;
-        box-shadow: none;
-        border: 1px solid rgba(#fff, .05);
-
-        &::placeholder {
-          color: rgba(#fff, .4);
-        }
-      }
-    }
-
     &.add > .nav-item-wrapper a::before {
       @include mi;
       content: 'add';
     }
 
-    &.new > .nav-item-wrapper .nav-item::before {
+    &.new > .nav-item-wrapper .nav-item-link::before {
       @include mi;
       content: 'fiber_new';
     }
 
-    &.cryptocurrency > .nav-item-wrapper .nav-item::before {
+    &.cryptocurrency > .nav-item-wrapper .nav-item-link::before {
       @include mi;
       content: 'local_atm';
     }
 
-    &.devices > .nav-item-wrapper .nav-item::before {
+    &.devices > .nav-item-wrapper .nav-item-link::before {
       @include mi;
       content: 'devices';
     }
 
-    &.mobile > .nav-item-wrapper .nav-item::before {
+    &.mobile > .nav-item-wrapper .nav-item-link::before {
       @include mi;
       content: 'phone_android';
     }
 
-    &.television > .nav-item-wrapper .nav-item::before {
+    &.television > .nav-item-wrapper .nav-item-link::before {
       @include mi;
       content: 'desktop_windows';
     }
 
-    &.camera > .nav-item-wrapper .nav-item::before {
+    &.camera > .nav-item-wrapper .nav-item-link::before {
       @include mi;
       content: 'camera_alt';
     }
 
-    &.magazines > .nav-item-wrapper .nav-item::before {
+    &.magazines > .nav-item-wrapper .nav-item-link::before {
       @include mi;
       content: 'import_contacts';
     }
 
-    &.store > .nav-item-wrapper .nav-item::before {
+    &.store > .nav-item-wrapper .nav-item-link::before {
       @include mi;
       content: 'store';
     }
 
-    &.collections > .nav-item-wrapper .nav-item::before {
-      @include mi;
-      content: 'collections';
+    &.collections > .nav-item-wrapper .nav-item-link {
+      span {
+        font-size: 11px;
+        line-height: 13px;
+        height: 15px;
+        padding: 0 4px;
+        display: inline-block;
+        float: right;
+        background: #ff635a;
+        border-radius: 2px;
+        margin-top: 2px;
+      }
+
+      &::before {
+        @include mi;
+        content: 'collections';
+      }
     }
 
-    &.nolink > .nav-item-wrapper .nav-item::before {
+    &.nolink > .nav-item-wrapper .nav-item-link::before {
       @include mi;
       content: 'format_clear';
     }
 
-    &.disabled > .nav-item-wrapper .nav-item::before {
+    &.disabled > .nav-item-wrapper .nav-item-link::before {
       @include mi;
       content: 'block';
     }
@@ -521,13 +536,15 @@ main {
 
   ul.bottom-nav {
     position: absolute;
-    z-index: 10;
+    left: 0;
+    right: 0;
     bottom: 0;
+    z-index: 10;
     width: 100%;
     display: flex;
     flex-wrap: nowrap;
     align-items: stretch;
-    border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+    border-top: 1px solid rgba(#000, .15);
 
     li {
       flex: auto;
@@ -565,6 +582,24 @@ main {
           height: 19px;
         }
       }
+    }
+  }
+}
+
+body.theme-default {
+  .hc-offcanvas-nav {
+
+    .nav-content > .nav-close a:hover {
+      border: none;
+      background: radial-gradient(
+        farthest-corner at top right,
+        rgba(0, 0, 0, .1),
+        rgba(0, 0, 0, 0)
+      ) !important;
+    }
+
+    .second-nav {
+      border-bottom: none !important;
     }
   }
 }
