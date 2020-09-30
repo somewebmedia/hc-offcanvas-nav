@@ -214,7 +214,7 @@
   };
 
   const addRemoveListener = (op, add) => {
-    const f = EventTarget.prototype[op + 'EventListener'];
+    const f = Element.prototype[op + 'EventListener'];
 
     return function (type, cb, opts) {
       if (!this) return;
@@ -274,8 +274,8 @@
     };
   };
 
-  EventTarget.prototype.addEventListener = addRemoveListener('add');
-  EventTarget.prototype.removeEventListener = addRemoveListener('remove');
+  Element.prototype.addEventListener = addRemoveListener('add');
+  Element.prototype.removeEventListener = addRemoveListener('remove');
 
   const debounce = (func, wait, immediate) => {
     let timeout;
