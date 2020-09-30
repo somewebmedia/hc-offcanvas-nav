@@ -19,6 +19,7 @@ JavaScript library for creating off-canvas multi-level navigations, using ARIA. 
 - No dependencies
 - Flexible, simple markup
 - A number of exposed [Options](#options), [Methods](#methods) and [Events](#events)
+- 2 [Themes](#themes)
 - Cross-browser compatibility
 - Full ARIA keyboard support
   - It relies on <a href="https://www.w3.org/TR/wai-aria-practices/#dialog_modal"><abbr title="Accessible Rich Internet Application">ARIA</abbr> Design pattern for Dialogs</a>
