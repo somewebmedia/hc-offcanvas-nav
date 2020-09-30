@@ -1,3 +1,9 @@
+$hc-offcanvas-nav-trigger-width:              30px !default;
+$hc-offcanvas-nav-trigger-height:             24px !default;
+$hc-offcanvas-nav-trigger-line-width:         4px !default;
+$hc-offcanvas-nav-trigger-color:              #34495E !default;
+$hc-offcanvas-nav-trigger-transform-speed:    .2s !default;
+
 @mixin hc-hamburger($type: 'default', $width: $hc-offcanvas-nav-trigger-width, $height: $hc-offcanvas-nav-trigger-height, $line-width: $hc-offcanvas-nav-trigger-line-width, $color: $hc-offcanvas-nav-trigger-color, $transform-speed: $hc-offcanvas-nav-trigger-transform-speed) {
   position: absolute;
   cursor: pointer;
