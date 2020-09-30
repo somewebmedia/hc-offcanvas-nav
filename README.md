@@ -140,9 +140,9 @@ HC Off-canvas Nav currently has 2 themes, the default and Carbon. To use Carbon 
 <link rel="stylesheet" href="/path/to/hc-offcanvas-nav.carbon.css">
 ```
 
-Or if compiling the scss from the `src` dir, `@include` it from there:
+Or if compiling the SCSS from the `src` dir, `@include` it from there:
 
-```sass
+```scss
 @import 'hc-offcanvas-nav/src/scss/core';
 @import 'hc-offcanvas-nav/src/scss/toggle';
 @import 'hc-offcanvas-nav/src/scss/theme-carbon';
