@@ -41,8 +41,9 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 
 ### Including HC Off-canvas Nav
 
-#### Script tag
+#### Script and Css tag
 ```html
+<link rel="stylesheet" href="/path/to/hc-offcanvas-nav.css">
 <script src="/path/to/hc-offcanvas-nav.js"></script>
 ```
 
@@ -128,6 +129,23 @@ For HC Off-canvas Nav to work as a jQuery plugin, jQuery has to be a property of
     <li><a href="#">Contact</a></li>
   </ul>
 </nav>
+```
+
+
+## Themes
+
+HC Off-canvas Nav currently has 2 themes, the default and Carbon. To use Carbon theme simply call the Carbon theme css instead of the default one:
+
+```html
+<link rel="stylesheet" href="/path/to/hc-offcanvas-nav.carbon.css">
+```
+
+Or if compiling the scss from the `src` dir, `@include` it from there:
+
+```sass
+@import 'hc-offcanvas-nav/src/scss/core';
+@import 'hc-offcanvas-nav/src/scss/toggle';
+@import 'hc-offcanvas-nav/src/scss/theme-carbon';
 ```
 
 
