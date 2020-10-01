@@ -45,6 +45,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 #### Script and Css tag
 ```html
 <link rel="stylesheet" href="/path/to/hc-offcanvas-nav.css">
+
 <script src="/path/to/hc-offcanvas-nav.js"></script>
 ```
 
@@ -66,6 +67,13 @@ import hcOffcanvasNav from 'hc-offcanvas-nav';
 
 If using AMD, the module will be automatically defined as `hcOffcanvasNav`.
 
+#### SCSS
+
+```scss
+@import 'hc-offcanvas-nav/src/scss/core';
+@import 'hc-offcanvas-nav/src/scss/toggle';
+@import 'hc-offcanvas-nav/src/scss/theme-default';
+```
 
 
 ## Usage
@@ -104,7 +112,7 @@ jQuery(document).ready(function($) {
 });
 ```
 
-For HC Off-canvas Nav to work as a jQuery plugin, jQuery has to be a property of global `window` object, so be careful when using it in compbination with Babel/Webpack/Browserify and jQuery.
+For HC Off-canvas Nav to work as a jQuery plugin, jQuery has to be a property of global `window` object, so be careful when using it in combination with Babel/Webpack/Browserify and jQuery.
 
 #### Example HTML menu structure
 
