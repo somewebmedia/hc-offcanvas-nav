@@ -390,7 +390,7 @@ Nav.on('close.level', (e, settings) => {
   localStorage.setItem('NavIndex', e.data.currentIndex);
 });
 
-Nav.on('trigger', (e, settings) => {
+Nav.on('toggle', (e, settings) => {
   if (e.data.action == 'open') {
     // do something when `open` action is triggered
   }
