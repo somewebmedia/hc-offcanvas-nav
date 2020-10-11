@@ -1310,8 +1310,17 @@
           return;
         }
 
+        // trigger "toggle" event
+        if ($nav._eventListeners.toggle) {
+          $nav._eventListeners.toggle.forEach((ev) => {
+            ev.fn(Helpers.customEventObject('toggle', $nav, $nav, {
+              action: 'open'
+            }), Object.assign({}, Settings));
+          });
+        }
+
         setTimeout(() => {
-          // trigger open event
+          // trigger "open" event
           if ($nav._eventListeners.open) {
             $nav._eventListeners.open.forEach((ev) => {
               ev.fn(Helpers.customEventObject('open', $nav, $nav), Object.assign({}, Settings));
@@ -1372,6 +1381,15 @@
             // reset top
             _top = 0;
           }
+        }
+
+        // trigger "toggle" event
+        if ($nav._eventListeners.toggle) {
+          $nav._eventListeners.toggle.forEach((ev) => {
+            ev.fn(Helpers.customEventObject('toggle', $nav, $nav, {
+              action: 'close'
+            }), Object.assign({}, Settings));
+          });
         }
 
         setTimeout(() => {
