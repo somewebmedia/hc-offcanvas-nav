@@ -356,9 +356,11 @@ Nav.off('close');
 | **close.level** | Triggers each time after any level is closed. |
 | **toggle** | Triggers each time nav is triggered to be opened or closed. |
 
-All events return Event object as first argument, and the plugin Settings object as second argument.<br>
+All events return Event object as first argument, and the plugin Settings object as second argument.
+
 - `open.level` and `close.level` return the newly opened level and index under the `Event.data` property.
 - `toggle` event returns the action under the `Event.data` property.
+
 Open and close events are triggered after the nav animation is over, whie toggle event gets triggered imediatelly.
 
 Examples:
