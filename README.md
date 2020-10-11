@@ -349,14 +349,19 @@ Nav.off('close');
 
 | Event | Description |
 |-------|-------------|
-| **open** | Triggers each time when the nav is opened. |
-| **open.level** | Triggers each time when any level is opened. |
-| **close** | Triggers each time when the nav is closed. |
-| **close.once** | Triggers only the first time the nav is closed, and than it detaches itself. |
-| **close.level** | Triggers each time when any level is closed. |
+| **open** | Triggers each time after nav is opened. |
+| **open.level** | Triggers each time after any level is opened. |
+| **close** | Triggers each time after nav is closed. |
+| **close.once** | Triggers only the first time after nav is closed, and than it detaches itself. |
+| **close.level** | Triggers each time after any level is closed. |
+| **toggle** | Triggers each time nav is triggered to be opened or closed. |
 
 All events return Event object as first argument, and the plugin Settings object as second argument.<br>
-`open.level` and `close.level` return the newly opened level and index under the `Event.data` property.
+- `open.level` and `close.level` return the newly opened level and index under the `Event.data` property.
+- `toggle` event returns the action under the `Event.data` property.
+Open and close events are triggered after the nav animation is over, whie toggle event gets triggered imediatelly.
+
+Examples:
 
 ```js
 // change nav open position after each close
@@ -381,7 +386,13 @@ Nav.on('open.level', (e, settings) => {
 Nav.on('close.level', (e, settings) => {
   localStorage.setItem('NavLevel', e.data.currentLevel);
   localStorage.setItem('NavIndex', e.data.currentIndex);
-})
+});
+
+Nav.on('trigger', (e, settings) => {
+  if (e.data.action == 'open') {
+    // do something when `open` action is triggered
+  }
+});
 ```
 
 
