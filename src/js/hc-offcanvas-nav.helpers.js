@@ -211,18 +211,18 @@
     return (type ? (el._eventListeners || {})[type] : el._eventListeners) || false;
   };
 
-  const addRemoveListener = (op, add) => {
-    const f = Element.prototype[op + 'EventListener'];
+  const addRemoveListener = (op) => {
+    const f = Node.prototype[op + 'EventListener'];
 
-    return function (type, cb, opts) {
+    return function (name, cb, opts) {
       if (!this) return;
 
-      const name = type.split('.')[0];
+      const eventName = name.split('.')[0];
 
       this._eventListeners = this._eventListeners || {};
 
       if (op === 'add') {
-        this._eventListeners[type] = this._eventListeners[type] || [];
+        this._eventListeners[name] = this._eventListeners[name] || [];
 
         const lstn = {fn: cb};
 
@@ -230,16 +230,16 @@
           lstn.options = opts;
         }
 
-        this._eventListeners[type].push(lstn);
+        this._eventListeners[name].push(lstn);
 
         // call native addEventListener
-        f.call(this, name, cb, opts);
+        f.call(this, eventName, cb, opts);
       }
       else {
         // remove single event listener
         if (typeof cb === 'function') {
           // call native addEventListener
-          f.call(this, name, cb, opts);
+          f.call(this, eventName, cb, opts);
 
           for (const e in this._eventListeners) {
             this._eventListeners[e] = this._eventListeners[e].filter((l) => {
@@ -253,16 +253,16 @@
         }
         else {
           // remove all event listeners
-          if (this._eventListeners[type]) {
-            for (let i = this._eventListeners[type].length; i--;) {
+          if (this._eventListeners[name]) {
+            for (let i = this._eventListeners[name].length; i--;) {
               // call native addEventListener
-              f.call(this, name, this._eventListeners[type][i].fn, this._eventListeners[type][i].options);
+              f.call(this, eventName, this._eventListeners[name][i].fn, this._eventListeners[name][i].options);
 
-              this._eventListeners[type].splice(i, 1);
+              this._eventListeners[name].splice(i, 1);
             }
 
-            if (!this._eventListeners[type].length) {
-              delete this._eventListeners[type];
+            if (!this._eventListeners[name].length) {
+              delete this._eventListeners[name];
             }
           }
         }
@@ -272,8 +272,8 @@
     };
   };
 
-  Element.prototype.addEventListener = addRemoveListener('add');
-  Element.prototype.removeEventListener = addRemoveListener('remove');
+  Node.prototype.addEventListener = addRemoveListener('add');
+  Node.prototype.removeEventListener = addRemoveListener('remove');
 
   const debounce = (func, wait, immediate) => {
     let timeout;
