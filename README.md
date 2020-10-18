@@ -172,7 +172,7 @@ Or if compiling the SCSS from the `src` dir, `@include` it from there:
 | **levelOpen** | `'overlap'` | str | Submenu levels open effect. Available options: `'overlap'`, `'expand'`, `'none'` or `false`. |
 | **levelSpacing** | `40` | int | If levels are overlaped, this is the spacing between them, if they are expanding or always open, this is the text indent of the submenus. |
 | **levelTitles** | `true` | bool | Show titles for submenus, which is the parent item name. Works only for overlaped levels. |
-| **navTitle** | `null` | str | Main navigation (first level) title. |
+| **navTitle** | `null` | str / Element obj | Main navigation (first level) title. Can also be HTML object like an image (logo). |
 | **navClass** | `''` | str | Custom navigation class. |
 | **disableBody** | `true` | bool | Disable body scroll when navigation is open. |
 | **closeOpenLevels** | `true` | bool | Should all open sub levels be closed when the nav closes. |
