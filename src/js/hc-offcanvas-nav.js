@@ -559,9 +559,13 @@
 
           // titles
           if (title && (level === 0 || (level > 0 && Settings.levelOpen === 'overlap'))) {
+            const _title = typeof title === 'string'
+              ? title
+              : Helpers.clone(window.jQuery && title instanceof window.jQuery && title.length ? title[0] : title, true, true);
+
             $content.insertBefore(Helpers.createElement('h2', {
               class: level === 0 ? 'nav-title' + (Settings.insertClose === true && !Settings.labelClose ? ' followed-empty-close' : '') : 'level-title'
-            }, title), $content.firstChild);
+            }, _title), $content.firstChild);
           }
 
           menu.forEach((nav, i_nav) => {
@@ -806,7 +810,7 @@
 
                 _indexes[nextLevel]++;
 
-                createDom(item.subnav, $item, nextLevel, nav_title, _indexes[nextLevel]-1, title);
+                createDom(item.subnav, $item, nextLevel, nav_title, _indexes[nextLevel]-1, typeof title === 'string' ? title : '');
               }
             });
           });
