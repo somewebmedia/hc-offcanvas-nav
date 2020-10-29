@@ -33,7 +33,7 @@
   let navCount = 0;
   const navOpenClass = 'nav-open';
 
-  const hcOffcanvasNav = (elem, options) => {
+  const hcOffcanvasNav = function HcOffcanvasNav(elem, options) {
     options = options || {};
 
     // use querySelector if string is passed
