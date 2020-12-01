@@ -126,7 +126,7 @@
       const keydownEventName = 'keydown.hcOffcanvasNav';
 
       // this is our new nav element
-      const $nav = Helpers.createElement('nav', {role: 'navigation'});
+      const $nav = Helpers.createElement('nav', {id: navUniqId});
       const $nav_container = Helpers.createElement('div', {class: 'nav-container'});
 
       $nav.addEventListener('click', Helpers.stopPropagation);
@@ -180,6 +180,7 @@
       // ARIA
       $toggle.setAttribute('role', 'button');
       $toggle.setAttribute('aria-controls', navUniqId);
+      $toggle.setAttribute('aria-expanded', false);
 
       // make nav opening keyboard accessible
       $toggle.addEventListener('keydown', (e) => {
@@ -563,17 +564,33 @@
               : Helpers.clone(window.jQuery && title instanceof window.jQuery && title.length ? title[0] : title, true, true);
 
             $content.insertBefore(Helpers.createElement('h2', {
+              id: level === 0 ? `${navUniqId}-nav-title` : null,
               class: level === 0 ? 'nav-title' + (Settings.insertClose === true && !Settings.labelClose ? ' followed-empty-close' : '') : 'level-title'
             }, _title), $content.firstChild);
+
+            // Nav ARIA title
+            if (level === 0 && typeof title === 'string') {
+              $nav.setAttribute('aria-labelledby', `${navUniqId}-nav-title`);
+            }
           }
+
+          let menu_count = -1;
 
           menu.forEach((nav, i_nav) => {
             if (nav.tagName !== 'UL') {
               $content.appendChild(nav.content);
               return;
             }
+            else {
+              menu_count++;
+            }
 
             const $menu = Helpers.createElement('ul', {
+              id: nav.id
+                ? menu.length > 1
+                    ? `menu-${nav.id}-${menu_count}` // sibling menus
+                    : `menu-${nav.id}`
+                : null,
               role: 'menu',
               'aria-level': level + 1
             });
@@ -583,10 +600,6 @@
             // keep original menu classes
             if (Settings.keepClasses && nav.htmlClass) {
               $menu.classList.add.apply($menu.classList, nav.htmlClass.split(' '));
-            }
-
-            if (i_nav === 0 && title && typeof title === 'string') {
-              $menu.setAttribute('aria-label', title);
             }
 
             nav.items.forEach((item, i_item) => {
@@ -760,7 +773,10 @@
                     });
 
                     // ARIA
-                    $el.setAttribute('aria-controls', `menu-${uniqid}`);
+                    $el.setAttribute('aria-controls', item.subnav.length > 1
+                      ? item.subnav.filter(s => s.tagName === 'UL').map((s, i) => `menu-${s.id}-${i}`).join(' ') // sibling menus
+                      : `menu-${uniqid}`
+                    );
                     $el.setAttribute('aria-haspopup', Settings.levelOpen === 'overlap');
                     $el.setAttribute('aria-expanded', false);
                   }
@@ -1275,6 +1291,7 @@
         $nav.classList.add(navOpenClass);
 
         $toggle.classList.add('toggle-open');
+        $toggle.setAttribute('aria-expanded', true);
 
         if (Settings.levelOpen === 'expand' && _closeLevelsTimeout) {
           clearTimeout(_closeLevelsTimeout);
@@ -1345,6 +1362,7 @@
         $nav.setAttribute('aria-hidden', true);
         $nav_container.removeAttribute('style');
         $toggle.classList.remove('toggle-open');
+        $toggle.setAttribute('aria-expanded', false);
 
         if (Settings.levelOpen === 'expand' && ['top', 'bottom'].indexOf(Settings.position) !== -1) {
           // close all levels before closing the nav because the nav height changed
