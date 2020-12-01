@@ -34,7 +34,8 @@ $hc-offcanvas-nav-text-size:          15px !default;
 
         &:not(.nav-title):not(.level-title) {
           font-size: $hc-offcanvas-nav-text-size + 1;
-          padding: 15px;
+          padding: 15px 12px;
+          text-transform: uppercase;
           color: darken($hc-offcanvas-nav-text-color, 30%);
         }
       }
@@ -233,11 +234,6 @@ $hc-offcanvas-nav-text-size:          15px !default;
   }
 
   .nav-title {
-
-    &.followed-empty-close {
-      padding-right: 46px;
-    }
-
     & + .nav-close {
       a:not(.has-label) {
         position: absolute;
@@ -247,6 +243,12 @@ $hc-offcanvas-nav-text-size:          15px !default;
         top: 28px;
         right: 15px;
       }
+    }
+  }
+
+  &.nav-close-button-empty {
+    .nav-title {
+      padding-right: 46px;
     }
   }
 

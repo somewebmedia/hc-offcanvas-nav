@@ -74,7 +74,7 @@ $hc-offcanvas-nav-text-size:          14px !default;
     background: darken($hc-offcanvas-nav-background-color, 4%);
   }
 
-  .nav-wrapper-0 {
+  .nav-wrapper {
     & > .nav-content > {
 
       ul {
@@ -116,6 +116,16 @@ $hc-offcanvas-nav-text-size:          14px !default;
                 }
               }
             }
+          }
+        }
+      }
+
+      .nav-title,
+      .level-title,
+      .nav-close {
+        & + {
+          h2, h3, h4, h5, h6 {
+            border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
           }
         }
       }
@@ -203,8 +213,12 @@ $hc-offcanvas-nav-text-size:          14px !default;
       }
 
       &:hover {
-        background: darken($hc-offcanvas-nav-background-color, 2%);
-        border-left: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
+        border: none;
+        background: radial-gradient(
+          farthest-corner at top right,
+          rgba(0, 0, 0, .1),
+          rgba(0, 0, 0, 0)
+        );
       }
     }
 
@@ -213,12 +227,13 @@ $hc-offcanvas-nav-text-size:          14px !default;
     }
   }
 
-  .nav-title  {
-
-    &.followed-empty-close {
-      padding-right: 55px;
+  &:not(.nav-close-button-empty) {
+    .nav-content > .nav-close {
+      margin-bottom: -1px;
     }
+  }
 
+  .nav-title {
     & + .nav-close {
       a:not(.has-label) {
         position: absolute;
@@ -228,6 +243,12 @@ $hc-offcanvas-nav-text-size:          14px !default;
         top: -66px;
         right: 0;
       }
+    }
+  }
+
+  &.nav-close-button-empty {
+    .nav-title {
+      padding-right: 55px;
     }
   }
 
@@ -246,7 +267,7 @@ $hc-offcanvas-nav-text-size:          14px !default;
     border-bottom: 1px solid darken($hc-offcanvas-nav-background-color, 7%);
 
     &:hover {
-      background: darken($hc-offcanvas-nav-background-color, 6.5%);
+      background: darken($hc-offcanvas-nav-background-color, 4.3%);
     }
   }
 

@@ -412,6 +412,7 @@
           Helpers.isTouchDevice ? 'touch-device' : '',
           wasOpen ? navOpenClass : '',
           Settings.rtl ? 'rtl' : '',
+          Settings.insertClose === true && !Settings.labelClose ? 'nav-close-button-empty' : ''
         ].join(' ').trim().replace(/  +/g, ' ');
 
         $nav.removeEventListener('click');
@@ -565,7 +566,7 @@
 
             $content.insertBefore(Helpers.createElement('h2', {
               id: level === 0 ? `${navUniqId}-nav-title` : null,
-              class: level === 0 ? 'nav-title' + (Settings.insertClose === true && !Settings.labelClose ? ' followed-empty-close' : '') : 'level-title'
+              class: level === 0 ? 'nav-title' : 'level-title'
             }, _title), $content.firstChild);
 
             // Nav ARIA title
