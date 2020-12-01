@@ -368,7 +368,7 @@ $hc-offcanvas-nav-text-size:          15px !default;
       }
     }
 
-    li.nav-back {
+    .nav-back {
       span {
         &::before {
           margin-left: -2px;
@@ -398,7 +398,7 @@ $hc-offcanvas-nav-text-size:          15px !default;
       }
     }
 
-    li.nav-back {
+    .nav-back {
       span {
         &::before {
           margin-left: 0;
@@ -429,7 +429,7 @@ $hc-offcanvas-nav-text-size:          15px !default;
       }
     }
 
-    li.nav-back {
+    .nav-back {
       span {
         &::before {
           margin-left: 0;

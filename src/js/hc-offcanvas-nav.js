@@ -480,7 +480,7 @@
                 const customContent = $li.getAttribute('data-nav-custom-content') !== null;
                 let $content = customContent ? $li.children : Array.prototype.filter.call($li.children, (child) => child.tagName !== 'UL' && !child.querySelector('ul')).concat($li.children.length ? [] : [$li.firstChild]);
                 const $nested_navs = customContent ? [] : Array.prototype.slice.call($li.querySelectorAll('ul'));
-                const $subnav = !$nested_navs.length ? [] : [$nested_navs[0]].concat(Array.prototype.filter.call($nested_navs[0].parentNode.children, (child) => child.tagName === 'UL' && child !== $nested_navs[0]));
+                const $subnav = !$nested_navs.length ? [] : [].concat(Array.prototype.filter.call($nested_navs[0].parentNode.children, (child) => child.tagName === 'UL' || child instanceof HTMLHeadingElement));
 
                 let uniqid = null;
 
@@ -836,7 +836,16 @@
                 backLabel,
                 Helpers.createElement('span')
               ]);
-              const $back = Helpers.createElement('li', {class: 'nav-item nav-back'}, $back_a);
+
+              if (Settings.insertBack === true || Settings.insertBack === 0) {
+                const $back = Helpers.createElement('div', {class: 'nav-back'}, $back_a);
+                $content.insertBefore($back, Helpers.children($content, ':not(.level-title)')[0]);
+              }
+              else {
+                const $back = Helpers.createElement('li', {class: 'nav-item nav-back'}, $back_a);
+                Helpers.insertAt($back, Settings.insertBack === true ? 0 : Settings.insertBack, $children_menus);
+              }
+
               const closeThisLevel = () => closeLevel(level, backIndex);
 
               Helpers.wrap($back_a, Helpers.createElement('div', {class: 'nav-item-wrapper'}));
@@ -847,8 +856,6 @@
                   _keyboard = true;
                 }
               });
-
-              Helpers.insertAt($back, Settings.insertBack === true ? 0 : Settings.insertBack, $children_menus);
             }
           }
 
