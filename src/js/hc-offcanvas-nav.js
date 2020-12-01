@@ -416,7 +416,6 @@
         $nav.removeEventListener('click');
         $nav.className = navClasses;
         $nav.setAttribute('aria-hidden', true);
-        $nav.setAttribute('aria-labelledby', navUniqId);
 
         // set css variable so we can use it in themes if needed
         document.documentElement.style.setProperty('--nav-level-spacing', Settings.levelSpacing + 'px');
@@ -586,12 +585,8 @@
               $menu.classList.add.apply($menu.classList, nav.htmlClass.split(' '));
             }
 
-            if (i_nav === 0 && title) {
+            if (i_nav === 0 && title && typeof title === 'string') {
               $menu.setAttribute('aria-label', title);
-            }
-
-            if (nav.id) {
-              $menu.setAttribute('aria-labelledby', `menu-${nav.id}`);
             }
 
             nav.items.forEach((item, i_item) => {
