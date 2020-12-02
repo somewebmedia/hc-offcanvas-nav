@@ -398,7 +398,7 @@
 
         // get page content
         if (!reinit || (reinit && checkForUpdate('pushContent'))) {
-          $push_content = Helpers.getElements(Settings.pushContent)[0];
+          $push_content = Settings.pushContent ? Helpers.getElements(Settings.pushContent)[0] : null;
         }
 
         // remove transition from the nav container so we can update the nav without flickering
