@@ -588,15 +588,6 @@ main {
 body.theme-default {
   .hc-offcanvas-nav {
 
-    .nav-content > .nav-close a:hover {
-      border: none;
-      background: radial-gradient(
-        farthest-corner at top right,
-        rgba(0, 0, 0, .1),
-        rgba(0, 0, 0, 0)
-      ) !important;
-    }
-
     .second-nav {
       border-bottom: none !important;
     }
