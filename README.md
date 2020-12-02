@@ -323,6 +323,14 @@ Closes the nav if open.
 Nav.close();
 ```
 
+### .toggle()
+
+Toggles (open/close) the nav.
+
+```js
+Nav.toggle();
+```
+
 ### .on(eventName, cb)
 
 Attach [Event](#events) listener to the nav.
