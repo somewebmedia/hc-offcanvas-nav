@@ -1,6 +1,6 @@
 {
   "name": "hc-offcanvas-nav",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "description": "JavaScript library for creating off-canvas multi-level navigations",
   "homepage": "https://somewebmedia.github.io/hc-offcanvas-nav/",
   "main": "dist/hc-offcanvas-nav.js",
