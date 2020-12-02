@@ -133,6 +133,7 @@
       $nav.appendChild($nav_container);
 
       let $toggle = null;
+      let $toggle_open = null;
       let $push_content = null;
 
       let Model = {};
@@ -158,39 +159,39 @@
 
       if (!Settings.customToggle) {
         // our toggle
-        $toggle = Helpers.createElement('a', {
-          href: '#',
-          class: `hc-nav-trigger ${navUniqId}`,
-          'aria-label': (Settings.ariaLabels || {}).open
-        }, Helpers.createElement('span'));
+        $toggle = [Helpers.createElement('a', {
+          href: '#'
+        }, Helpers.createElement('span'))];
 
-        $toggle.addEventListener('click', toggleNav);
-        $originalNav.insertAdjacentElement('afterend', $toggle);
+        $originalNav.insertAdjacentElement('afterend', $toggle[0]);
       }
       else {
         // user toggle
-        $toggle = Helpers.getElement(Settings.customToggle);
-
-        if ($toggle) {
-          $toggle.classList.add('hc-nav-trigger', navUniqId);
-          $toggle.addEventListener('click', toggleNav);
-        }
+        $toggle = Helpers.getElements(Settings.customToggle);
       }
 
-      // ARIA
-      $toggle.setAttribute('role', 'button');
-      $toggle.setAttribute('aria-controls', navUniqId);
-      $toggle.setAttribute('aria-expanded', false);
+      if ($toggle && $toggle.length) {
+        $toggle.forEach(($t) => {
+          $t.addEventListener('click', toggleNav($t));
+          $t.classList.add('hc-nav-trigger', navUniqId);
 
-      // make nav opening keyboard accessible
-      $toggle.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-          // trap focus inside nav
-          setTimeout(() => {
-            trapFocus(0, 0);
-          }, 0);
-        }
-      });
+          // ARIA
+          $t.setAttribute('role', 'button');
+          $t.setAttribute('aria-label', (Settings.ariaLabels || {}).open);
+          $t.setAttribute('aria-controls', navUniqId);
+          $t.setAttribute('aria-expanded', false);
+
+          // make nav opening keyboard accessible
+          $t.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+              // trap focus inside nav
+              setTimeout(() => {
+                trapFocus(0, 0);
+              }, 0);
+            }
+          });
+        });
+      }
 
       /* ARIA Keyboard Focus */
 
@@ -262,9 +263,11 @@
       const untrapFocus = () => {
         document.removeEventListener(keydownEventName);
 
-        setTimeout(() => {
-          $toggle.focus();
-        }, _transitionDuration);
+        if ($toggle_open) {
+          setTimeout(() => {
+            $toggle_open.focus();
+          }, _transitionDuration);
+        }
       };
 
       /* Build methods */
@@ -316,7 +319,7 @@
 
       // init function
       const initNav = (reinit) => {
-        const toggleDisplay = window.getComputedStyle($toggle).display;
+        const toggleDisplay = $toggle ? window.getComputedStyle($toggle[0]).display : false;
         const mediaquery = Settings.disableAt ? `max-width: ${Settings.disableAt - 1}px` : false;
         const width = Helpers.formatSizeVal(Settings.width);
         const height = Helpers.formatSizeVal(Settings.height);
@@ -342,7 +345,9 @@
         Styles.add(`.hc-nav-original.${navUniqId}`, 'display: none', mediaquery);
 
         // trigger
-        Styles.add(`.hc-nav-trigger.${navUniqId}`, `display: ${toggleDisplay && toggleDisplay !== 'none' ? toggleDisplay : 'block'}`, mediaquery);
+        if (toggleDisplay) {
+          Styles.add(`.hc-nav-trigger.${navUniqId}`, `display: ${toggleDisplay && toggleDisplay !== 'none' ? toggleDisplay : 'block'}`, mediaquery);
+        }
 
         if (['left', 'right'].indexOf(Settings.position) !== -1) {
           // container width
@@ -393,7 +398,7 @@
 
         // get page content
         if (!reinit || (reinit && checkForUpdate('pushContent'))) {
-          $push_content = Helpers.getElement(Settings.pushContent);
+          $push_content = Helpers.getElements(Settings.pushContent)[0];
         }
 
         // remove transition from the nav container so we can update the nav without flickering
@@ -1171,6 +1176,11 @@
         }
       }
 
+      function closeToggles($t) {
+        $t.classList.remove('toggle-open');
+        $t.setAttribute('aria-expanded', false);
+      };
+
       function areLevelsOpenable() {
         return Settings.levelOpen !== false && Settings.levelOpen !== 'none';
       }
@@ -1298,8 +1308,14 @@
         $nav.setAttribute('aria-hidden', false);
         $nav.classList.add(navOpenClass);
 
-        $toggle.classList.add('toggle-open');
-        $toggle.setAttribute('aria-expanded', true);
+        if ($toggle) {
+          $toggle.forEach(closeToggles);
+
+          if ($toggle_open) {
+            $toggle_open.classList.add('toggle-open');
+            $toggle_open.setAttribute('aria-expanded', true);
+          }
+        }
 
         if (Settings.levelOpen === 'expand' && _closeLevelsTimeout) {
           clearTimeout(_closeLevelsTimeout);
@@ -1369,8 +1385,10 @@
         $nav.classList.remove('user-is-tabbing');
         $nav.setAttribute('aria-hidden', true);
         $nav_container.removeAttribute('style');
-        $toggle.classList.remove('toggle-open');
-        $toggle.setAttribute('aria-expanded', false);
+
+        if ($toggle) {
+          $toggle.forEach(closeToggles);
+        }
 
         if (Settings.levelOpen === 'expand' && ['top', 'bottom'].indexOf(Settings.position) !== -1) {
           // close all levels before closing the nav because the nav height changed
@@ -1437,12 +1455,21 @@
         }, _transitionDuration);
       }
 
-      function toggleNav(e) {
-        e.preventDefault();
-        e.stopPropagation();
+      function toggleNav($t) {
+        return (e) => {
+          if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
 
-        if (_open) closeNav();
-        else openNav();
+          if ($t) {
+            // remember which toggle button was pressed
+            $toggle_open = $t;
+          }
+
+          if (_open) closeNav();
+          else openNav();
+        }
       }
 
       function openLevel(l, i, transition = true) {
@@ -1594,6 +1621,8 @@
       $nav.open = openNav;
 
       $nav.close = closeNav;
+
+      $nav.toggle = toggleNav(null);
 
       $nav.update = (options, updateDom) => {
         // clear updated array

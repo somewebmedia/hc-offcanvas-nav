@@ -333,17 +333,17 @@
     return el;
   };
 
-  const getElement = (el) => {
+  const getElements = (el) => {
     let node = null;
 
     if (typeof el === 'string') {
-      node = document.querySelector(el);
+      node = document.querySelectorAll(el);
     }
     else if (window.jQuery && el instanceof window.jQuery && el.length) {
-      node = el[0];
+      node = el.toArray();
     }
     else if (el instanceof Element) {
-      node = el;
+      node = [el];
     }
 
     return node;
@@ -507,7 +507,7 @@
     hasListener,
     debounce,
     createElement,
-    getElement,
+    getElements,
     getElementCssTag,
     printStyle,
     insertAt,
