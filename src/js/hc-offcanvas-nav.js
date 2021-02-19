@@ -64,6 +64,7 @@
       disableBody:        true,
       closeOnClick:       true,
       customToggle:       null,
+      activeToggleClass:  null,
       bodyInsert:         'prepend', // prepend/append
       keepClasses:        true,
       removeOriginalNav:  false,
@@ -124,6 +125,7 @@
       const navUniqId = `hc-nav-${navCount}`;
       const Styles = Helpers.printStyle(`hc-offcanvas-${navCount}-style`);
       const keydownEventName = 'keydown.hcOffcanvasNav';
+      const activeToggleClass = Settings.activeToggleClass || 'toggle-open';
 
       // this is our new nav element
       const $nav = Helpers.createElement('nav', {id: navUniqId});
@@ -1177,7 +1179,7 @@
       }
 
       function closeToggles($t) {
-        $t.classList.remove('toggle-open');
+        $t.classList.remove(activeToggleClass);
         $t.setAttribute('aria-expanded', false);
       };
 
@@ -1312,7 +1314,7 @@
           $toggle.forEach(closeToggles);
 
           if ($toggle_open) {
-            $toggle_open.classList.add('toggle-open');
+            $toggle_open.classList.add(activeToggleClass);
             $toggle_open.setAttribute('aria-expanded', true);
           }
         }
