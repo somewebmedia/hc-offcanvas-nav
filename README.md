@@ -179,6 +179,7 @@ Or if compiling the SCSS from the `src` dir, `@include` it from there:
 | **closeActiveLevel** | `false` | bool | Should initially active sub level (see [`data-nav-active`](#data-attributes)) be cleared when the nav closes. |
 | **closeOnClick** | `true` | bool | Close the navigation when links are clicked. |
 | **customToggle** | `null` | str / Element obj | Custom navigation toggle element. |
+| **activeToggleClass** | `null` | str | Custom active toggle class. |
 | **insertClose** | `true` | bool / int | Insert navigation close button. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. |
 | **insertBack** | `true` | bool / int | Insert back buttons to submenus. You can also use an integer representing 0-based index that will be the position of the button in the list. Negative numbers are also supported. Works only for overlaped levels. |
 | **labelClose** | `''` | str | Label for the close button. |
