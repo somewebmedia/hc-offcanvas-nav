@@ -78,7 +78,7 @@ If using AMD, the module will be automatically defined as `hcOffcanvasNav`.
 
 ## Usage
 
-Be sure to call HC-Sticky once your menu element is available in the DOM.
+Be sure to call the Nav once your menu element is available in the DOM.
 
 #### Vanilla JS
 
