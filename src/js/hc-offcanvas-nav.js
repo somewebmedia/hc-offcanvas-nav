@@ -936,7 +936,7 @@
       };
 
       const touchCaptureNav = (transNav, transContent) => {
-        window.addEventListener('touchmove', Helpers.preventDefault, Helpers.supportsPassive); // disable scroll
+        window.addEventListener('touchmove', Helpers.preventDefault, Helpers.supportsPassive); // disable page scroll
         $nav.style.visibility = 'visible';
         $nav_container.style[Helpers.browserPrefix('transition')] = 'none';
         Helpers.setTransform($nav_container, transNav, Settings.position);
@@ -948,7 +948,7 @@
       };
 
       const touchReleaseNav = (action, timeoutVsb = true, transNav = false, transContent = false) => {
-        window.removeEventListener('touchmove', Helpers.preventDefault, Helpers.supportsPassive) // enable scroll
+        window.removeEventListener('touchmove', Helpers.preventDefault, Helpers.supportsPassive) // enable page scroll
         $nav_container.style[Helpers.browserPrefix('transition')] = '';
         Helpers.setTransform($nav_container, transNav, Settings.position);
 
@@ -988,8 +988,8 @@
         }
 
         if (
-          (Settings.position === 'left' && _xStart < maxStart) || // swipe right
-          (Settings.position === 'right' && _xStart > document.clientWidth - maxStart) // swipe left
+          (Settings.position === 'left' && _xStart < maxStart) || // swipe right ->
+          (Settings.position === 'right' && _xStart > document.body.clientWidth - maxStart) // swipe left <-
         ) {
           _touchMoved = true;
           touchCaptureNav(0 - (_containerWidth - xDiff), Math.abs(xDiff));
@@ -1053,8 +1053,8 @@
         }
 
         if (
-          (Settings.position === 'left' && xDiff < 0) || // swipe right
-          (Settings.position === 'right' && xDiff > 0) // swipe left
+          (Settings.position === 'left' && xDiff < 0) || // swipe right ->
+          (Settings.position === 'right' && xDiff > 0) // swipe left <-
         ) {
           _touchMoved = true;
           touchCaptureNav(-Math.abs(xDiff) + levelSpacing, swipeWidth - Math.abs(xDiff));
