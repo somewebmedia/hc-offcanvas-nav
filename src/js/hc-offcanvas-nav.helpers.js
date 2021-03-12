@@ -451,17 +451,17 @@
   const setTransform = (() => {
     const transform = browserPrefix('transform');
 
-    return ($el, val, position) => {
+    return ($el, val, pos) => {
       if (val === false || val === '') {
         $el.style.transform = '';
       }
       else {
-        if (getAxis(position) === 'x') {
-          const x = position === 'left' ? val : '-' + val;
+        if (getAxis(pos) === 'x') {
+          const x = pos === 'left' ? val : -val;
           $el.style.transform = `translate3d(${formatSizeVal(x)},0,0)`;
         }
         else {
-          const y = position === 'top' ? val : '-' + val;
+          const y = pos === 'top' ? val : -val;
           $el.style.transform = `translate3d(0,${formatSizeVal(y)},0)`;
         }
       }
