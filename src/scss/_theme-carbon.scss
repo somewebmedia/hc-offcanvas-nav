@@ -22,7 +22,7 @@ $hc-offcanvas-nav-text-size:          15px !default;
     padding: 0 15px;
 
     & > {
-      h2, h3, h4, h5, h6 {
+      div {
         font-size: round($hc-offcanvas-nav-text-size * 1.26);
         font-weight: normal;
         padding: 25px 15px 30px;
@@ -224,7 +224,7 @@ $hc-offcanvas-nav-text-size:          15px !default;
           }
 
           & + {
-            h2, h3, h4, h5, h6 {
+            div {
               margin-top: 55px;
             }
           }

@@ -571,7 +571,7 @@
               ? title
               : Helpers.clone(window.jQuery && title instanceof window.jQuery && title.length ? title[0] : title, true, true);
 
-            $content.insertBefore(Helpers.createElement('h2', {
+            $content.insertBefore(Helpers.createElement('div', {
               id: level === 0 ? `${navUniqId}-nav-title` : null,
               class: level === 0 ? 'nav-title' : 'level-title'
             }, _title), $content.firstChild);

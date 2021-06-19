@@ -19,7 +19,7 @@ $hc-offcanvas-nav-text-size:          14px !default;
   }
 
   .nav-content > {
-    h2, h3, h4, h5, h6 {
+    div {
       font-size: round($hc-offcanvas-nav-text-size * 1.35);
       font-weight: normal;
       padding: 20px 17px;
@@ -106,13 +106,13 @@ $hc-offcanvas-nav-text-size:          14px !default;
         }
 
         & + {
-          h2, h3, h4, h5, h6 {
+          div {
             margin-top: -2px;
           }
         }
       }
 
-      h2, h3, h4, h5, h6 {
+      div {
         & + ul {
           & > li {
             &:first-child:not(.nav-back):not(.nav-close) {
@@ -130,7 +130,7 @@ $hc-offcanvas-nav-text-size:          14px !default;
       .level-title,
       .nav-close {
         & + {
-          h2, h3, h4, h5, h6 {
+          div {
             border-top: 1px solid darken($hc-offcanvas-nav-background-color, 6%);
           }
         }
