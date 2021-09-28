@@ -63,6 +63,7 @@
       navClass:           '',
       disableBody:        true,
       closeOnClick:       true,
+      closeOnEsc:         true,
       customToggle:       null,
       activeToggleClass:  null,
       bodyInsert:         'prepend', // prepend/append
@@ -1143,7 +1144,9 @@
       }
 
       // close levels on escape
-      document.addEventListener('keydown', checkEsc);
+      if (Settings.closeOnEsc) {
+        document.addEventListener('keydown', checkEsc);
+      }
 
       // re-calculate our nav if window is resized
       const debounceResize = Helpers.debounce(calcNav, 500);
