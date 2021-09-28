@@ -14,7 +14,6 @@
     "type": "git",
     "url": "git+https://github.com/somewebmedia/hc-offcanvas-nav.git"
   },
-  "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.12.8",
     "@babel/core": "^7.12.9",
@@ -26,8 +25,9 @@
     "gulp-concat": "^2.6.1",
     "gulp-open": "^3.0.1",
     "gulp-replace": "^1.0.0",
-    "gulp-sass": "^4.1.0",
+    "gulp-sass": "^5.0.0",
     "gulp-uglify": "^3.0.2",
+    "node-sass": "^6.0.1",
     "uglify-save-license": "^0.4.1",
     "yargs": "^15.4.1"
   },
