@@ -1,6 +1,7 @@
 // stylelint-disable no-descending-specificity
-// CSS Variables for off canvas menu
 .hc-offcanvas-nav {
+
+  // CSS Variables for off canvas menu
   // Colors
   --hc-offcanvas-nav-color-background: #336ca6;
   --hc-offcanvas-nav-color-background-hilight: #2e6296;
@@ -24,9 +25,6 @@
   --hc-offcanvas-nav-font-size-heading: 19px;
   --hc-offcanvas-heading-padding-y: 20px;
   --hc-offcanvas-heading-padding-x: 17px;
-}
-
-.hc-offcanvas-nav {
   font-family: var(--hc-offcanvas-nav-font-family);
 }
 
