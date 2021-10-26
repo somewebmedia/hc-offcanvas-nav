@@ -1,7 +1,6 @@
 $background: #243949;
 $white: #fffce1;
 $yellow: #dab977;
-
 @import '../src/scss/mixins';
 @import '../src/scss/core';
 
@@ -38,7 +37,14 @@ body.theme-carbon {
   speak: never;
 }
 
-html, body, div, span, header, ul, li, a {
+html,
+body,
+div,
+span,
+header,
+ul,
+li,
+a {
   margin: 0;
   padding: 0;
   border: 0;
@@ -51,7 +57,12 @@ html {
   height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
 }
 
@@ -63,7 +74,8 @@ strong {
   font-weight: 600;
 }
 
-ol, ul {
+ol,
+ul {
   list-style: none;
 }
 
@@ -86,7 +98,7 @@ ol, ul {
   flex-direction: column;
   min-height: 100vh;
   height: 100%;
-  background: linear-gradient(-134deg, #517FA4 0%, $background 100%);
+  background: linear-gradient(-134deg, #517fa4 0%, $background 100%);
   font-family: 'Raleway', sans-serif;
   text-align: center;
   color: $white;
@@ -138,7 +150,7 @@ header {
     transition: background .15s ease-in-out;
 
     &:hover {
-      background: #4CA8B9;
+      background: #4ca8b9;
 
       svg {
         border-color: #54b9cb;
@@ -225,9 +237,11 @@ footer {
       .l-1 {
         fill: #4fb5e1;
       }
+
       .l-2 {
         fill: #f2c053;
       }
+
       .l-3 {
         fill: #a7ce38;
       }
@@ -238,9 +252,11 @@ footer {
         .l-1 {
           fill: lighten($background, 20%);
         }
+
         .l-2 {
           fill: lighten($background, 50%);
         }
+
         .l-3 {
           fill: lighten($background, 30%);
         }
@@ -280,7 +296,6 @@ main {
     }
 
     @media screen and (min-width: 800px) {
-
       &:not(.theme) {
         display: flex;
         flex-wrap: wrap;
@@ -301,7 +316,6 @@ main {
       }
 
       &.theme {
-
         &::after {
           content: '';
           display: table;
@@ -327,7 +341,6 @@ main {
           display: none;
 
           &:checked {
-
             & ~ span {
               background: $yellow;
 
@@ -376,7 +389,7 @@ main {
     color: $background;
     cursor: pointer;
     background: $white;
-    border-radius: 30px/80px;
+    border-radius: 30px / 80px;
     transition: all .1s ease;
 
     &:not(.active):hover {
@@ -404,7 +417,6 @@ main {
 }
 
 .hc-offcanvas-nav {
-
   .nav-wrapper-0 > .nav-content {
     padding-bottom: 41px;
   }
@@ -418,7 +430,6 @@ main {
   }
 
   &.rtl {
-
     .nav-item-link {
       &::before {
         margin-left: 15px;
@@ -432,7 +443,6 @@ main {
   }
 
   li {
-
     .custom-message {
       font-size: 12px;
 
@@ -522,7 +532,6 @@ main {
 
   &.nav-position-top,
   &.nav-position-bottom {
-
     ul.bottom-nav {
       position: relative;
       border-top: none;
@@ -587,7 +596,6 @@ main {
 
 body.theme-default {
   .hc-offcanvas-nav {
-
     .second-nav {
       border-bottom: none !important;
     }
