@@ -25,6 +25,8 @@
   --hc-offcanvas-nav-font-size-heading: 19px;
   --hc-offcanvas-heading-padding-y: 20px;
   --hc-offcanvas-heading-padding-x: 17px;
+  --hc-offcanvas-nav-item-padding-y: 14px;
+  --hc-offcanvas-nav-item-padding-x: 17px;
 
   // Styling on main level
   font-family: var(--hc-offcanvas-nav-font-family);
@@ -58,7 +60,7 @@
   border-bottom: 1px solid var(--hc-offcanvas-nav-color-border-link-items);
   color: var(--hc-offcanvas-nav-color-text);
   font-size: var(--hc-offcanvas-nav-font-size-text);
-  padding: 14px 17px;
+  padding: var(--hc-offcanvas-nav-item-padding-y) var(--hc-offcanvas-nav-item-padding-x);
   transition: background .1s ease;
   z-index: 1;
 
