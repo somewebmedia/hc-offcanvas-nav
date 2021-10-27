@@ -57,8 +57,10 @@
 .hc-offcanvas-nav .nav-item-link,
 .hc-offcanvas-nav li.nav-close a,
 .hc-offcanvas-nav .nav-back a {
+  align-items: center;
   border-bottom: 1px solid var(--hc-offcanvas-nav-color-border-link-items);
   color: var(--hc-offcanvas-nav-color-text);
+  display: flex;
   font-size: var(--hc-offcanvas-nav-font-size-text);
   padding: var(--hc-offcanvas-nav-item-padding-y) var(--hc-offcanvas-nav-item-padding-x);
   transition: background .1s ease;
