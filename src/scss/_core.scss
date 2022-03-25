@@ -6,20 +6,20 @@ html.hc-nav-yscroll {
 }
 
 body.hc-nav-open {
+  min-height: 100%;
   overflow: visible;
   position: fixed;
   width: 100%;
-  min-height: 100%;
 }
 
 .hc-offcanvas-nav {
-  visibility: hidden;
   display: none;
-  position: fixed;
-  top: 0;
   height: 100%;
-  z-index: 9999;
+  position: fixed;
   text-align: left;
+  top: 0;
+  visibility: hidden;
+  z-index: 9999;
 
   &.is-ios {
     * {
@@ -28,21 +28,21 @@ body.hc-nav-open {
   }
 
   .nav-container {
-    position: fixed;
-    z-index: 9998;
-    top: 0;
-    height: 100%;
-    max-width: 100%;
-    max-height: 100%;
     box-sizing: border-box;
+    height: 100%;
+    max-height: 100%;
+    max-width: 100%;
+    position: fixed;
+    top: 0;
     transition: transform $hc-offcanvas-nav-transition-duration $hc-offcanvas-nav-transition-timing-function;
+    z-index: 9998;
   }
 
   .nav-wrapper {
-    width: 100%;
-    height: 100%;
     box-sizing: border-box;
+    height: 100%;
     overscroll-behavior: none;
+    width: 100%;
   }
 
   .nav-content {
@@ -51,10 +51,10 @@ body.hc-nav-open {
 
   .nav-wrapper-0 {
     & > .nav-content {
+      box-sizing: border-box;
       overflow: scroll;
       overflow-x: visible;
       overflow-y: auto;
-      box-sizing: border-box;
     }
   }
 
@@ -65,8 +65,8 @@ body.hc-nav-open {
   }
 
   li {
-    position: relative;
     display: block;
+    position: relative;
 
     &.level-open {
       & > .nav-wrapper {
@@ -76,17 +76,20 @@ body.hc-nav-open {
 
     &:not(.custom-content) {
       a {
-        position: relative;
-        display: block;
+        align-items: center;
         box-sizing: border-box;
         cursor: pointer;
+        display: flex;
+        position: relative;
 
         &[disabled] {
           cursor: not-allowed;
         }
 
         &,
-        &:hover {
+        &:hover,
+        &,
+        &:focus {
           text-decoration: none;
         }
       }
@@ -98,13 +101,13 @@ body.hc-nav-open {
   }
 
   label {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     bottom: 0;
-    z-index: 10;
     cursor: pointer;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 10;
   }
 
   .nav-item-wrapper {
@@ -112,9 +115,9 @@ body.hc-nav-open {
   }
 
   .nav-item-link {
-    position: relative;
-    display: block;
     box-sizing: border-box;
+    display: block;
+    position: relative;
   }
 
   &:not(.user-is-tabbing) {
@@ -139,18 +142,18 @@ body.hc-nav-open {
   &.disable-body,
   .nav-wrapper {
     &::after {
-      content: '';
-      z-index: 9990;
-      top: 0;
-      left: 0;
-      right: 0;
       bottom: 0;
-      width: 100%;
+      content: '';
       height: 100%;
-      overscroll-behavior: none;
-      visibility: hidden;
+      left: 0;
       opacity: 0;
+      overscroll-behavior: none;
+      right: 0;
+      top: 0;
       transition: visibility 0s ease $hc-offcanvas-nav-transition-duration, opacity $hc-offcanvas-nav-transition-duration ease;
+      visibility: hidden;
+      width: 100%;
+      z-index: 9990;
     }
   }
 
@@ -169,9 +172,9 @@ body.hc-nav-open {
   &.disable-body.nav-open,
   .sub-level-open {
     &::after {
-      visibility: visible;
       opacity: 1;
       transition-delay: .05s;
+      visibility: visible;
     }
   }
 
@@ -183,9 +186,7 @@ body.hc-nav-open {
 
   // Expand Levels
   &.nav-levels-expand {
-
     .nav-wrapper {
-
       &::after {
         display: none;
       }
@@ -194,22 +195,22 @@ body.hc-nav-open {
         max-height: 100vh;
 
         & > .nav-content {
+          box-sizing: border-box;
+          max-height: 100vh;
           overflow: scroll;
           overflow-x: visible;
           overflow-y: auto;
-          box-sizing: border-box;
-          max-height: 100vh;
         }
       }
     }
 
     ul {
       .nav-wrapper {
-        min-width: 0;
         max-height: 0;
-        visibility: hidden;
+        min-width: 0;
         overflow: hidden;
         transition: height 0s ease $hc-offcanvas-nav-transition-duration;
+        visibility: hidden;
       }
     }
 
@@ -224,13 +225,12 @@ body.hc-nav-open {
 
   // Transform Levels
   &.nav-levels-overlap {
-
     .nav-content {
+      box-sizing: border-box;
+      max-height: 100vh;
       overflow: scroll;
       overflow-x: visible;
       overflow-y: auto;
-      box-sizing: border-box;
-      max-height: 100vh;
     }
 
     .nav-wrapper {
@@ -238,27 +238,25 @@ body.hc-nav-open {
     }
 
     ul {
-
       .nav-wrapper {
-        position: absolute;
-        z-index: 9999;
-        top: 0;
         height: 100%;
-        visibility: hidden;
+        position: absolute;
+        top: 0;
         transition: visibility 0s ease $hc-offcanvas-nav-transition-duration, transform $hc-offcanvas-nav-transition-duration $hc-offcanvas-nav-transition-timing-function;
+        visibility: hidden;
+        z-index: 9999;
       }
 
       li {
-
         &.nav-parent {
           position: static;
         }
 
         &.level-open {
           & > .nav-wrapper {
-            visibility: visible;
             transform: translate3d(0, 0, 0);
             transition: transform $hc-offcanvas-nav-transition-duration $hc-offcanvas-nav-transition-timing-function;
+            visibility: visible;
           }
         }
       }
@@ -274,7 +272,6 @@ body.hc-nav-open {
     }
 
     &.nav-levels-overlap {
-
       li {
         .nav-wrapper {
           left: 0;
@@ -293,7 +290,6 @@ body.hc-nav-open {
     }
 
     &.nav-levels-overlap {
-
       li {
         .nav-wrapper {
           right: 0;
@@ -313,7 +309,6 @@ body.hc-nav-open {
     }
 
     &.nav-levels-overlap {
-
       li {
         .nav-wrapper {
           left: 0;
@@ -325,17 +320,16 @@ body.hc-nav-open {
 
   // Bottom
   &.nav-position-bottom {
-    top: auto;
     bottom: 0;
+    top: auto;
 
     .nav-container {
-      top: auto;
       bottom: 0;
+      top: auto;
       width: 100%;
     }
 
     &.nav-levels-overlap {
-
       li {
         .nav-wrapper {
           left: 0;
@@ -354,7 +348,7 @@ body.hc-nav-open {
 
   // RTL
   &.rtl {
-    text-align: right;
     direction: rtl;
+    text-align: right;
   }
 }

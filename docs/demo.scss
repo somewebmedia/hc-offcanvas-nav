@@ -14,36 +14,43 @@ body.theme-carbon {
 }
 
 @mixin mi {
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  display: inline-block;
-  line-height: 1;
-  text-transform: none;
-  text-indent: 0;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
   direction: ltr;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: 'liga';
   display: inline-block;
-  width: 19px;
-  height: 19px;
-  margin-right: 15px;
+  display: inline-block;
+  font-family: 'Material Icons';
+  font-feature-settings: 'liga';
   font-size: 23px;
-  vertical-align: top;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-style: normal;
+  font-weight: normal;
+  height: 19px;
+  letter-spacing: normal;
+  line-height: 19px;
+  margin-right: 15px;
   speak: never;
+  text-indent: 0;
+  text-rendering: optimizeLegibility;
+  text-transform: none;
+  vertical-align: top;
+  white-space: nowrap;
+  width: 19px;
+  word-wrap: normal;
 }
 
-html, body, div, span, header, ul, li, a {
+html,
+body,
+div,
+span,
+header,
+ul,
+li,
+a {
+  border: 0;
+  font: inherit;
+  font-size: 100%;
   margin: 0;
   padding: 0;
-  border: 0;
-  font-size: 100%;
-  font: inherit;
   vertical-align: baseline;
 }
 
@@ -51,7 +58,12 @@ html {
   height: 100%;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
 }
 
@@ -63,7 +75,8 @@ strong {
   font-weight: 600;
 }
 
-ol, ul {
+ol,
+ul {
   list-style: none;
 }
 
@@ -82,19 +95,19 @@ ol, ul {
 }
 
 #container {
+  background: linear-gradient(-134deg, #517fa4 0%, $background 100%);
+  color: $white;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  height: 100%;
-  background: linear-gradient(-134deg, #517FA4 0%, $background 100%);
   font-family: 'Raleway', sans-serif;
+  height: 100%;
+  min-height: 100vh;
   text-align: center;
-  color: $white;
 }
 
 .wrapper {
-  max-width: 800px;
   margin: 0 auto;
+  max-width: 800px;
   padding: 0 20px;
 }
 
@@ -103,42 +116,43 @@ ol, ul {
 }
 
 header {
-  position: relative;
   padding: 50px 0 20px;
+  position: relative;
 
   h1 {
     font-size: 50px;
     font-weight: 700;
-    text-align: center;
     letter-spacing: 5px;
     padding-bottom: 8px;
+    text-align: center;
   }
 
   h2 {
-    max-width: 680px;
-    margin: auto;
     font-size: 20px;
     font-weight: 200;
-    line-height: 1.4;
-    text-align: center;
     letter-spacing: 1px;
+    line-height: 1.4;
+    margin: auto;
+    max-width: 680px;
     padding-bottom: 30px;
+    text-align: center;
   }
 
   .git {
-    display: inline-block;
-    text-decoration: none;
-    color: #fff;
+    background: #54b9cb;
     border-radius: 4px;
-    padding: 4px 10px 4px 0;
+    color: #fff;
+    color: $white;
+    display: inline-block;
     font-size: 15px;
     font-weight: 400;
-    color: $white;
-    background: #54b9cb;
+    padding: 4px 10px 4px 0;
+    text-decoration: none;
     transition: background .15s ease-in-out;
 
-    &:hover {
-      background: #4CA8B9;
+    &:hover,
+    &:focus {
+      background: #4ca8b9;
 
       svg {
         border-color: #54b9cb;
@@ -146,22 +160,22 @@ header {
     }
 
     svg {
-      width: 15px;
-      height: 15px;
+      border-right: 1px solid #4daabb;
       fill: $white;
+      height: 15px;
+      margin-right: 10px;
+      padding: 0 10px;
       position: relative;
       top: 2px;
-      padding: 0 10px;
-      margin-right: 10px;
-      border-right: 1px solid #4daabb;
       transition: border-color .15s ease-in-out;
+      width: 15px;
     }
   }
 
   .ver {
-    padding-top: 15px;
-    font-weight: 200;
     color: $yellow;
+    font-weight: 200;
+    padding-top: 15px;
 
     span {
       color: $white;
@@ -170,23 +184,24 @@ header {
 
   .toggle {
     @include hc-hamburger('default', 35px, 26px, 4px, darken($background, 7%), .25s);
-    position: relative;
-    width: auto;
-    top: auto;
-    left: auto;
-    float: left;
-    display: block;
-    cursor: pointer;
     box-sizing: content-box;
+    color: #fff;
+    cursor: pointer;
+    display: block;
+    float: left;
     font-size: 18px;
-    padding-left: 55px;
+    left: auto;
     line-height: 22px;
     margin-top: 55px;
-    color: #fff;
+    padding-left: 55px;
+    position: relative;
     text-align: left;
     text-decoration: none;
+    top: auto;
+    width: auto;
 
-    &:hover {
+    &:hover,
+    &:focus {
       span {
         &,
         &::before,
@@ -197,8 +212,8 @@ header {
     }
 
     i {
-      font-size: 10px;
       display: block;
+      font-size: 10px;
       line-height: 10px;
       opacity: .7;
     }
@@ -214,9 +229,9 @@ footer {
 
     svg {
       display: block;
-      width: auto;
       height: 17px;
       margin-top: 22px;
+      width: auto;
 
       path {
         transition: fill .1s ease;
@@ -225,22 +240,27 @@ footer {
       .l-1 {
         fill: #4fb5e1;
       }
+
       .l-2 {
         fill: #f2c053;
       }
+
       .l-3 {
         fill: #a7ce38;
       }
     }
 
-    &:not(:hover) {
+    &:not(:hover),
+    &:not(:focus) {
       svg {
         .l-1 {
           fill: lighten($background, 20%);
         }
+
         .l-2 {
           fill: lighten($background, 50%);
         }
+
         .l-3 {
           fill: lighten($background, 30%);
         }
@@ -260,10 +280,10 @@ main {
 
   h4 {
     font-size: 15px;
-    letter-spacing: 1px;
     font-weight: 600;
-    text-transform: uppercase;
+    letter-spacing: 1px;
     margin: 20px 0;
+    text-transform: uppercase;
 
     &:first-child {
       margin-top: 30px;
@@ -275,72 +295,36 @@ main {
     text-align: center;
 
     div {
-      padding: 0 15px 20px;
       box-sizing: border-box;
-    }
-
-    @media screen and (min-width: 800px) {
-
-      &:not(.theme) {
-        display: flex;
-        flex-wrap: wrap;
-
-        div {
-          float: left;
-          flex: 1 1 33.33%;
-          max-width: 33.33%;
-        }
-
-        &.position {
-          div {
-            float: left;
-            flex: 1 1 25%;
-            max-width: 25%;
-          }
-        }
-      }
-
-      &.theme {
-
-        &::after {
-          content: '';
-          display: table;
-          clear: both;
-        }
-
-        div {
-          float: left;
-        }
-      }
+      padding: 0 15px 20px;
     }
 
     &.checkboxes {
-      text-align: left;
       padding-top: 8px;
+      text-align: left;
 
       label {
+        cursor: pointer;
         font-size: 14px;
         text-transform: uppercase;
-        cursor: pointer;
 
         input {
           display: none;
 
           &:checked {
-
             & ~ span {
               background: $yellow;
 
               &::before {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                margin-top: -1px;
                 border: solid $background;
                 border-width: 0 3px 3px 0;
+                content: '';
                 display: inline-block;
+                left: 50%;
+                margin-top: -1px;
                 padding: 5px 2px;
+                position: absolute;
+                top: 50%;
                 transform: translate(-50%, -50%) rotate(45deg);
               }
             }
@@ -348,38 +332,72 @@ main {
         }
 
         span {
+          background: $white;
           display: inline-block;
+          height: 22px;
+          margin-right: 12px;
           position: relative;
           top: -1px;
-          width: 22px;
-          height: 22px;
-          background: $white;
-          margin-right: 12px;
-          vertical-align: top;
           transition: all .1s ease;
+          vertical-align: top;
+          width: 22px;
+        }
+      }
+    }
+
+    @media screen and (min-width: 800px) {
+      &:not(.theme) {
+        display: flex;
+        flex-wrap: wrap;
+
+        div {
+          flex: 1 1 33.33%;
+          float: left;
+          max-width: 33.33%;
+        }
+
+        &.position {
+          div {
+            flex: 1 1 25%;
+            float: left;
+            max-width: 25%;
+          }
+        }
+      }
+
+      &.theme {
+        &::after {
+          clear: both;
+          content: '';
+          display: table;
+        }
+
+        div {
+          float: left;
         }
       }
     }
   }
 
   .button {
-    position: relative;
-    display: block;
-    padding: 18px 30px 16px;
-    text-transform: uppercase;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 1.4;
-    letter-spacing: 1px;
-    text-decoration: none;
+    background: $white;
+    border-radius: 30px / 80px;
     color: $background;
     cursor: pointer;
-    background: $white;
-    border-radius: 30px/80px;
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    line-height: 1.4;
+    padding: 18px 30px 16px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
     transition: all .1s ease;
 
-    &:not(.active):hover {
+    &:not(.active):hover,
+    &:not(.active):focus {
       color: darken($yellow, 5%);
     }
 
@@ -389,13 +407,13 @@ main {
   }
 
   .thumb {
-    position: relative;
-    display: block;
-    width: 100px;
-    height: 100px;
+    background-size: cover;
     border: 4px solid $white;
     border-radius: 5px;
-    background-size: cover;
+    display: block;
+    height: 100px;
+    position: relative;
+    width: 100px;
 
     &.active {
       border-color: $yellow;
@@ -404,7 +422,6 @@ main {
 }
 
 .hc-offcanvas-nav {
-
   .nav-wrapper-0 > .nav-content {
     padding-bottom: 41px;
   }
@@ -418,7 +435,6 @@ main {
   }
 
   &.rtl {
-
     .nav-item-link {
       &::before {
         margin-left: 15px;
@@ -432,7 +448,6 @@ main {
   }
 
   li {
-
     .custom-message {
       font-size: 12px;
 
@@ -440,7 +455,8 @@ main {
         color: #fff;
         font-size: 13px;
 
-        &:hover {
+        &:hover,
+        &:focus {
           text-decoration: none;
         }
       }
@@ -493,14 +509,14 @@ main {
 
     &.collections > .nav-item-wrapper .nav-item-link {
       span {
-        font-size: 70%;
-        line-height: 15px;
-        height: 15px;
-        padding: 0 4px;
-        float: right;
         background: #ff635a;
         border-radius: 2px;
+        float: right;
+        font-size: 70%;
+        height: 15px;
+        line-height: 15px;
         margin-top: 2px;
+        padding: 0 4px;
       }
 
       &::before {
@@ -522,10 +538,9 @@ main {
 
   &.nav-position-top,
   &.nav-position-bottom {
-
     ul.bottom-nav {
-      position: relative;
       border-top: none;
+      position: relative;
     }
 
     .nav-wrapper-0 > .nav-content {
@@ -534,51 +549,51 @@ main {
   }
 
   ul.bottom-nav {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 10;
-    width: 100%;
-    display: flex;
-    flex-wrap: nowrap;
     align-items: stretch;
     border-top: 1px solid rgba(#000, .15);
+    bottom: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    left: 0;
+    position: absolute;
+    right: 0;
+    width: 100%;
+    z-index: 10;
 
     li {
       flex: auto;
 
       a {
+        border-bottom: none;
+        height: 100%;
         padding: 10px;
         text-align: center;
-        height: 100%;
-        border-bottom: none;
       }
 
       svg {
-        fill: #fff;
         display: inline-block;
+        fill: #fff;
         vertical-align: middle;
       }
 
       &.github {
         svg {
-          width: 17px;
           height: 17px;
+          width: 17px;
         }
       }
 
       &.ko-fi {
         svg {
-          width: 21px;
           height: 21px;
+          width: 21px;
         }
       }
 
       &.email {
         svg {
-          width: 19px;
           height: 19px;
+          width: 19px;
         }
       }
     }
@@ -587,7 +602,6 @@ main {
 
 body.theme-default {
   .hc-offcanvas-nav {
-
     .second-nav {
       border-bottom: none !important;
     }
