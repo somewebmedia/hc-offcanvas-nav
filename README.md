@@ -36,7 +36,7 @@ This package can be installed with:
 
 - [npm](https://www.npmjs.com/package/hc-offcanvas-nav): `npm install --save hc-offcanvas-nav`
 
-Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-nav/releases).
+Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-nav/tags).
 
 
 
