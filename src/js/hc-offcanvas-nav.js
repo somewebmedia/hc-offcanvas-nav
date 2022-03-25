@@ -486,7 +486,7 @@
 
               Array.prototype.forEach.call($ul.children, ($li) => {
                 const customContent = $li.getAttribute('data-nav-custom-content') !== null;
-                let $content = customContent ? $li.children : Array.prototype.filter.call($li.children, (child) => child.tagName !== 'UL' && !child.querySelector('ul')).concat($li.children.length ? [] : [$li.firstChild]);
+                let $content = customContent ? $li.childNodes : Array.prototype.filter.call($li.children, (child) => child.tagName !== 'UL' && !child.querySelector('ul')).concat($li.children.length ? [] : [$li.firstChild]);
                 const $nested_navs = customContent ? [] : Array.prototype.slice.call($li.querySelectorAll('ul'));
                 const $subnav = !$nested_navs.length ? [] : [].concat(Array.prototype.filter.call($nested_navs[0].parentNode.children, (child) => child.tagName === 'UL' || child instanceof HTMLHeadingElement));
 
