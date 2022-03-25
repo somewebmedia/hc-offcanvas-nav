@@ -3,7 +3,7 @@ HC Off-canvas Nav
 
 [![Version](https://img.shields.io/npm/v/hc-offcanvas-nav.svg)](https://www.npmjs.com/package/hc-offcanvas-nav) [![Downloads](https://img.shields.io/npm/dt/hc-offcanvas-nav.svg)](https://www.npmjs.com/package/hc-offcanvas-nav)
 
-JavaScript library for creating off-canvas multi-level navigations, using ARIA. Dependency free, but lso works as a jQuery plugin. [Demo](https://somewebmedia.github.io/hc-offcanvas-nav/)
+JavaScript library for creating off-canvas multi-level navigations, using ARIA. Dependency free, but also works as a jQuery plugin. [Demo](https://somewebmedia.github.io/hc-offcanvas-nav/)
 
 <img src="https://somewebmedia.github.io/hc-offcanvas-nav/hc-offcanvas-nav.png" width="440">
 
