@@ -203,15 +203,20 @@
           return;
         }
 
-        const focusableSelector = '[tabindex="0"], a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select';
+        const focusableSelector = '[tabindex="0"], a[role="menuitem"], a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select';
 
         let $focusable = Array.prototype.filter.call($nav_container.querySelectorAll('.nav-wrapper'), (el) => {
           return el.getAttribute('data-level') == l && (typeof i !== 'number' || (typeof i === 'number' && el.getAttribute('data-index') == i));
         })[0];
+
         $focusable = Helpers.children($focusable, '.nav-content')[0];
+
+        const $navControls = Helpers.children($focusable, '.nav-close, .nav-back');
+
         $focusable = Helpers.children($focusable, 'ul');
         $focusable = Helpers.children($focusable, 'li');
         $focusable = Helpers.children($focusable, ':not(.nav-wrapper)');
+        $focusable = [...$navControls, ...$focusable];
         $focusable = Array.prototype.map.call($focusable, (el) => {
           return Array.prototype.slice.call(el.querySelectorAll(focusableSelector));
         }).flat();
