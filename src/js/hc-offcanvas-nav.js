@@ -174,8 +174,8 @@
       }
 
       if ( $toggle && $toggle.length ) {
-        $toggle.forEach( ($t ) => {
-          Helpers.EventManager.add( $t, 'click', toggleNav($t ) );
+        $toggle.forEach( ( $t ) => {
+          Helpers.EventManager.add( $t, 'click', toggleNav( $t ) );
           $t.classList.add( 'hc-nav-trigger', navUniqId );
 
           // ARIA
@@ -465,8 +465,8 @@
         function getModel( $menu, id ) {
           const level = [];
 
-          Array.from( $menu ).forEach( ($ul ) => {
-            if ( $ul.tagName !== 'UL' && !($ul instanceof HTMLHeadingElement ) ) {
+          Array.from( $menu ).forEach( ( $ul ) => {
+            if ( $ul.tagName !== 'UL' && ! ( $ul instanceof HTMLHeadingElement ) ) {
               return;
             }
 
@@ -489,13 +489,13 @@
                 $ul.removeAttribute( 'data-nav-active' );
               }
 
-              Array.from( $ul.children ).forEach( ($li ) => {
+              Array.from( $ul.children ).forEach( ( $li ) => {
                 const customContent = $li.getAttribute( 'data-nav-custom-content' ) !== null;
                 let $content = customContent
                   ? $li.children
                   : Array.from( $li.children ).filter( (child ) => child.tagName !== 'UL' && !child.querySelector( 'ul' ) ).concat( $li.children.length ? [] : [$li.firstChild] );
                 const $nested_navs = customContent ? [] : Array.from( $li.querySelectorAll( 'ul' ) );
-                const $subnav = !$nested_navs.length
+                const $subnav = ! $nested_navs.length
                   ? []
                   : Array.from( $nested_navs[0].parentNode.children ).filter( ( child ) => child.tagName === 'UL' || child instanceof HTMLHeadingElement );
 
@@ -516,7 +516,7 @@
 
                 // save unique identifier for remembering open sub menus
                 if ( $subnav.length ) {
-                  if ( ! Helpers.data($li, 'hc-uniqid' ) ) {
+                  if ( ! Helpers.data( $li, 'hc-uniqid' ) ) {
                     uniqid = Math.random().toString( 36 ).substr( 2 );
                     Helpers.data( $li, 'hc-uniqid', uniqid );
                   }
@@ -627,7 +627,7 @@
               if ( item.custom ) {
 
                 const $custom_item = Helpers.createElement( 'li', {class: 'nav-item nav-item-custom'},
-                  Helpers.createElement( 'div', {class: 'nav-custom-content'}, Array.from($item_content ).map( ( el ) => {
+                  Helpers.createElement( 'div', {class: 'nav-custom-content'}, Array.from( $item_content ).map( ( el ) => {
                     return Helpers.clone( el, true, true );
                   } ) )
                 );
@@ -676,7 +676,7 @@
                   e.stopPropagation();
 
                   // trigger original click event
-                  if ( Helpers.EventManager.hasListener($original_link, 'click' ) ) {
+                  if ( Helpers.EventManager.hasListener( $original_link, 'click' ) ) {
                     $original_link.click();
                   }
                 } );
