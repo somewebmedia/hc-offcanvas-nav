@@ -132,7 +132,7 @@
       const $nav = Helpers.createElement( 'nav', {id: navUniqId} );
       const $nav_container = Helpers.createElement( 'div', {class: 'nav-container'} );
 
-      $nav.addEventListener( 'click', Helpers.stopPropagation );
+      Helpers.EventManager.add( $nav, 'click', Helpers.stopPropagation );
       $nav.appendChild( $nav_container );
 
       let $toggle = null;
@@ -175,7 +175,7 @@
 
       if ( $toggle && $toggle.length ) {
         $toggle.forEach( ($t ) => {
-          $t.addEventListener( 'click', toggleNav($t ) );
+          Helpers.EventManager.add( $t, 'click', toggleNav($t ) );
           $t.classList.add( 'hc-nav-trigger', navUniqId );
 
           // ARIA
@@ -185,7 +185,7 @@
           $t.setAttribute( 'aria-expanded', false );
 
           // make nav opening keyboard accessible
-          $t.addEventListener( 'keydown', ( e ) => {
+          Helpers.EventManager.add( $t, 'keydown', ( e ) => {
             if ( e.key === 'Enter' || e.keyCode === 13 ) {
               // trap focus inside nav
               setTimeout( () => {
@@ -244,9 +244,9 @@
         }
 
         // remove previous keydown event
-        document.removeEventListener( keydownEventName );
+        Helpers.EventManager.remove( document, keydownEventName );
 
-        document.addEventListener( keydownEventName, ( e ) => {
+        Helpers.EventManager.add( document, keydownEventName, ( e ) => {
           if ( ! ( e.key === 'Tab' || e.keyCode === 9 ) ) {
             return;
           }
@@ -269,7 +269,7 @@
       };
 
       const untrapFocus = () => {
-        document.removeEventListener( keydownEventName );
+        Helpers.EventManager.remove( document, keydownEventName );
 
         if ( $toggle_open ) {
           setTimeout( () => {
@@ -428,7 +428,7 @@
           Settings.insertClose === true && !Settings.labelClose ? 'nav-close-button-empty' : ''
         ].join( ' ' ).trim().replace( /  +/g, ' ' );
 
-        $nav.removeEventListener( 'click' );
+        Helpers.EventManager.remove( $nav, 'click' );
         $nav.className = navClasses;
         $nav.setAttribute( 'aria-hidden', true );
 
@@ -437,7 +437,7 @@
 
         // close menu on body click (nav::after)
         if ( Settings.disableBody ) {
-          $nav.addEventListener( 'click', closeNav );
+          Helpers.EventManager.add( $nav, 'click', closeNav );
         }
 
         if ( reinit ) {
@@ -571,7 +571,7 @@
           } );
           const $content = Helpers.createElement( 'div', {class: 'nav-content'} );
 
-          $wrapper.addEventListener( 'click', Helpers.stopPropagation );
+          Helpers.EventManager.add( $wrapper, 'click', Helpers.stopPropagation );
           $wrapper.appendChild( $content );
           $container.appendChild( $wrapper );
 
@@ -672,11 +672,11 @@
               }
 
               if ( $original_link ) {
-                $item_link.addEventListener( 'click', ( e ) => {
+                Helpers.EventManager.add( $item_link, 'click', e => {
                   e.stopPropagation();
 
                   // trigger original click event
-                  if ( Helpers.hasListener($original_link, 'click' ) ) {
+                  if ( Helpers.EventManager.hasListener($original_link, 'click' ) ) {
                     $original_link.click();
                   }
                 } );
@@ -684,7 +684,7 @@
 
               if ( $item_link.getAttribute( 'href' ) === '#' ) {
                 // prevent page jumping
-                $item_link.addEventListener( 'click', Helpers.preventDefault );
+                Helpers.EventManager.add( $item_link, 'click', Helpers.preventDefault );
               }
 
               // close nav on item click
@@ -696,7 +696,7 @@
                     $item_link.dataset.navClose !== 'false' &&
                     ( $item_link.getAttribute( 'disabled' ) === null || $item_link.getAttribute( 'disabled' ) === 'false' )
                   ) {
-                    $item_link.addEventListener( 'click', closeNav );
+                    Helpers.EventManager.add ( $item_link, 'click', closeNav );
                   }
                 }
                 else {
@@ -708,7 +708,7 @@
                     ( $item_link.getAttribute( 'disabled' ) === null || $item_link.getAttribute( 'disabled' ) === 'false' ) &&
                     ( ! item.subnav.length || ( $item_link.getAttribute( 'href' ) && $item_link.getAttribute( 'href' ).charAt( 0 ) !== '#' ) )
                   ) {
-                    $item_link.addEventListener( 'click', closeNav );
+                    Helpers.EventManager.add( $item_link, 'click', closeNav );
                   }
                 }
               }
@@ -765,12 +765,12 @@
                     value: uniqid
                   } );
 
-                  $checkbox.addEventListener( 'click', Helpers.stopPropagation );
-                  $checkbox.addEventListener( 'change', checkboxChange );
+                  Helpers.EventManager.add( $checkbox, 'click', Helpers.stopPropagation );
+                  Helpers.EventManager.add( $checkbox, 'change', checkboxChange );
                   $item.insertBefore( $checkbox, $item.firstChild );
 
                   const attachToLink = ( $el ) => {
-                    $el.addEventListener( 'click', ( e ) => {
+                    Helpers.EventManager.add( $el, 'click', ( e ) => {
                       e.stopPropagation();
                       // trigger checkbox to toggle level
                       $checkbox.setAttribute( 'checked', $checkbox.getAttribute( 'checked' ) === 'true' ? false : true );
@@ -782,7 +782,7 @@
                       }
                     } );
 
-                    $el.addEventListener( 'keydown', function( e ) {
+                    Helpers.EventManager.add( $el, 'keydown', function( e ) {
                       if ( e.key === 'Enter' || e.keyCode === 13 ) {
                         // remember we are accessing via keyboard
                         _keyboard = true;
@@ -802,7 +802,7 @@
                   // nav is updated, we should keep this level open
                   if ( _openLevels.indexOf( uniqid ) !== -1 ) {
                     $wrapper.classList.add( 'sub-level-open' );
-                    $wrapper.addEventListener( 'click', () => closeLevel( nextLevel, index ) ); // close on self click
+                    Helpers.EventManager.add( $wrapper, 'click', () => closeLevel( nextLevel, index ) ); // close on self click
                     $item.classList.add( 'level-open' );
                     $checkbox.setAttribute( 'checked', true );
                   }
@@ -825,7 +825,7 @@
                       tabindex: 0
                     }, Helpers.createElement( 'span' ) );
 
-                    $a_next.addEventListener( 'click', Helpers.preventClick() );
+                    Helpers.EventManager.add( $a_next, 'click', Helpers.preventClick() );
                     attachToLink( $a_next );
 
                     if ( Settings.rtl ) {
@@ -866,8 +866,8 @@
               const closeThisLevel = () => closeLevel( level, backIndex );
 
               Helpers.wrap( $back_a, Helpers.createElement( 'div', {class: 'nav-item-wrapper'} ) );
-              $back_a.addEventListener( 'click', Helpers.preventClick(closeThisLevel ) );
-              $back_a.addEventListener( 'keydown', ( e ) => {
+              Helpers.EventManager.add( $back_a, 'click', Helpers.preventClick(closeThisLevel ) );
+              Helpers.EventManager.add( $back_a, 'keydown', ( e ) => {
                 if ( e.key === 'Enter' || e.keyCode === 13 ) {
                   // remember we are accessing via keyboard
                   _keyboard = true;
@@ -888,8 +888,8 @@
               [Settings.labelClose || '', Helpers.createElement( 'span' )]
             );
 
-            $close_a.addEventListener( 'click', Helpers.preventClick(closeNav ) );
-            $close_a.addEventListener( 'keydown', ( e ) => {
+            Helpers.EventManager.add( $close_a, 'click', Helpers.preventClick(closeNav ) );
+            Helpers.EventManager.add( $close_a, 'keydown', ( e ) => {
               if ( e.key === 'Enter' || e.keyCode === 13 ) {
                 untrapFocus();
               }
@@ -933,20 +933,20 @@
           // temporary attach touch listeners
           if ( target === 'doc' ) {
             if ( ! _touchNavTriggered ) {
-              document.addEventListener( 'touchmove', touchMove_open, Helpers.supportsPassive );
-              document.addEventListener( 'touchend', touchEnd_open, Helpers.supportsPassive );
+              Helpers.EventManager.add( document, 'touchmove', touchMove_open, Helpers.supportsPassive );
+              Helpers.EventManager.add( document, 'touchend', touchEnd_open, Helpers.supportsPassive );
             }
           }
           else {
             _touchNavTriggered = true;
-            $nav_container.addEventListener( 'touchmove', touchMove_close, Helpers.supportsPassive );
-            $nav_container.addEventListener( 'touchend', touchEnd_close, Helpers.supportsPassive );
+            Helpers.EventManager.add( $nav_container, 'touchmove', touchMove_close, Helpers.supportsPassive );
+            Helpers.EventManager.add( $nav_container, 'touchend', touchEnd_close, Helpers.supportsPassive );
           }
         };
       };
 
       const touchCaptureNav = ( transNav, transContent ) => {
-        window.addEventListener( 'touchmove', Helpers.preventDefault, Helpers.supportsPassive ); // disable page scroll
+        Helpers.EventManager.add( window, 'touchmove', Helpers.preventDefault, Helpers.supportsPassive ); // disable page scroll
         $nav.style.visibility = 'visible';
         $nav_container.style[Helpers.browserPrefix( 'transition' )] = 'none';
         Helpers.setTransform( $nav_container, transNav, Settings.position );
@@ -958,7 +958,7 @@
       };
 
       const touchReleaseNav = ( action, timeoutVsb = true, transNav = false, transContent = false ) => {
-        window.removeEventListener( 'touchmove', Helpers.preventDefault, Helpers.supportsPassive ) // enable page scroll
+        Helpers.EventManager.remove( window, 'touchmove', Helpers.preventDefault, Helpers.supportsPassive ); // enable page scroll
         $nav_container.style[Helpers.browserPrefix( 'transition' )] = '';
         Helpers.setTransform( $nav_container, transNav, Settings.position );
 
@@ -1008,8 +1008,8 @@
 
       const touchEnd_open = ( e ) => {
         // remove touch listeners from document
-        document.removeEventListener( 'touchmove', touchMove_open );
-        document.removeEventListener( 'touchend', touchEnd_open );
+        Helpers.EventManager.remove( document, 'touchmove', touchMove_open );
+        Helpers.EventManager.remove( document, 'touchend', touchEnd_open );
 
         if ( ! _touchMoved ) {
           return;
@@ -1073,8 +1073,8 @@
 
       const touchEnd_close = ( e ) => {
         // remove touch listeners from nav
-        $nav_container.removeEventListener( 'touchmove', touchMove_close );
-        $nav_container.removeEventListener( 'touchend', touchEnd_close );
+        Helpers.EventManager.remove( $nav_container, 'touchmove', touchMove_close );
+        Helpers.EventManager.remove( $nav_container, 'touchend', touchEnd_close );
         _touchNavTriggered = false;
 
         if ( ! _touchMoved ) {
@@ -1147,19 +1147,19 @@
       if ( Settings.swipeGestures ) {
         // close touch event on nav swipe
         // trigger before document touch
-        $nav_container.addEventListener( 'touchstart', touchStart( 'nav' ), Helpers.supportsPassive );
+        Helpers.EventManager.add( $nav_container, 'touchstart', touchStart( 'nav' ), Helpers.supportsPassive );
         // open touch event on document swipe
-        document.addEventListener( 'touchstart', touchStart( 'doc' ), Helpers.supportsPassive );
+        Helpers.EventManager.add( document, 'touchstart', touchStart( 'doc' ), Helpers.supportsPassive );
       }
 
       // close levels on escape
       if ( Settings.closeOnEsc ) {
-        document.addEventListener( 'keydown', checkEsc );
+        Helpers.EventManager.add( document, 'keydown', checkEsc );
       }
 
       // re-calculate our nav if window is resized
       const debounceResize = Helpers.debounce( calcNav, 500 );
-      window.addEventListener( 'resize', debounceResize, Helpers.supportsPassive );
+      Helpers.EventManager.add( window, 'resize', debounceResize, Helpers.supportsPassive );
 
       /* Private methods */
 
@@ -1367,7 +1367,7 @@
         // trigger "toggle" event
         if ( $nav._eventListeners.toggle ) {
           $nav._eventListeners.toggle.forEach( ( ev ) => {
-            ev.fn( Helpers.customEventObject( 'toggle', $nav, $nav, {
+            ev.fn( Helpers.EventManager.createEvent( 'toggle', $nav, $nav, {
               action: 'open'
             } ), Object.assign( {}, Settings ) );
           } );
@@ -1377,7 +1377,7 @@
           // trigger "open" event
           if ( $nav._eventListeners.open ) {
             $nav._eventListeners.open.forEach( ( ev ) => {
-              ev.fn( Helpers.customEventObject( 'open', $nav, $nav ), Object.assign( {}, Settings ) );
+              ev.fn( Helpers.EventManager.createEvent( 'open', $nav, $nav ), Object.assign( {}, Settings ) );
             } );
           }
         }, _transitionDuration);
@@ -1443,7 +1443,7 @@
         // trigger "toggle" event
         if ( $nav._eventListeners.toggle ) {
           $nav._eventListeners.toggle.forEach( ( ev ) => {
-            ev.fn( Helpers.customEventObject( 'toggle', $nav, $nav, {
+            ev.fn( Helpers.EventManager.createEvent( 'toggle', $nav, $nav, {
               action: 'close'
             } ), Object.assign( {}, Settings ) );
           } );
@@ -1455,17 +1455,18 @@
           // trigger "close" event
           if ( $nav._eventListeners.close ) {
             $nav._eventListeners.close.forEach( ( ev ) => {
-              ev.fn( Helpers.customEventObject( 'close', $nav, $nav ), Object.assign( {}, Settings ) );
+              ev.fn( Helpers.EventManager.createEvent( 'close', $nav, $nav ), Object.assign( {}, Settings ) );
             } );
           }
 
           // only trigger this "close" event once and then remove it
           if ( $nav._eventListeners['close.once'] ) {
             $nav._eventListeners['close.once'].forEach( ( ev ) => {
-              ev.fn( Helpers.customEventObject( 'close.once', $nav, $nav ), Object.assign( {}, Settings ) );
+              ev.fn( Helpers.EventManager.createEvent( 'close.once', $nav, $nav ), Object.assign( {}, Settings ) );
             } );
           }
-          $nav.removeEventListener( 'close.once' );
+
+          Helpers.EventManager.remove( $nav, 'close.once' );
         }, _transitionDuration);
       }
 
@@ -1517,7 +1518,7 @@
 
         if ( Settings.levelOpen === 'overlap' ) {
           // close on self click
-          $wrap.addEventListener( 'click', () => closeLevel( l, i ) );
+          Helpers.EventManager.add( $wrap, 'click', () => closeLevel( l, i ) );
           // expand the nav
           Helpers.setTransform( $nav_container, l * Settings.levelSpacing, Settings.position );
 
@@ -1531,7 +1532,7 @@
         // trigger level open event
         if ( $nav._eventListeners['open.level'] ) {
           $nav._eventListeners['open.level'].forEach( ( ev ) => {
-            ev.fn( Helpers.customEventObject( 'open.level', $nav, $sub_wrap, {
+            ev.fn( Helpers.EventManager.createEvent( 'open.level', $nav, $sub_wrap, {
               currentLevel: l,
               currentIndex: i
             } ), Object.assign( {}, Settings ) );
@@ -1567,8 +1568,8 @@
 
         if ( transform && Settings.levelOpen === 'overlap' ) {
           //level closed, remove wrapper click
-          $wrap.removeEventListener( 'click' );
-          $wrap.addEventListener( 'click', Helpers.stopPropagation );
+          Helpers.EventManager.remove( $wrap, 'click' );
+          Helpers.EventManager.add( $wrap, 'click', Helpers.stopPropagation );
           // collapse the nav
           Helpers.setTransform( $nav_container, ( l - 1 ) * Settings.levelSpacing, Settings.position );
 
@@ -1604,7 +1605,7 @@
           const $wrap = document.querySelector( `#${navUniqId}-${l}-${i}` ).closest( '.nav-wrapper' );
 
           $nav._eventListeners['close.level'].forEach( ( ev ) => {
-            ev.fn( Helpers.customEventObject( 'close.level', $nav, $wrap, {
+            ev.fn( Helpers.EventManager.createEvent( 'close.level', $nav, $wrap, {
               currentLevel: l - 1,
               currentIndex: activeIndex()
             } ), Object.assign( {}, Settings ) );
@@ -1622,11 +1623,11 @@
       /* Public methods */
 
       $nav.on = ( type, cb ) => {
-        $nav.addEventListener( type, cb );
+        Helpers.EventManager.add( $nav, type, cb );
       };
 
       $nav.off = ( type, cb ) => {
-        $nav.removeEventListener( type, cb );
+        Helpers.EventManager.remove( $nav, type, cb );
       };
 
       $nav.getSettings = () => Object.assign( {}, Settings );
