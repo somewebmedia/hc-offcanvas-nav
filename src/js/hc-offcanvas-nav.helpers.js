@@ -91,8 +91,8 @@
 
   const clone = ( el, withEvents, deepWithEvents ) => {
     const cloned = el.cloneNode( deepWithEvents || false );
-    const srcElements = el instanceof Element ? [el].concat( Array.from( el.getElementsByTagName('*' ) ) ) : [];
-    const destElements = cloned instanceof Element ? [cloned].concat( Array.from( cloned.getElementsByTagName('*' ) ) ) : [];
+    const srcElements = el instanceof Element ? [el].concat( Array.from( el.getElementsByTagName( '*' ) ) ) : [];
+    const destElements = cloned instanceof Element ? [cloned].concat( Array.from( cloned.getElementsByTagName( '*' ) ) ) : [];
 
     const cloneCopyEvent = ( src, dest ) => {
       for ( let s = 0; s < src.length; s++ ) {
@@ -284,7 +284,7 @@
     return typeof el === 'string'
       ? el
       : el.getAttribute( 'id' )
-        ? `#${el.getAttribute('id')}`
+        ? `#${el.getAttribute( 'id' )}`
         : el.getAttribute( 'class' )
           ? el.tagName.toLowerCase() + '.' + el.getAttribute( 'class' ).replace( /\s+/g, '.' )
           : getElementCssTag( el.parentNode ) + ' > ' + el.tagName.toLowerCase();
@@ -416,7 +416,8 @@
         'color: #5595c6',
         'color: default',
         'color: #5595c6',
-        'color: default');
+        'color: default'
+      );
     };
   } )();
 

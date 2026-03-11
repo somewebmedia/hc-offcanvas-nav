@@ -85,7 +85,7 @@
 
     let Settings = Object.assign( {}, defaults, options );
 
-    Settings.ariaLabels = Object.assign({}, {
+    Settings.ariaLabels = Object.assign( {}, {
       open:    'Open Menu',
       close:   'Close Menu',
       submenu: 'Submenu'
@@ -162,7 +162,7 @@
 
       if ( ! Settings.customToggle ) {
         // our toggle
-        $toggle = [Helpers.createElement('a', {
+        $toggle = [Helpers.createElement( 'a', {
           href: '#'
         }, Helpers.createElement( 'span' ) )];
 
@@ -185,7 +185,7 @@
           $t.setAttribute( 'aria-expanded', false );
 
           // make nav opening keyboard accessible
-          $t.addEventListener( 'keydown', (e ) => {
+          $t.addEventListener( 'keydown', ( e ) => {
             if ( e.key === 'Enter' || e.keyCode === 13 ) {
               // trap focus inside nav
               setTimeout( () => {
@@ -205,8 +205,8 @@
 
         const focusableSelector = '[tabindex="0"], a[role="menuitem"], a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select';
 
-        let $focusable = Array.from( $nav_container.querySelectorAll('.nav-wrapper' ) ).filter( (el ) => {
-          return el.getAttribute( 'data-level' ) == l && ( typeof i !== 'number' || ( typeof i === 'number' && el.getAttribute('data-index' ) == i ) );
+        let $focusable = Array.from( $nav_container.querySelectorAll( '.nav-wrapper' ) ).filter( ( el ) => {
+          return el.getAttribute( 'data-level' ) == l && ( typeof i !== 'number' || ( typeof i === 'number' && el.getAttribute( 'data-index' ) == i ) );
         } )[0];
 
         $focusable = Helpers.children( $focusable, '.nav-content' )[0];
@@ -217,7 +217,7 @@
         $focusable = Helpers.children( $focusable, 'li' );
         $focusable = Helpers.children( $focusable, ':not(.nav-wrapper)' );
         $focusable = [...$navControls, ...$focusable];
-        $focusable = Array.from( $focusable ).map( (el ) => {
+        $focusable = Array.from( $focusable ).map( ( el ) => {
           return Array.from( el.querySelectorAll(focusableSelector ) );
         } ).flat();
         $focusable = Array.from( $focusable ).filter( ( el ) => el.getAttribute( 'tabindex' ) !== '-1' );
@@ -246,8 +246,8 @@
         // remove previous keydown event
         document.removeEventListener( keydownEventName );
 
-        document.addEventListener( keydownEventName, (e ) => {
-          if ( ! (e.key === 'Tab' || e.keyCode === 9 ) ) {
+        document.addEventListener( keydownEventName, ( e ) => {
+          if ( ! ( e.key === 'Tab' || e.keyCode === 9 ) ) {
             return;
           }
 
@@ -405,7 +405,7 @@
         Styles.insert();
 
         // get page content
-        if ( ! reinit || ( reinit && checkForUpdate('pushContent' ) ) ) {
+        if ( ! reinit || ( reinit && checkForUpdate( 'pushContent' ) ) ) {
           $push_content = Settings.pushContent ? Helpers.getElements( Settings.pushContent )[0] : null;
         }
 
@@ -494,7 +494,7 @@
                 let $content = customContent
                   ? $li.children
                   : Array.from( $li.children ).filter( (child ) => child.tagName !== 'UL' && !child.querySelector( 'ul' ) ).concat( $li.children.length ? [] : [$li.firstChild] );
-                const $nested_navs = customContent ? [] : Array.from( $li.querySelectorAll('ul' ) );
+                const $nested_navs = customContent ? [] : Array.from( $li.querySelectorAll( 'ul' ) );
                 const $subnav = !$nested_navs.length
                   ? []
                   : Array.from( $nested_navs[0].parentNode.children ).filter( ( child ) => child.tagName === 'UL' || child instanceof HTMLHeadingElement );
@@ -533,7 +533,7 @@
                 }
 
                 // add elements to this level
-                nav.items.push({
+                nav.items.push( {
                   id: uniqid,
                   htmlClass: $li.getAttribute( 'class' ) || '',
                   content: $content,
@@ -564,7 +564,7 @@
         createDom( Model, $nav_container, 0, Settings.navTitle );
 
         function createDom( menu, $container, level, title, backIndex, backTitle ) {
-          const $wrapper = Helpers.createElement('div', {
+          const $wrapper = Helpers.createElement( 'div', {
             class: `nav-wrapper nav-wrapper-${level}`,
             'data-level': level,
             'data-index': backIndex || 0
@@ -581,7 +581,7 @@
               ? title
               : Helpers.clone( window.jQuery && title instanceof window.jQuery && title.length ? title[0] : title, true, true );
 
-            $content.insertBefore(Helpers.createElement('h2', {
+            $content.insertBefore( Helpers.createElement( 'h2', {
               id: level === 0 ? `${navUniqId}-nav-title` : null,
               class: level === 0 ? 'nav-title' : 'level-title'
             }, _title), $content.firstChild);
@@ -603,7 +603,7 @@
               menu_count++;
             }
 
-            const $menu = Helpers.createElement('ul', {
+            const $menu = Helpers.createElement( 'ul', {
               id: nav.id
                 ? menu.length > 1
                     ? `menu-${nav.id}-${menu_count}` // sibling menus
@@ -617,7 +617,7 @@
 
             // keep original menu classes
             if ( Settings.keepClasses && nav.htmlClass ) {
-              $menu.classList.add.apply( $menu.classList, nav.htmlClass.split(' ' ) );
+              $menu.classList.add.apply( $menu.classList, nav.htmlClass.split( ' ' ) );
             }
 
             nav.items.forEach( (item, i_item ) => {
@@ -626,15 +626,15 @@
               // item has custom content
               if ( item.custom ) {
 
-                const $custom_item = Helpers.createElement('li', {class: 'nav-item nav-item-custom'},
-                  Helpers.createElement( 'div', {class: 'nav-custom-content'}, Array.from($item_content ).map( (el ) => {
+                const $custom_item = Helpers.createElement( 'li', {class: 'nav-item nav-item-custom'},
+                  Helpers.createElement( 'div', {class: 'nav-custom-content'}, Array.from($item_content ).map( ( el ) => {
                     return Helpers.clone( el, true, true );
                   } ) )
                 );
 
                 // keep original menu item classes
                 if ( Settings.keepClasses && item.htmlClass ) {
-                  $custom_item.classList.add.apply( $custom_item.classList, item.htmlClass.split(' ' ) );
+                  $custom_item.classList.add.apply( $custom_item.classList, item.htmlClass.split( ' ' ) );
                 }
 
                 // insert item
@@ -645,7 +645,7 @@
               }
 
               const $original_link = Array.from( $item_content ).filter( (child ) => {
-                return child.tagName === 'A' || ( child.nodeType !== Node.TEXT_NODE && child.querySelector('a' ) );
+                return child.tagName === 'A' || ( child.nodeType !== Node.TEXT_NODE && child.querySelector( 'a' ) );
               } )[0];
 
               let $item_link;
@@ -657,7 +657,7 @@
               else {
                 $item_link = Helpers.createElement(item.subnav.length ? 'a' : 'span', {
                   class: 'nav-item-link'
-                }, Array.from( $item_content ).map( (el ) => {
+                }, Array.from( $item_content ).map( ( el ) => {
                   return Helpers.clone( el, true, true );
                 } ) );
               }
@@ -666,13 +666,13 @@
                 $item_link.setAttribute( 'tabindex', '0' );
                 $item_link.setAttribute( 'role', 'menuitem' );
 
-                if ( ! $item_link.getAttribute('href' ) ) {
+                if ( ! $item_link.getAttribute( 'href' ) ) {
                   $item_link.setAttribute( 'href', '#' );
                 }
               }
 
               if ( $original_link ) {
-                $item_link.addEventListener( 'click', (e ) => {
+                $item_link.addEventListener( 'click', ( e ) => {
                   e.stopPropagation();
 
                   // trigger original click event
@@ -706,7 +706,7 @@
                     $item_link.tagName === 'A' &&
                     $item_link.dataset.navClose !== 'false' &&
                     ( $item_link.getAttribute( 'disabled' ) === null || $item_link.getAttribute( 'disabled' ) === 'false' ) &&
-                    ( ! item.subnav.length || ( $item_link.getAttribute('href' ) && $item_link.getAttribute( 'href' ).charAt( 0 ) !== '#' ) )
+                    ( ! item.subnav.length || ( $item_link.getAttribute( 'href' ) && $item_link.getAttribute( 'href' ).charAt( 0 ) !== '#' ) )
                   ) {
                     $item_link.addEventListener( 'click', closeNav );
                   }
@@ -714,7 +714,7 @@
               }
 
               // our nav item
-              const $item = Helpers.createElement('li', {
+              const $item = Helpers.createElement( 'li', {
                 class: 'nav-item'
               } );
 
@@ -723,7 +723,7 @@
 
               // keep original menu item classes
               if ( Settings.keepClasses && item.htmlClass ) {
-                $item.classList.add.apply( $item.classList, item.htmlClass.split(' ' ) );
+                $item.classList.add.apply( $item.classList, item.htmlClass.split( ' ' ) );
               }
 
               // is nav item highlighted?
@@ -732,7 +732,7 @@
               }
 
               // wrap item link
-              Helpers.wrap( $item_link, Helpers.createElement('div', {class: 'nav-item-wrapper'} ) );
+              Helpers.wrap( $item_link, Helpers.createElement( 'div', {class: 'nav-item-wrapper'} ) );
 
               // do subnav
               if ( item.subnav.length ) {
@@ -755,7 +755,7 @@
                 else {
                   const index = _indexes[nextLevel];
 
-                  const $checkbox = Helpers.createElement('input', {
+                  const $checkbox = Helpers.createElement( 'input', {
                     type: 'checkbox',
                     id: `${navUniqId}-${nextLevel}-${index}`,
                     class: 'hc-chk',
@@ -770,7 +770,7 @@
                   $item.insertBefore( $checkbox, $item.firstChild );
 
                   const attachToLink = ( $el ) => {
-                    $el.addEventListener( 'click', (e ) => {
+                    $el.addEventListener( 'click', ( e ) => {
                       e.stopPropagation();
                       // trigger checkbox to toggle level
                       $checkbox.setAttribute( 'checked', $checkbox.getAttribute( 'checked' ) === 'true' ? false : true );
@@ -782,7 +782,7 @@
                       }
                     } );
 
-                    $el.addEventListener( 'keydown', function(e ) {
+                    $el.addEventListener( 'keydown', function( e ) {
                       if ( e.key === 'Enter' || e.keyCode === 13 ) {
                         // remember we are accessing via keyboard
                         _keyboard = true;
@@ -791,7 +791,7 @@
                     } );
 
                     // ARIA
-                    $el.setAttribute('aria-controls', item.subnav.length > 1
+                    $el.setAttribute( 'aria-controls', item.subnav.length > 1
                       ? item.subnav.filter( s => s.tagName === 'UL' ).map( ( s, i ) => `menu-${s.id}-${i}` ).join( ' ' ) // sibling menus
                       : `menu-${uniqid}`
                     );
@@ -812,12 +812,12 @@
 
                   // item has no actual link
                   if ( ! $item_link.getAttribute( 'href' ) || $item_link.getAttribute( 'href' ) === '#' ) {
-                    $item_link.appendChild( Helpers.createElement( 'span', {class: 'nav-next'}, Helpers.createElement('span' ) ) );
+                    $item_link.appendChild( Helpers.createElement( 'span', {class: 'nav-next'}, Helpers.createElement( 'span' ) ) );
                     attachToLink( $item_link );
                   }
                   // item has valid link, create our next link
                   else {
-                    const $a_next = Helpers.createElement('a', {
+                    const $a_next = Helpers.createElement( 'a', {
                       href: '#',
                       class: 'nav-next',
                       'aria-label': `${(Settings.ariaLabels || {}).submenu}: ${nav_title}`,
@@ -849,7 +849,7 @@
             if ( Settings.insertBack !== false && Settings.levelOpen === 'overlap' ) {
               const $children_menus = Helpers.children( $content, 'ul' );
               const backLabel = ( Settings.levelTitleAsBack ? ( backTitle || Settings.labelBack ) : Settings.labelBack ) || '';
-              const $back_a = Helpers.createElement('a', {href: '#', class: 'nav-back-button', role: 'menuitem', tabindex: 0}, [
+              const $back_a = Helpers.createElement( 'a', {href: '#', class: 'nav-back-button', role: 'menuitem', tabindex: 0}, [
                 backLabel,
                 Helpers.createElement( 'span' )
               ]);
@@ -865,9 +865,9 @@
 
               const closeThisLevel = () => closeLevel( level, backIndex );
 
-              Helpers.wrap( $back_a, Helpers.createElement('div', {class: 'nav-item-wrapper'} ) );
+              Helpers.wrap( $back_a, Helpers.createElement( 'div', {class: 'nav-item-wrapper'} ) );
               $back_a.addEventListener( 'click', Helpers.preventClick(closeThisLevel ) );
-              $back_a.addEventListener( 'keydown', (e ) => {
+              $back_a.addEventListener( 'keydown', ( e ) => {
                 if ( e.key === 'Enter' || e.keyCode === 13 ) {
                   // remember we are accessing via keyboard
                   _keyboard = true;
@@ -878,7 +878,7 @@
 
           // insert close button
           if ( level === 0 && Settings.insertClose !== false ) {
-            const $close_a = Helpers.createElement('a', {
+            const $close_a = Helpers.createElement( 'a', {
               href: '#',
               class: 'nav-close-button' + ( Settings.labelClose ? ' has-label' : '' ),
               role: 'menuitem',
@@ -889,7 +889,7 @@
             );
 
             $close_a.addEventListener( 'click', Helpers.preventClick(closeNav ) );
-            $close_a.addEventListener( 'keydown', (e ) => {
+            $close_a.addEventListener( 'keydown', ( e ) => {
               if ( e.key === 'Enter' || e.keyCode === 13 ) {
                 untrapFocus();
               }
@@ -897,13 +897,13 @@
 
             if ( title && Settings.insertClose === true ) {
               // after nav title
-              $content.insertBefore(Helpers.createElement('div', {
+              $content.insertBefore( Helpers.createElement( 'div', {
                 class: 'nav-close'
               }, $close_a), $content.children[1]);
             }
             else if ( Settings.insertClose === true ) {
               // before nav content
-              $content.insertBefore(Helpers.createElement('div', {
+              $content.insertBefore( Helpers.createElement( 'div', {
                 class: 'nav-close'
               }, $close_a), $content.firstChild);
             }
@@ -912,7 +912,7 @@
               const $nav_ul = Helpers.children( $content, 'ul' );
               const $close = Helpers.createElement( 'li', {class: 'nav-item nav-close'}, $close_a );
 
-              Helpers.wrap( $close_a, Helpers.createElement('div', {class: 'nav-item-wrapper'} ) );
+              Helpers.wrap( $close_a, Helpers.createElement( 'div', {class: 'nav-item-wrapper'} ) );
               Helpers.insertAt( $close, Settings.insertClose, $nav_ul );
             }
           }
@@ -1206,7 +1206,7 @@
       function activeLevel() {
         return _openLevels.length
           ? Number(
-              Array.from( $nav_container.querySelectorAll('.hc-chk' ) ).filter( (el ) => {
+              Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( ( el ) => {
                 return el.value == _openLevels[_openLevels.length - 1];
               } )[0].dataset.level
             )
@@ -1216,7 +1216,7 @@
       function activeIndex() {
         return _openLevels.length
           ? Number(
-              Array.from( $nav_container.querySelectorAll('.hc-chk' ) ).filter( (el ) => {
+              Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( ( el ) => {
                 return el.value == _openLevels[_openLevels.length - 1];
               } )[0].dataset.index
             )
@@ -1225,7 +1225,7 @@
 
       function openNav( l, i ) {
         // check if already open
-        if ( isOpen() && typeof i === 'undefined') {
+        if ( isOpen() && typeof i === 'undefined' ) {
           return;
         }
 
@@ -1249,7 +1249,7 @@
         }
         else if ( _nextActiveLevel ) {
           // get level to open from [data-nav-active]
-          $checkbox = Array.from( $nav_container.querySelectorAll('.hc-chk' ) ).filter( (el ) => {
+          $checkbox = Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( ( el ) => {
             return el.value == _nextActiveLevel;
           } )[0];
 
@@ -1260,7 +1260,7 @@
         }
         else if ( Settings.closeOpenLevels === false ) {
           // get last checked level
-          $checkbox = Array.from( $nav_container.querySelectorAll('.hc-chk' ) ).filter( (el ) => {
+          $checkbox = Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( ( el ) => {
             return el.getAttribute( 'checked' ) === 'true';
           } );
           $checkbox = $checkbox[$checkbox.length - 1];
@@ -1276,7 +1276,7 @@
             const $parents = [];
 
             for ( ; $checkbox && $checkbox !== document; $checkbox = $checkbox.parentNode ) {
-              if ( $checkbox.matches('.nav-wrapper' ) ) {
+              if ( $checkbox.matches( '.nav-wrapper' ) ) {
                 $parents.push( $checkbox );
               }
               continue;
@@ -1288,7 +1288,7 @@
               const level = Number( $this.dataset.level );
 
               if ( level > 0 ) {
-                levels.push({
+                levels.push( {
                   level: level,
                   index: Number( $this.dataset.index )
                 } );
@@ -1298,7 +1298,7 @@
             levels = levels.reverse();
           }
 
-          levels.push({
+          levels.push( {
             level: l,
             index: i
           } );
@@ -1366,8 +1366,8 @@
 
         // trigger "toggle" event
         if ( $nav._eventListeners.toggle ) {
-          $nav._eventListeners.toggle.forEach( (ev ) => {
-            ev.fn(Helpers.customEventObject('toggle', $nav, $nav, {
+          $nav._eventListeners.toggle.forEach( ( ev ) => {
+            ev.fn( Helpers.customEventObject( 'toggle', $nav, $nav, {
               action: 'open'
             } ), Object.assign( {}, Settings ) );
           } );
@@ -1376,8 +1376,8 @@
         setTimeout( () => {
           // trigger "open" event
           if ( $nav._eventListeners.open ) {
-            $nav._eventListeners.open.forEach( (ev ) => {
-              ev.fn( Helpers.customEventObject('open', $nav, $nav ), Object.assign( {}, Settings ) );
+            $nav._eventListeners.open.forEach( ( ev ) => {
+              ev.fn( Helpers.customEventObject( 'open', $nav, $nav ), Object.assign( {}, Settings ) );
             } );
           }
         }, _transitionDuration);
@@ -1442,8 +1442,8 @@
 
         // trigger "toggle" event
         if ( $nav._eventListeners.toggle ) {
-          $nav._eventListeners.toggle.forEach( (ev ) => {
-            ev.fn(Helpers.customEventObject('toggle', $nav, $nav, {
+          $nav._eventListeners.toggle.forEach( ( ev ) => {
+            ev.fn( Helpers.customEventObject( 'toggle', $nav, $nav, {
               action: 'close'
             } ), Object.assign( {}, Settings ) );
           } );
@@ -1454,15 +1454,15 @@
 
           // trigger "close" event
           if ( $nav._eventListeners.close ) {
-            $nav._eventListeners.close.forEach( (ev ) => {
-              ev.fn( Helpers.customEventObject('close', $nav, $nav ), Object.assign( {}, Settings ) );
+            $nav._eventListeners.close.forEach( ( ev ) => {
+              ev.fn( Helpers.customEventObject( 'close', $nav, $nav ), Object.assign( {}, Settings ) );
             } );
           }
 
           // only trigger this "close" event once and then remove it
           if ( $nav._eventListeners['close.once'] ) {
-            $nav._eventListeners['close.once'].forEach( (ev ) => {
-              ev.fn( Helpers.customEventObject('close.once', $nav, $nav ), Object.assign( {}, Settings ) );
+            $nav._eventListeners['close.once'].forEach( ( ev ) => {
+              ev.fn( Helpers.customEventObject( 'close.once', $nav, $nav ), Object.assign( {}, Settings ) );
             } );
           }
           $nav.removeEventListener( 'close.once' );
@@ -1530,8 +1530,8 @@
 
         // trigger level open event
         if ( $nav._eventListeners['open.level'] ) {
-          $nav._eventListeners['open.level'].forEach( (ev ) => {
-            ev.fn(Helpers.customEventObject('open.level', $nav, $sub_wrap, {
+          $nav._eventListeners['open.level'].forEach( ( ev ) => {
+            ev.fn( Helpers.customEventObject( 'open.level', $nav, $sub_wrap, {
               currentLevel: l,
               currentIndex: i
             } ), Object.assign( {}, Settings ) );
@@ -1603,8 +1603,8 @@
         if ( l > 0 && $nav._eventListeners['close.level'] ) {
           const $wrap = document.querySelector( `#${navUniqId}-${l}-${i}` ).closest( '.nav-wrapper' );
 
-          $nav._eventListeners['close.level'].forEach( (ev ) => {
-            ev.fn(Helpers.customEventObject('close.level', $nav, $wrap, {
+          $nav._eventListeners['close.level'].forEach( ( ev ) => {
+            ev.fn( Helpers.customEventObject( 'close.level', $nav, $wrap, {
               currentLevel: l - 1,
               currentIndex: activeIndex()
             } ), Object.assign( {}, Settings ) );
@@ -1681,7 +1681,7 @@
       const navs = [];
       // call the plugin on each element
       for ( let i = 0; i < elem.length; i++ ) {
-        navs.push( Plugin(elem[i] ) );
+        navs.push( Plugin( elem[i] ) );
       }
 
       return navs.length > 1 ? navs : navs[0];
@@ -1696,7 +1696,7 @@
     const $ = window.jQuery;
     const namespace = 'hcOffcanvasNav';
 
-    $.fn.extend({
+    $.fn.extend( {
       hcOffcanvasNav: function( args ) {
         // check if selected element exist
         if ( ! this.length ) return this;
