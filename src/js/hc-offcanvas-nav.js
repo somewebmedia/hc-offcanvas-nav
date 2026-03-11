@@ -205,7 +205,7 @@
 
         const focusableSelector = '[tabindex="0"], a[role="menuitem"], a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select';
 
-        let $focusable = Array.prototype.filter.call($nav_container.querySelectorAll('.nav-wrapper'), (el) => {
+        let $focusable = Array.from($nav_container.querySelectorAll('.nav-wrapper')).filter((el) => {
           return el.getAttribute('data-level') == l && (typeof i !== 'number' || (typeof i === 'number' && el.getAttribute('data-index') == i));
         })[0];
 
@@ -217,10 +217,10 @@
         $focusable = Helpers.children($focusable, 'li');
         $focusable = Helpers.children($focusable, ':not(.nav-wrapper)');
         $focusable = [...$navControls, ...$focusable];
-        $focusable = Array.prototype.map.call($focusable, (el) => {
-          return Array.prototype.slice.call(el.querySelectorAll(focusableSelector));
+        $focusable = Array.from($focusable).map((el) => {
+          return Array.from(el.querySelectorAll(focusableSelector));
         }).flat();
-        $focusable = Array.prototype.filter.call($focusable, (el) => el.getAttribute('tabindex') !== '-1');
+        $focusable = Array.from($focusable).filter((el) => el.getAttribute('tabindex') !== '-1');
 
         if (!$focusable) {
           return;
@@ -456,7 +456,7 @@
         const $first_level = () => {
           return $originalNav.tagName === 'UL'
             ? [$originalNav]
-            : Array.prototype.filter.call($originalNav.children, (child) => child.tagName === 'UL' || child instanceof HTMLHeadingElement);
+            : Array.from($originalNav.children).filter((child) => child.tagName === 'UL' || child instanceof HTMLHeadingElement);
         };
 
         // call
@@ -465,7 +465,7 @@
         function getModel($menu, id) {
           const level = [];
 
-          Array.prototype.forEach.call($menu, ($ul) => {
+          Array.from($menu).forEach(($ul) => {
             if ($ul.tagName !== 'UL' && !($ul instanceof HTMLHeadingElement)) {
               return;
             }
@@ -489,11 +489,15 @@
                 $ul.removeAttribute('data-nav-active');
               }
 
-              Array.prototype.forEach.call($ul.children, ($li) => {
+              Array.from($ul.children).forEach(($li) => {
                 const customContent = $li.getAttribute('data-nav-custom-content') !== null;
-                let $content = customContent ? $li.childNodes : Array.prototype.filter.call($li.children, (child) => child.tagName !== 'UL' && !child.querySelector('ul')).concat($li.children.length ? [] : [$li.firstChild]);
-                const $nested_navs = customContent ? [] : Array.prototype.slice.call($li.querySelectorAll('ul'));
-                const $subnav = !$nested_navs.length ? [] : [].concat(Array.prototype.filter.call($nested_navs[0].parentNode.children, (child) => child.tagName === 'UL' || child instanceof HTMLHeadingElement));
+                let $content = customContent
+                  ? $li.children
+                  : Array.from($li.children).filter((child) => child.tagName !== 'UL' && !child.querySelector('ul')).concat($li.children.length ? [] : [$li.firstChild]);
+                const $nested_navs = customContent ? [] : Array.from($li.querySelectorAll('ul'));
+                const $subnav = !$nested_navs.length
+                  ? []
+                  : Array.from($nested_navs[0].parentNode.children).filter((child) => child.tagName === 'UL' || child instanceof HTMLHeadingElement);
 
                 let uniqid = null;
 
@@ -623,7 +627,7 @@
               if (item.custom) {
 
                 const $custom_item = Helpers.createElement('li', {class: 'nav-item nav-item-custom'},
-                  Helpers.createElement('div', {class: 'nav-custom-content'}, Array.prototype.map.call($item_content, (el) => {
+                  Helpers.createElement('div', {class: 'nav-custom-content'}, Array.from($item_content).map((el) => {
                     return Helpers.clone(el, true, true);
                   }))
                 );
@@ -640,7 +644,7 @@
                 return;
               }
 
-              const $original_link = Array.prototype.filter.call($item_content, (child) => {
+              const $original_link = Array.from($item_content).filter((child) => {
                 return child.tagName === 'A' || (child.nodeType !== Node.TEXT_NODE && child.querySelector('a'));
               })[0];
 
@@ -653,7 +657,7 @@
               else {
                 $item_link = Helpers.createElement(item.subnav.length ? 'a' : 'span', {
                   class: 'nav-item-link'
-                }, Array.prototype.map.call($item_content, (el) => {
+                }, Array.from($item_content).map((el) => {
                   return Helpers.clone(el, true, true);
                 }));
               }
@@ -1202,7 +1206,7 @@
       function activeLevel() {
         return _openLevels.length
           ? Number(
-              Array.prototype.filter.call($nav_container.querySelectorAll('.hc-chk'), (el) => {
+              Array.from($nav_container.querySelectorAll('.hc-chk')).filter((el) => {
                 return el.value == _openLevels[_openLevels.length - 1];
               })[0].dataset.level
             )
@@ -1212,7 +1216,7 @@
       function activeIndex() {
         return _openLevels.length
           ? Number(
-              Array.prototype.filter.call($nav_container.querySelectorAll('.hc-chk'), (el) => {
+              Array.from($nav_container.querySelectorAll('.hc-chk')).filter((el) => {
                 return el.value == _openLevels[_openLevels.length - 1];
               })[0].dataset.index
             )
@@ -1245,7 +1249,7 @@
         }
         else if (_nextActiveLevel) {
           // get level to open from [data-nav-active]
-          $checkbox = Array.prototype.filter.call($nav_container.querySelectorAll('.hc-chk'), (el) => {
+          $checkbox = Array.from($nav_container.querySelectorAll('.hc-chk')).filter((el) => {
             return el.value == _nextActiveLevel;
           })[0];
 
@@ -1256,7 +1260,7 @@
         }
         else if (Settings.closeOpenLevels === false) {
           // get last checked level
-          $checkbox = Array.prototype.filter.call($nav_container.querySelectorAll('.hc-chk'), (el) => {
+          $checkbox = Array.from($nav_container.querySelectorAll('.hc-chk')).filter((el) => {
             return el.getAttribute('checked') === 'true';
           });
           $checkbox = $checkbox[$checkbox.length - 1];

@@ -4,74 +4,6 @@
   const hcOffcanvasNav = window.hcOffcanvasNav;
   const document = window.document;
 
-  if (typeof Object.assign !== 'function') {
-    Object.defineProperty(Object, 'assign', {
-      value: function assign(target, varArgs) {
-        'use strict';
-        if (target == null) {
-          throw new TypeError('Cannot convert undefined or null to object');
-        }
-
-        var to = Object(target);
-
-        for (var index = 1; index < arguments.length; index++) {
-          var nextSource = arguments[index];
-
-          if (nextSource != null) {
-            for (var nextKey in nextSource) {
-              if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
-                to[nextKey] = nextSource[nextKey];
-              }
-            }
-          }
-        }
-        return to;
-      },
-      writable: true,
-      configurable: true
-    });
-  }
-
-  if (!Element.prototype.closest) {
-    Element.prototype.closest = function(s) {
-      let el = this;
-      do {
-        if (Element.prototype.matches.call(el, s)) return el;
-        el = el.parentElement || el.parentNode;
-      } while (el !== null && el.nodeType === 1);
-      return null;
-    };
-  }
-
-  if (!Array.prototype.flat) {
-    Object.defineProperty(Array.prototype, 'flat', {
-      configurable: true,
-      value: function flat() {
-        var depth = isNaN(arguments[0]) ? 1 : Number(arguments[0]);
-
-        return depth ? Array.prototype.reduce.call(this, function (acc, cur) {
-          if (Array.isArray(cur)) {
-            acc.push.apply(acc, flat.call(cur, depth - 1));
-          } else {
-            acc.push(cur);
-          }
-
-          return acc;
-        }, []) : Array.prototype.slice.call(this);
-      },
-      writable: true
-    });
-  }
-
-  if (!Element.prototype.matches) {
-    Element.prototype.matches =
-      Element.prototype.msMatchesSelector ||
-      Element.prototype.matchesSelector ||
-      Element.prototype.mozMatchesSelector ||
-      Element.prototype.oMatchesSelector ||
-      Element.prototype.webkitMatchesSelector;
-  }
-
   let supportsPassive = false;
   try {
     const opts = Object.defineProperty({}, 'passive', {
@@ -125,18 +57,18 @@
 
   const children = (el, selector) => {
     if (el instanceof Element) {
-      return selector ? Array.prototype.filter.call(el.children, (child) => child.matches(selector)) : el.children;
+      return selector ? Array.from(el.children).filter((child) => child.matches(selector)) : el.children;
     }
     else {
-      let children = [];
+      let result = [];
 
-      Array.prototype.forEach.call(el, (n) => {
-        children = selector
-          ? children.concat(Array.prototype.filter.call(n.children, (child) => child.matches(selector)))
-          : children.concat(Array.prototype.slice.call(n.children));
+      Array.from(el).forEach((n) => {
+        result = selector
+          ? result.concat(Array.from(n.children).filter((child) => child.matches(selector)))
+          : result.concat(Array.from(n.children));
       });
 
-      return children;
+      return result;
     }
   };
 
@@ -158,8 +90,8 @@
 
   const clone = (el, withEvents, deepWithEvents) => {
     const cloned = el.cloneNode(deepWithEvents || false);
-    const srcElements = el instanceof Element ? [el].concat(Array.prototype.slice.call(el.getElementsByTagName('*'))) : [];
-    const destElements = cloned instanceof Element ? [cloned].concat(Array.prototype.slice.call(cloned.getElementsByTagName('*'))) : [];
+    const srcElements = el instanceof Element ? [el].concat(Array.from(el.getElementsByTagName('*'))) : [];
+    const destElements = cloned instanceof Element ? [cloned].concat(Array.from(cloned.getElementsByTagName('*'))) : [];
 
     const cloneCopyEvent = (src, dest) => {
       for (let s = 0; s < src.length; s++) {
@@ -242,9 +174,7 @@
           f.call(this, eventName, cb, opts);
 
           for (const e in this._eventListeners) {
-            this._eventListeners[e] = this._eventListeners[e].filter((l) => {
-              return l.fn !== cb;
-            });
+            this._eventListeners[e] = this._eventListeners[e].filter((l) => l.fn !== cb);
 
             if (!this._eventListeners[e].length) {
               delete this._eventListeners[e];
