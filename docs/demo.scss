@@ -2,15 +2,17 @@ $background: #243949;
 $white: #fffce1;
 $yellow: #dab977;
 
-@import '../src/scss/mixins';
-@import '../src/scss/core';
+@use 'sass:color';
+@use '../src/scss/mixins' as *;
+@use '../src/scss/core';
+@use '../src/scss/theme-default' as theme-default;
+@use '../src/scss/theme-carbon' as theme-carbon;
 
 body.theme-default {
-  @import '../src/scss/theme-default';
+  @include theme-default.styles();
 }
-
 body.theme-carbon {
-  @import '../src/scss/theme-carbon';
+  @include theme-carbon.styles();
 }
 
 @mixin mi {
@@ -169,7 +171,7 @@ header {
   }
 
   .toggle {
-    @include hc-hamburger('default', 35px, 26px, 4px, darken($background, 7%), .25s);
+    @include hc-hamburger('default', 35px, 26px, 4px, color.adjust($background, $lightness: -7%), .25s);
     position: relative;
     width: auto;
     top: auto;
@@ -236,13 +238,13 @@ footer {
     &:not(:hover) {
       svg {
         .l-1 {
-          fill: lighten($background, 20%);
+          fill: color.adjust($background, $lightness: 20%);
         }
         .l-2 {
-          fill: lighten($background, 50%);
+          fill: color.adjust($background, $lightness: 50%);
         }
         .l-3 {
-          fill: lighten($background, 30%);
+          fill: color.adjust($background, $lightness: 30%);
         }
       }
     }
@@ -380,7 +382,7 @@ main {
     transition: all .1s ease;
 
     &:not(.active):hover {
-      color: darken($yellow, 5%);
+      color: color.adjust($yellow, $lightness: -5%);
     }
 
     &.active {
