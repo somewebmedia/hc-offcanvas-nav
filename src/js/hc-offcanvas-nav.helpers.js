@@ -144,67 +144,83 @@
     return ( type ? ( el._eventListeners || {} )[type] : el._eventListeners ) || false;
   };
 
+  const normalizeOptions = ( opts ) => {
+    if ( typeof opts === 'boolean' ) {
+      return { capture: opts };
+    }
+    return opts ?? { capture: false };
+  };
+
+  const registry = new WeakMap();
+
+  const getRegistry = ( el ) => {
+    if ( ! registry.has( el ) ) {
+      const store = {};
+      registry.set( el, store );
+      Object.defineProperty( el, '_eventListeners', {
+        get() {
+          return registry.get( this );
+        },
+        configurable: true,
+        enumerable: false
+      } );
+    }
+    return registry.get( el );
+  };
+
   const addRemoveListener = ( op ) => {
-    const f = Node.prototype[op + 'EventListener'];
+    const f = EventTarget.prototype[op + 'EventListener'];
 
     return function ( name, cb, opts ) {
-      if ( ! this ) return;
-
       const eventName = name.split( '.' )[0];
-
-      this._eventListeners = this._eventListeners || {};
+      const store = getRegistry( this );
 
       if ( op === 'add' ) {
-        this._eventListeners[name] = this._eventListeners[name] || [];
+        store[name] = store[name] || [];
 
-        const lstn = {fn: cb};
+        const normalized = normalizeOptions( opts );
+        const isDuplicate = store[name].some(
+          ( e ) => e.fn === cb && normalizeOptions( e.options ).capture === normalized.capture
+        );
 
-        if ( opts ) {
-          lstn.options = opts;
+        if ( ! isDuplicate ) {
+          const lstn = { fn: cb };
+
+          if ( opts ) {
+            lstn.options = opts;
+          }
+
+          store[name].push( lstn );
+          f.call( this, eventName, cb, opts );
         }
-
-        this._eventListeners[name].push( lstn );
-
-        // call native addEventListener
-        f.call( this, eventName, cb, opts );
       }
       else {
-        // remove single event listener
         if ( typeof cb === 'function' ) {
-          // call native addEventListener
           f.call( this, eventName, cb, opts );
 
-          for ( const e in this._eventListeners ) {
-            this._eventListeners[e] = this._eventListeners[e].filter( ( l ) => l.fn !== cb );
+          for ( const e in store ) {
+            store[e] = store[e].filter( ( l ) => ! ( l.fn === cb && e.split( '.' )[0] === eventName ) );
 
-            if ( ! this._eventListeners[e].length ) {
-              delete this._eventListeners[e];
+            if ( ! store[e].length ) {
+              delete store[e];
             }
           }
         }
         else {
-          // remove all event listeners
-          if ( this._eventListeners[name] ) {
-            for ( let i = this._eventListeners[name].length; i--; ) {
-              // call native addEventListener
-              f.call( this, eventName, this._eventListeners[name][i].fn, this._eventListeners[name][i].options );
-
-              this._eventListeners[name].splice( i, 1 );
+          if ( store[name] ) {
+            for ( let i = store[name].length; i--; ) {
+              f.call( this, eventName, store[name][i].fn, store[name][i].options );
+              store[name].splice( i, 1 );
             }
-
-            if ( ! this._eventListeners[name].length ) {
-              delete this._eventListeners[name];
-            }
+            delete store[name];
           }
         }
       }
-
-      return;
     };
   };
 
-  Node.prototype.addEventListener = addRemoveListener( 'add' );
-  Node.prototype.removeEventListener = addRemoveListener( 'remove' );
+  EventTarget.prototype.addEventListener = addRemoveListener( 'add' );
+  EventTarget.prototype.removeEventListener = addRemoveListener( 'remove' );
 
   const debounce = ( func, wait, immediate ) => {
     let timeout;
