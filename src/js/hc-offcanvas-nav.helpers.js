@@ -1,6 +1,4 @@
 ( ( window ) => {
-  'use strict';
-
   const hcOffcanvasNav = window.hcOffcanvasNav;
   const document = window.document;
 
