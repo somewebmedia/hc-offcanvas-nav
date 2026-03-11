@@ -118,80 +118,93 @@
     return cloned;
   };
 
-  const EventManager = {
-    createEvent( type, target, currentTarget, args ) {
-      function Event( type ) {
-        this.bubbles = false;
-        this.cancelable = false;
-        this.composed = false;
-        this.currentTarget = currentTarget;
-        this.data = args ? {} : null;
-        this.defaultPrevented = false;
-        this.eventPhase = 0;
-        this.isTrusted = false;
-        this.target = target;
-        this.timeStamp = Date.now();
-        this.type = type;
-        for ( const prop in args ) {
-          this.data[prop] = args[prop];
-        }
+  const customEventObject = ( type, target, currentTarget, args ) => {
+    function Event( type ) {
+      this.bubbles = false;
+      this.cancelable = false;
+      this.composed = false;
+      this.currentTarget = currentTarget;
+      this.data = args ? {} : null;
+      this.defaultPrevented = false;
+      this.eventPhase = 0;
+      this.isTrusted = false;
+      this.target = target;
+      this.timeStamp = Date.now();
+      this.type = type;
+
+      for ( const prop in args ) {
+        this.data[prop] = args[prop];
       }
-      return new Event( type );
-    },
+    }
 
-    add( node, name, cb, opts ) {
-      if ( ! node ) return;
+    return new Event( type );
+  };
 
-      const eventName = name.split( '.' )[0];
+  const hasListener = ( el, type ) => {
+    return ( type ? ( el._eventListeners || {} )[type] : el._eventListeners ) || false;
+  };
 
-      node._eventListeners = node._eventListeners || {};
-      node._eventListeners[name] = node._eventListeners[name] || [];
+  const addRemoveListener = ( op ) => {
+    const f = Node.prototype[op + 'EventListener'];
 
-      const lstn = { fn: cb };
-
-      if ( opts ) lstn.options = opts;
-
-      node._eventListeners[name].push( lstn );
-      node.addEventListener( eventName, cb, opts );
-    },
-
-    remove( node, name, cb, opts ) {
-      if ( ! node ) return;
+    return function ( name, cb, opts ) {
+      if ( ! this ) return;
 
       const eventName = name.split( '.' )[0];
 
-      node._eventListeners = node._eventListeners || {};
+      this._eventListeners = this._eventListeners || {};
 
-      if ( typeof cb === 'function' ) {
-        node.removeEventListener( eventName, cb, opts );
+      if ( op === 'add' ) {
+        this._eventListeners[name] = this._eventListeners[name] || [];
 
-        for ( const e in node._eventListeners ) {
-          node._eventListeners[e] = node._eventListeners[e].filter( ( l ) => l.fn !== cb );
+        const lstn = {fn: cb};
 
-          if ( ! node._eventListeners[e].length ) {
-            delete node._eventListeners[e];
-          }
+        if ( opts ) {
+          lstn.options = opts;
         }
+
+        this._eventListeners[name].push( lstn );
+
+        // call native addEventListener
+        f.call( this, eventName, cb, opts );
       }
       else {
-        if ( node._eventListeners[name] ) {
-          for ( let i = node._eventListeners[name].length; i--; ) {
-            const lstn = node._eventListeners[name][i];
+        // remove single event listener
+        if ( typeof cb === 'function' ) {
+          // call native addEventListener
+          f.call( this, eventName, cb, opts );
 
-            node.removeEventListener( eventName, lstn.fn, lstn.options );
-            node._eventListeners[name].splice( i, 1 );
+          for ( const e in this._eventListeners ) {
+            this._eventListeners[e] = this._eventListeners[e].filter( ( l ) => l.fn !== cb );
+
+            if ( ! this._eventListeners[e].length ) {
+              delete this._eventListeners[e];
+            }
           }
-          if ( ! node._eventListeners[name].length ) {
-            delete node._eventListeners[name];
+        }
+        else {
+          // remove all event listeners
+          if ( this._eventListeners[name] ) {
+            for ( let i = this._eventListeners[name].length; i--; ) {
+              // call native addEventListener
+              f.call( this, eventName, this._eventListeners[name][i].fn, this._eventListeners[name][i].options );
+
+              this._eventListeners[name].splice( i, 1 );
+            }
+
+            if ( ! this._eventListeners[name].length ) {
+              delete this._eventListeners[name];
+            }
           }
         }
       }
-    },
 
-    hasListener( el, type ) {
-      return ( type ? ( el._eventListeners || {} )[type] : el._eventListeners ) || false;
-    }
+      return;
+    };
   };
+
+  Node.prototype.addEventListener = addRemoveListener( 'add' );
+  Node.prototype.removeEventListener = addRemoveListener( 'remove' );
 
   const debounce = ( func, wait, immediate ) => {
     let timeout;
@@ -423,7 +436,8 @@
     wrap,
     data,
     clone,
-    EventManager,
+    customEventObject,
+    hasListener,
     debounce,
     createElement,
     getElements,
