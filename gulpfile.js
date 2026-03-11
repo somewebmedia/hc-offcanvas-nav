@@ -13,6 +13,7 @@ const path = require( 'path' );
 const argv = require( 'yargs' ).argv;
 const bump = require( 'gulp-bump' );
 const replace = require( 'gulp-replace' );
+const browserSync = require( 'browser-sync' ).create();
 
 const compileJs = () => {
   return src( [
@@ -63,13 +64,6 @@ const compileDemoScss = () => {
     .pipe( dest( './docs/' ) );
 };
 
-const runDemo = ( done ) => {
-  const url = 'http://localhost:3000';
-  const cmd = process.platform === 'win32' ? `start ${url}` : process.platform === 'darwin' ? `open ${url}` : `xdg-open ${url}`;
-  exec( cmd );
-  done();
-};
-
 const bumpPackage = () => {
   return src( './*.json' )
     .pipe( bump( argv.ver && argv.ver.indexOf( '.' ) > -1 ? { version: argv.ver } : { type: argv.ver || 'patch' } ) )
@@ -97,18 +91,33 @@ const bumpHtml = () => {
     .pipe( dest( './docs/' ) );
 };
 
+const serve = ( done ) => {
+  browserSync.init( {
+    server: { baseDir: './docs/' },
+    port: 3000,
+    open: true
+  } );
+  done();
+};
+
+const reload = ( done ) => {
+  browserSync.reload();
+  done();
+};
+
 const defaultTask = parallel( compileJs, compileScss, compileDemoScss );
 
 const watchFiles = () => {
   const watch_scss = glob.sync( './src/scss/*.scss' );
   const watch_js = glob.sync( './src/js/*.js' );
   const watch_demo = glob.sync( './docs/demo.scss' );
-  watch( watch_scss, parallel( compileScss, compileDemoScss ) );
-  watch( watch_demo, compileDemoScss );
-  watch( watch_js, compileJs );
+
+  watch( watch_scss, series( parallel( compileScss, compileDemoScss ), reload ) );
+  watch( watch_demo, series( compileDemoScss, reload ) );
+  watch( watch_js, series( compileJs, reload ) );
 };
 
 module.exports.default = defaultTask;
 module.exports.watch = series( defaultTask, watchFiles );
 module.exports.bump = series( bumpPackage, bumpJs, bumpHtml, compileJs );
-module.exports.demo = series( defaultTask, runDemo );
+module.exports.demo = series( defaultTask, serve, watchFiles );

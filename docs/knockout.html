@@ -25,7 +25,7 @@
     <script src="hc-offcanvas-nav.js?ver=6.1.5"></script>
   </head>
 
-  <body>
+  <body class="theme-default">
 
     <div id="container">
 
@@ -58,42 +58,42 @@
 
           var Nav;
 
-          var PageModel = function(page) {
+          var PageModel = function( page ) {
             var self = this;
 
             self.id = page.id;
             self.title = page.title;
             self.pages = ko.observableArray();
 
-            self.pages(ko.utils.arrayMap(page.pages, function(page) {
-              return new PageModel(page);
-            }));
+            self.pages( ko.utils.arrayMap( page.pages, function( page ) {
+              return new PageModel( page );
+            } ) );
           }
 
-          var NavigationModel = function(pages) {
+          var NavigationModel = function( pages ) {
             var self = this;
 
             self.pages = ko.observableArray();
 
-            self.pages(ko.utils.arrayMap(pages, function(page) {
-              return new PageModel(page);
-            }));
+            self.pages( ko.utils.arrayMap( pages, function( page ) {
+              return new PageModel( page );
+            } ) );
 
-            self.clicked = function(data) {
-              console.log('You clicked an item', data.title);
-            }.bind(self);
+            self.clicked = function( data ) {
+              console.log( 'You clicked an item', data.title );
+            }.bind( self );
 
-            self.createItem = function(data) {
-              console.log('New item added');
+            self.createItem = function( data ) {
+              console.log( 'New item added' );
 
               data.pages.push({
                 title: 'N',
                 pages: ko.observableArray()
-              });
+              } );
 
               // update nav
-              Nav.update(true);
-            }.bind(self);
+              Nav.update( true );
+            }.bind( self );
           };
 
           var pages = [
@@ -120,17 +120,17 @@
             }
           ];
 
-          ko.applyBindings(new NavigationModel(pages));
+          ko.applyBindings( new NavigationModel( pages ) );
 
-          Nav = new hcOffcanvasNav('#nav', {
+          Nav = new hcOffcanvasNav( '#nav', {
             disableAt: false,
             levelTitles: true,
             closeOnClick: false
-          });
-        })();
+          } );
+        } )();
       </script>
 
     </div>
 
-  </body>
+  </bodyclass>
 </html>
