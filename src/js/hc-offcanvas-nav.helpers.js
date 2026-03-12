@@ -56,14 +56,14 @@
 
   const children = ( el, selector ) => {
     if ( el instanceof Element ) {
-      return selector ? Array.from( el.children ).filter( ( child ) => child.matches( selector ) ) : el.children;
+      return selector ? Array.from( el.children ).filter( child => child.matches( selector ) ) : el.children;
     }
     else {
       let result = [];
 
-      Array.from( el ).forEach( ( n ) => {
+      Array.from( el ).forEach( n => {
         result = selector
-          ? result.concat( Array.from( n.children ).filter( ( child ) => child.matches( selector ) ) )
+          ? result.concat( Array.from( n.children ).filter( child => child.matches( selector ) ) )
           : result.concat( Array.from( n.children ) );
       } );
 
@@ -197,7 +197,7 @@
           f.call( this, eventName, cb, opts );
 
           for ( const e in store ) {
-            store[e] = store[e].filter( ( l ) => ! ( l.fn === cb && e.split( '.' )[0] === eventName ) );
+            store[e] = store[e].filter( l => ! ( l.fn === cb && e.split( '.' )[0] === eventName ) );
 
             if ( ! store[e].length ) {
               delete store[e];

@@ -127,8 +127,8 @@
       const activeToggleClass = Settings.activeToggleClass || 'toggle-open';
 
       // this is our new nav element
-      const $nav = Helpers.createElement( 'nav', {id: navUniqId} );
-      const $nav_container = Helpers.createElement( 'div', {class: 'nav-container'} );
+      const $nav = Helpers.createElement( 'nav', { id: navUniqId } );
+      const $nav_container = Helpers.createElement( 'div', { class: 'nav-container' } );
 
       $nav.addEventListener( 'click', Helpers.stopPropagation );
       $nav.appendChild( $nav_container );
@@ -172,7 +172,7 @@
       }
 
       if ( $toggle && $toggle.length ) {
-        $toggle.forEach( ( $t ) => {
+        $toggle.forEach( $t => {
           $t.addEventListener( 'click', toggleNav( $t ) );
           $t.classList.add( 'hc-nav-trigger', navUniqId );
 
@@ -203,7 +203,7 @@
 
         const focusableSelector = '[tabindex="0"], a[role="menuitem"], a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select';
 
-        let $focusable = Array.from( $nav_container.querySelectorAll( '.nav-wrapper' ) ).filter( ( el ) => {
+        let $focusable = Array.from( $nav_container.querySelectorAll( '.nav-wrapper' ) ).filter( el => {
           return el.getAttribute( 'data-level' ) == l && ( typeof i !== 'number' || ( typeof i === 'number' && el.getAttribute( 'data-index' ) == i ) );
         } )[0];
 
@@ -218,7 +218,7 @@
         $focusable = Array.from( $focusable ).map( ( el ) => {
           return Array.from( el.querySelectorAll(focusableSelector ) );
         } ).flat();
-        $focusable = Array.from( $focusable ).filter( ( el ) => el.getAttribute( 'tabindex' ) !== '-1' );
+        $focusable = Array.from( $focusable ).filter( el => el.getAttribute( 'tabindex' ) !== '-1' );
 
         if ( ! $focusable ) {
           return;
@@ -423,7 +423,7 @@
           Helpers.isTouchDevice ? 'touch-device' : '',
           wasOpen ? navOpenClass : '',
           Settings.rtl ? 'rtl' : '',
-          Settings.insertClose === true && !Settings.labelClose ? 'nav-close-button-empty' : ''
+          Settings.insertClose === true && ! Settings.labelClose ? 'nav-close-button-empty' : ''
         ].join( ' ' ).trim().replace( /  +/g, ' ' );
 
         $nav.removeEventListener( 'click' );
@@ -454,7 +454,7 @@
         const $first_level = () => {
           return $originalNav.tagName === 'UL'
             ? [$originalNav]
-            : Array.from( $originalNav.children ).filter( ( child ) => child.tagName === 'UL' || child instanceof HTMLHeadingElement );
+            : Array.from( $originalNav.children ).filter( child => child.tagName === 'UL' || child instanceof HTMLHeadingElement );
         };
 
         // call
@@ -463,7 +463,7 @@
         function getModel( $menu, id ) {
           const level = [];
 
-          Array.from( $menu ).forEach( ( $ul ) => {
+          Array.from( $menu ).forEach( $ul => {
             if ( $ul.tagName !== 'UL' && ! ( $ul instanceof HTMLHeadingElement ) ) {
               return;
             }
@@ -487,15 +487,15 @@
                 $ul.removeAttribute( 'data-nav-active' );
               }
 
-              Array.from( $ul.children ).forEach( ( $li ) => {
+              Array.from( $ul.children ).forEach( $li => {
                 const customContent = $li.getAttribute( 'data-nav-custom-content' ) !== null;
                 let $content = customContent
                   ? $li.children
-                  : Array.from( $li.children ).filter( (child ) => child.tagName !== 'UL' && !child.querySelector( 'ul' ) ).concat( $li.children.length ? [] : [$li.firstChild] );
+                  : Array.from( $li.children ).filter( child => child.tagName !== 'UL' && !child.querySelector( 'ul' ) ).concat( $li.children.length ? [] : [$li.firstChild] );
                 const $nested_navs = customContent ? [] : Array.from( $li.querySelectorAll( 'ul' ) );
                 const $subnav = ! $nested_navs.length
                   ? []
-                  : Array.from( $nested_navs[0].parentNode.children ).filter( ( child ) => child.tagName === 'UL' || child instanceof HTMLHeadingElement );
+                  : Array.from( $nested_navs[0].parentNode.children ).filter( child => child.tagName === 'UL' || child instanceof HTMLHeadingElement );
 
                 let uniqid = null;
 
@@ -567,14 +567,14 @@
             'data-level': level,
             'data-index': backIndex || 0
           } );
-          const $content = Helpers.createElement( 'div', {class: 'nav-content'} );
+          const $content = Helpers.createElement( 'div', { class: 'nav-content' } );
 
           $wrapper.addEventListener( 'click', Helpers.stopPropagation );
           $wrapper.appendChild( $content );
           $container.appendChild( $wrapper );
 
           // titles
-          if ( title && ( level === 0 || (level > 0 && Settings.levelOpen === 'overlap' ) ) ) {
+          if ( title && ( level === 0 || ( level > 0 && Settings.levelOpen === 'overlap' ) ) ) {
             const _title = typeof title === 'string'
               ? title
               : Helpers.clone( window.jQuery && title instanceof window.jQuery && title.length ? title[0] : title, true, true );
@@ -582,7 +582,7 @@
             $content.insertBefore( Helpers.createElement( 'h2', {
               id: level === 0 ? `${navUniqId}-nav-title` : null,
               class: level === 0 ? 'nav-title' : 'level-title'
-            }, _title), $content.firstChild);
+            }, _title ), $content.firstChild );
 
             // Nav ARIA title
             if ( level === 0 && typeof title === 'string' ) {
@@ -592,7 +592,7 @@
 
           let menu_count = -1;
 
-          menu.forEach( (nav, i_nav ) => {
+          menu.forEach( nav => {
             if ( nav.tagName !== 'UL' ) {
               $content.appendChild( nav.content );
               return;
@@ -618,7 +618,7 @@
               $menu.classList.add.apply( $menu.classList, nav.htmlClass.split( ' ' ) );
             }
 
-            nav.items.forEach( (item, i_item ) => {
+            nav.items.forEach( item => {
               const $item_content = item.content;
 
               // item has custom content
@@ -642,7 +642,7 @@
                 return;
               }
 
-              const $original_link = Array.from( $item_content ).filter( (child ) => {
+              const $original_link = Array.from( $item_content ).filter( child => {
                 return child.tagName === 'A' || ( child.nodeType !== Node.TEXT_NODE && child.querySelector( 'a' ) );
               } )[0];
 
@@ -653,7 +653,7 @@
                 $item_link.classList.add( 'nav-item-link' );
               }
               else {
-                $item_link = Helpers.createElement(item.subnav.length ? 'a' : 'span', {
+                $item_link = Helpers.createElement( item.subnav.length ? 'a' : 'span', {
                   class: 'nav-item-link'
                 }, Array.from( $item_content ).map( ( el ) => {
                   return Helpers.clone( el, true, true );
@@ -848,10 +848,15 @@
             if ( Settings.insertBack !== false && Settings.levelOpen === 'overlap' ) {
               const $children_menus = Helpers.children( $content, 'ul' );
               const backLabel = ( Settings.levelTitleAsBack ? ( backTitle || Settings.labelBack ) : Settings.labelBack ) || '';
-              const $back_a = Helpers.createElement( 'a', {href: '#', class: 'nav-back-button', role: 'menuitem', tabindex: 0}, [
+              const $back_a = Helpers.createElement( 'a', {
+                href: '#',
+                class: 'nav-back-button',
+                role: 'menuitem',
+                tabindex: 0
+              }, [
                 backLabel,
                 Helpers.createElement( 'span' )
-              ]);
+              ] );
 
               if ( Settings.insertBack === true || Settings.insertBack === 0 ) {
                 const $back = Helpers.createElement( 'div', {class: 'nav-back'}, $back_a );
@@ -865,7 +870,7 @@
               const closeThisLevel = () => closeLevel( level, backIndex );
 
               Helpers.wrap( $back_a, Helpers.createElement( 'div', {class: 'nav-item-wrapper'} ) );
-              $back_a.addEventListener( 'click', Helpers.preventClick(closeThisLevel ) );
+              $back_a.addEventListener( 'click', Helpers.preventClick( closeThisLevel ) );
               $back_a.addEventListener( 'keydown', ( e ) => {
                 if ( e.key === 'Enter' || e.keyCode === 13 ) {
                   // remember we are accessing via keyboard
@@ -882,12 +887,12 @@
               class: 'nav-close-button' + ( Settings.labelClose ? ' has-label' : '' ),
               role: 'menuitem',
               tabindex: 0,
-              'aria-label': !Settings.labelClose ? ( Settings.ariaLabels || {} ).close : ''
+              'aria-label': ! Settings.labelClose ? ( Settings.ariaLabels || {} ).close : ''
             },
               [Settings.labelClose || '', Helpers.createElement( 'span' )]
             );
 
-            $close_a.addEventListener( 'click', Helpers.preventClick(closeNav ) );
+            $close_a.addEventListener( 'click', Helpers.preventClick( closeNav ) );
             $close_a.addEventListener( 'keydown', ( e ) => {
               if ( e.key === 'Enter' || e.keyCode === 13 ) {
                 untrapFocus();
@@ -898,20 +903,24 @@
               // after nav title
               $content.insertBefore( Helpers.createElement( 'div', {
                 class: 'nav-close'
-              }, $close_a), $content.children[1]);
+              }, $close_a ), $content.children[1] );
             }
             else if ( Settings.insertClose === true ) {
               // before nav content
               $content.insertBefore( Helpers.createElement( 'div', {
                 class: 'nav-close'
-              }, $close_a), $content.firstChild);
+              }, $close_a ), $content.firstChild );
             }
             else {
               // as menu item
               const $nav_ul = Helpers.children( $content, 'ul' );
-              const $close = Helpers.createElement( 'li', {class: 'nav-item nav-close'}, $close_a );
+              const $close = Helpers.createElement( 'li', {
+                class: 'nav-item nav-close'
+              }, $close_a );
 
-              Helpers.wrap( $close_a, Helpers.createElement( 'div', {class: 'nav-item-wrapper'} ) );
+              Helpers.wrap( $close_a, Helpers.createElement( 'div', {
+                class: 'nav-item-wrapper'
+              } ) );
               Helpers.insertAt( $close, Settings.insertClose, $nav_ul );
             }
           }
@@ -993,7 +1002,7 @@
           xDiff = Math.min( Math.max( xDiff, 0 ), swipeWidth );
         }
         else {
-          xDiff = Math.abs( Math.min( Math.max(xDiff, -swipeWidth ), 0 ) );
+          xDiff = Math.abs( Math.min( Math.max( xDiff, -swipeWidth ), 0 ) );
         }
 
         if (
@@ -1001,7 +1010,7 @@
           ( Settings.position === 'right' && _xStart > document.body.clientWidth - maxStart ) // swipe left <-
         ) {
           _touchMoved = true;
-          touchCaptureNav( 0 - (_containerWidth - xDiff ), Math.abs( xDiff ) );
+          touchCaptureNav( 0 - ( _containerWidth - xDiff ), Math.abs( xDiff ) );
         }
       };
 
@@ -1024,7 +1033,7 @@
           xDiff = Math.min( Math.max( xDiff, 0 ), swipeWidth );
         }
         else {
-          xDiff = Math.abs( Math.min( Math.max(xDiff, -swipeWidth ), 0 ) );
+          xDiff = Math.abs( Math.min( Math.max( xDiff, -swipeWidth ), 0 ) );
         }
 
         if ( ! xDiff ) {
@@ -1047,7 +1056,7 @@
         let xDiff = 0 - ( _xStart - e.touches[0].clientX );
         let yDiff = 0 - ( _yStart - e.touches[0].clientY );
 
-        if ( Math.abs(xDiff ) < Math.abs( yDiff ) ) {
+        if ( Math.abs( xDiff ) < Math.abs( yDiff ) ) {
           return;
         }
 
@@ -1066,7 +1075,7 @@
           ( Settings.position === 'right' && xDiff > 0 ) // swipe left <-
         ) {
           _touchMoved = true;
-          touchCaptureNav( -Math.abs(xDiff ) + levelSpacing, swipeWidth - Math.abs( xDiff ) );
+          touchCaptureNav( -Math.abs( xDiff ) + levelSpacing, swipeWidth - Math.abs( xDiff ) );
         }
       };
 
@@ -1087,10 +1096,10 @@
         const diffTrashold = 50;
 
         if ( Settings.position === 'left' ) {
-          xDiff = Math.abs( Math.min( Math.max(xDiff, -swipeWidth ), 0 ) );
+          xDiff = Math.abs( Math.min( Math.max( xDiff, -swipeWidth ), 0 ) );
         }
         else {
-          xDiff = Math.abs( Math.min( Math.max(xDiff, 0 ), swipeWidth ) );
+          xDiff = Math.abs( Math.min( Math.max( xDiff, 0 ), swipeWidth ) );
         }
 
         if ( xDiff === swipeWidth ) {
@@ -1205,7 +1214,7 @@
       function activeLevel() {
         return _openLevels.length
           ? Number(
-              Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( ( el ) => {
+              Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( el => {
                 return el.value == _openLevels[_openLevels.length - 1];
               } )[0].dataset.level
             )
@@ -1215,7 +1224,7 @@
       function activeIndex() {
         return _openLevels.length
           ? Number(
-              Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( ( el ) => {
+              Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( el => {
                 return el.value == _openLevels[_openLevels.length - 1];
               } )[0].dataset.index
             )
@@ -1237,7 +1246,7 @@
 
         let $checkbox;
 
-        if ( ( typeof l === 'number' || Helpers.isNumeric(l ) ) && ( typeof i === 'number' || Helpers.isNumeric(i ) ) ) {
+        if ( ( typeof l === 'number' || Helpers.isNumeric( l ) ) && ( typeof i === 'number' || Helpers.isNumeric( i ) ) ) {
 
           $checkbox = document.querySelector( `#${navUniqId}-${l}-${i}` );
 
@@ -1248,18 +1257,18 @@
         }
         else if ( _nextActiveLevel ) {
           // get level to open from [data-nav-active]
-          $checkbox = Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( ( el ) => {
+          $checkbox = Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( el => {
             return el.value == _nextActiveLevel;
           } )[0];
 
           // reset flag
-          if ( Settings.closeActiveLevel || !Settings.closeOpenLevels ) {
+          if ( Settings.closeActiveLevel || ! Settings.closeOpenLevels ) {
             _nextActiveLevel = null;
           }
         }
         else if ( Settings.closeOpenLevels === false ) {
           // get last checked level
-          $checkbox = Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( ( el ) => {
+          $checkbox = Array.from( $nav_container.querySelectorAll( '.hc-chk' ) ).filter( el => {
             return el.getAttribute( 'checked' ) === 'true';
           } );
           $checkbox = $checkbox[$checkbox.length - 1];
@@ -1365,7 +1374,7 @@
 
         // trigger "toggle" event
         if ( $nav._eventListeners.toggle ) {
-          $nav._eventListeners.toggle.forEach( ( ev ) => {
+          $nav._eventListeners.toggle.forEach( ev => {
             ev.fn( Helpers.customEventObject( 'toggle', $nav, $nav, {
               action: 'open'
             } ), Object.assign( {}, Settings ) );
@@ -1375,7 +1384,7 @@
         setTimeout( () => {
           // trigger "open" event
           if ( $nav._eventListeners.open ) {
-            $nav._eventListeners.open.forEach( ( ev ) => {
+            $nav._eventListeners.open.forEach( ev => {
               ev.fn( Helpers.customEventObject( 'open', $nav, $nav ), Object.assign( {}, Settings ) );
             } );
           }
@@ -1441,7 +1450,7 @@
 
         // trigger "toggle" event
         if ( $nav._eventListeners.toggle ) {
-          $nav._eventListeners.toggle.forEach( ( ev ) => {
+          $nav._eventListeners.toggle.forEach( ev => {
             ev.fn( Helpers.customEventObject( 'toggle', $nav, $nav, {
               action: 'close'
             } ), Object.assign( {}, Settings ) );
@@ -1453,14 +1462,14 @@
 
           // trigger "close" event
           if ( $nav._eventListeners.close ) {
-            $nav._eventListeners.close.forEach( ( ev ) => {
+            $nav._eventListeners.close.forEach( ev => {
               ev.fn( Helpers.customEventObject( 'close', $nav, $nav ), Object.assign( {}, Settings ) );
             } );
           }
 
           // only trigger this "close" event once and then remove it
           if ( $nav._eventListeners['close.once'] ) {
-            $nav._eventListeners['close.once'].forEach( ( ev ) => {
+            $nav._eventListeners['close.once'].forEach( ev => {
               ev.fn( Helpers.customEventObject( 'close.once', $nav, $nav ), Object.assign( {}, Settings ) );
             } );
           }
@@ -1529,7 +1538,7 @@
 
         // trigger level open event
         if ( $nav._eventListeners['open.level'] ) {
-          $nav._eventListeners['open.level'].forEach( ( ev ) => {
+          $nav._eventListeners['open.level'].forEach( ev => {
             ev.fn( Helpers.customEventObject( 'open.level', $nav, $sub_wrap, {
               currentLevel: l,
               currentIndex: i
@@ -1586,7 +1595,7 @@
             _closeLevel( l, i, true );
           }
           else {
-            if ( l === 0 && !Settings.closeOpenLevels ) {
+            if ( l === 0 && ! Settings.closeOpenLevels ) {
               // do nothing
             }
             else {
@@ -1602,7 +1611,7 @@
         if ( l > 0 && $nav._eventListeners['close.level'] ) {
           const $wrap = document.querySelector( `#${navUniqId}-${l}-${i}` ).closest( '.nav-wrapper' );
 
-          $nav._eventListeners['close.level'].forEach( ( ev ) => {
+          $nav._eventListeners['close.level'].forEach( ev => {
             ev.fn( Helpers.customEventObject( 'close.level', $nav, $wrap, {
               currentLevel: l - 1,
               currentIndex: activeIndex()
@@ -1612,7 +1621,7 @@
 
         if ( _keyboard ) {
           // trap focus back one level when keyboard accessing
-          trapFocus( null, l-1 );
+          trapFocus( null, l - 1 );
           // reset keyboard flag
           _keyboard = false;
         }
