@@ -54,7 +54,7 @@ Or download the [latest release](https://github.com/somewebmedia/hc-offcanvas-na
 In the script, including HC Off-canvas Nav will usually look like this:
 
 ```js
-const hcOffcanvasNav = require('hc-offcanvas-nav');
+const hcOffcanvasNav = require( 'hc-offcanvas-nav' );
 ```
 
 #### Babel
@@ -70,11 +70,12 @@ If using AMD, the module will be automatically defined as `hcOffcanvasNav`.
 #### SCSS
 
 ```scss
-@import 'hc-offcanvas-nav/src/scss/core';
-@import 'hc-offcanvas-nav/src/scss/toggle';
-@import 'hc-offcanvas-nav/src/scss/theme-default';
-```
+@use 'hc-offcanvas-nav/src/scss/core';
+@use 'hc-offcanvas-nav/src/scss/toggle';
+@use 'hc-offcanvas-nav/src/scss/theme-default' as theme-default;
 
+@include theme-default.styles();
+```
 
 ## Usage
 
@@ -83,33 +84,29 @@ Be sure to call the Nav once your menu element is available in the DOM.
 #### Vanilla JS
 
 ```js
-document.addEventListener('DOMContentLoaded', function() {
-
-  var Nav = new hcOffcanvasNav('#main-nav', {
+document.addEventListener( 'DOMContentLoaded', function () {
+  var Nav = new hcOffcanvasNav( '#main-nav', {
     disableAt: 1024,
     customToggle: '.toggle',
     navTitle: 'All Categories',
     levelTitles: true,
-    levelTitleAsBack: true
-  });
-
-});
+    levelTitleAsBack: true,
+  } );
+} );
 ```
 
 #### jQuery
 
 ```js
-jQuery(document).ready(function($) {
-
-  $('#main-nav').hcOffcanvasNav({
+jQuery( document ).ready( function ( $ ) {
+  $( '#main-nav' ).hcOffcanvasNav( {
     disableAt: 1024,
-    customToggle: $('.toggle'),
+    customToggle: $( '.toggle' ),
     navTitle: 'All Categories',
     levelTitles: true,
-    levelTitleAsBack: true
-  });
-
-});
+    levelTitleAsBack: true,
+  } );
+} );
 ```
 
 For HC Off-canvas Nav to work as a jQuery plugin, jQuery has to be a property of global `window` object, so be careful when using it in combination with Babel/Webpack/Browserify and jQuery.
@@ -152,11 +149,12 @@ HC Off-canvas Nav currently has 2 themes, the default and Carbon. To use Carbon 
 Or if compiling the SCSS from the `src` dir, `@include` it from there:
 
 ```scss
-@import 'hc-offcanvas-nav/src/scss/core';
-@import 'hc-offcanvas-nav/src/scss/toggle';
-@import 'hc-offcanvas-nav/src/scss/theme-carbon';
-```
+@use 'hc-offcanvas-nav/src/scss/core';
+@use 'hc-offcanvas-nav/src/scss/toggle';
+@use 'hc-offcanvas-nav/src/scss/theme-carbon' as theme-carbon;
 
+@include theme-carbon.styles();
+```
 
 ## Options
 
@@ -216,8 +214,8 @@ var Nav = new hcOffcanvasNav();
 #### jQuery
 
 ```js
-var $nav = $('#main-nav').hcOffcanvasNav();
-var Nav = $nav.data('hcOffcanvasNav');
+var $nav = $( '#main-nav' ).hcOffcanvasNav();
+var Nav = $nav.data( 'hcOffcanvasNav' );
 ```
 
 ### .getSettings()
@@ -233,7 +231,7 @@ var currentSettings = Nav.getSettings();
 Checks if the nav is open, and returns boolean.
 
 ```js
-if (Nav.isOpen()) {
+if ( Nav.isOpen() ) {
   // do something
 }
 ```
@@ -243,28 +241,31 @@ if (Nav.isOpen()) {
 Updates just the specified settings with the new ones.
 
 ```js
-Nav.update({
+Nav.update( {
   disableAt: 1024,
-  navTitle: 'All pages'
-});
+  navTitle: 'All pages',
+} );
 ```
 
 Updates nav DOM. You don't have to pass empty settings object, the method is smart. Use this when original nav has been altered.
 
 ```js
-Nav.update(true);
+Nav.update( true );
 ```
 
 Updates both settings and nav DOM. Use this when original nav was changed and you also want to update some specific settings.
 
 ```js
-Nav.update({
-  disableAt: 1024,
-  navTitle: 'All pages'
-}, true);
+Nav.update(
+  {
+    disableAt: 1024,
+    navTitle: 'All pages',
+  },
+  true
+);
 ```
 
-### .open(level, index)
+### .open( level, index )
 
 Opens the nav if closed.
 
@@ -275,7 +276,7 @@ Nav.open();
 Open the nav and also a specific sub menu. Each level sub menu has its own index that is relative to that level, not the parent menu.
 
 ```js
-Nav.open(2, 1);
+Nav.open( 2, 1 );
 ```
 Above code will open the nested menu in the example structure bellow:
 
@@ -333,38 +334,38 @@ Toggles (open/close) the nav.
 Nav.toggle();
 ```
 
-### .on(eventName, cb)
+### .on( eventName, cb )
 
 Attach [Event](#events) listener to the nav.
 
 ```js
-Nav.on('close', function() {
+Nav.on( 'close', function () {
   // do something on close
-});
+} );
 ```
 
-### .off(eventName, cb)
+### .off( eventName, cb )
 
 Remove [Event](#events) listener from the nav.
 
 ```js
 // remove specific function
-Nav.off('close', onCloseFunction);
+Nav.off( 'close', onCloseFunction);
 
 // remove all event listeners
-Nav.off('close');
+Nav.off( 'close' );
 ```
 
 ## Events
 
-| Event | Description |
-|-------|-------------|
-| **open** | Triggers each time after nav is opened. |
-| **open.level** | Triggers each time after any level is opened. |
-| **close** | Triggers each time after nav is closed. |
-| **close.once** | Triggers only the first time after nav is closed, and than it detaches itself. |
-| **close.level** | Triggers each time after any level is closed. |
-| **toggle** | Triggers each time nav is triggered to be opened or closed. |
+| Event           | Description                                                                    |
+| --------------- | ------------------------------------------------------------------------------ |
+| **open**        | Triggers each time after nav is opened.                                        |
+| **open.level**  | Triggers each time after any level is opened.                                  |
+| **close**       | Triggers each time after nav is closed.                                        |
+| **close.once**  | Triggers only the first time after nav is closed, and than it detaches itself. |
+| **close.level** | Triggers each time after any level is closed.                                  |
+| **toggle**      | Triggers each time nav is triggered to be opened or closed.                    |
 
 All events return Event object as first argument, and the plugin Settings object as second argument.
 
@@ -377,34 +378,34 @@ Examples:
 
 ```js
 // change nav open position after each close
-Nav.on('close', function(e, settings) {
-  Nav.update({
-    position: settings.position === 'left' ? 'right' : 'left'
-  });
-});
+Nav.on( 'close', function ( e, settings ) {
+  Nav.update( {
+    position: settings.position === 'left' ? 'right' : 'left',
+  } );
+} );
 
 // will change nav open position only once
-Nav.on('close.once', function(e, settings) {
-  Nav.update({
-    position: settings.position === 'left' ? 'right' : 'left'
-  });
-});
+Nav.on( 'close.once', function ( e, settings ) {
+  Nav.update( {
+    position: settings.position === 'left' ? 'right' : 'left',
+  } );
+} );
 
-Nav.on('open.level', (e, settings) => {
-  localStorage.setItem('NavLevel', e.data.currentLevel);
-  localStorage.setItem('NavIndex', e.data.currentIndex);
-});
+Nav.on( 'open.level', ( e, settings ) => {
+  localStorage.setItem( 'NavLevel', e.data.currentLevel );
+  localStorage.setItem( 'NavIndex', e.data.currentIndex );
+} );
 
-Nav.on('close.level', (e, settings) => {
-  localStorage.setItem('NavLevel', e.data.currentLevel);
-  localStorage.setItem('NavIndex', e.data.currentIndex);
-});
+Nav.on( 'close.level', ( e, settings ) => {
+  localStorage.setItem( 'NavLevel', e.data.currentLevel );
+  localStorage.setItem( 'NavIndex', e.data.currentIndex );
+} );
 
-Nav.on('toggle', (e, settings) => {
-  if (e.data.action == 'open') {
+Nav.on( 'toggle', ( e, settings ) => {
+  if ( e.data.action == 'open' ) {
     // do something when `open` action is triggered
   }
-});
+} );
 ```
 
 
@@ -452,44 +453,44 @@ $hc_nav_menu_walker;
 
 class HC_Walker_Nav_Menu extends Walker_Nav_Menu {
 
-  public function start_lvl(&$output, $depth = 0, $args = array()) {
+  public function start_lvl( &$output, $depth = 0, $args = array() ) {
     global $hc_nav_menu_walker;
-    $hc_nav_menu_walker->start_lvl($output, $depth, $args);
+    $hc_nav_menu_walker->start_lvl( $output, $depth, $args );
   }
 
-  public function end_lvl(&$output, $depth = 0, $args = array()) {
+  public function end_lvl( &$output, $depth = 0, $args = array() ) {
     global $hc_nav_menu_walker;
-    $hc_nav_menu_walker->end_lvl($output, $depth, $args);
+    $hc_nav_menu_walker->end_lvl( $output, $depth, $args );
   }
 
-  public function start_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
+  public function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
     global $hc_nav_menu_walker;
 
     $item_output = '';
 
-    $hc_nav_menu_walker->start_el($item_output, $item, $depth, $args, $id);
+    $hc_nav_menu_walker->start_el( $item_output, $item, $depth, $args, $id );
 
-    if ($item->current_item_parent) {
-      $item_output = preg_replace('/<li/', '<li data-nav-active', $item_output, 1);
+    if ( $item->current_item_parent ) {
+      $item_output = preg_replace( '/<li/', '<li data-nav-active', $item_output, 1 );
     }
 
-    if ($item->current) {
-      $item_output = preg_replace('/<li/', '<li data-nav-highlight', $item_output, 1);
+    if ( $item->current ) {
+      $item_output = preg_replace( '/<li/', '<li data-nav-highlight', $item_output, 1 );
     }
 
     $output .= $item_output;
   }
 
-  public function end_el(&$output, $item, $depth = 0, $args = array(), $id = 0) {
+  public function end_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
     global $hc_nav_menu_walker;
-    $hc_nav_menu_walker->end_el($output, $item, $depth, $args, $id);
+    $hc_nav_menu_walker->end_el( $output, $item, $depth, $args, $id );
   }
 }
 
-add_filter('wp_nav_menu_args', function($args) {
+add_filter( 'wp_nav_menu_args', function( $args ) {
   global $hc_nav_menu_walker;
 
-  if (!empty($args['walker'])) {
+  if ( ! empty( $args['walker'] ) ) {
     $hc_nav_menu_walker = $args['walker'];
   }
   else {
@@ -499,7 +500,7 @@ add_filter('wp_nav_menu_args', function($args) {
   $args['walker'] = new HC_Walker_Nav_Menu();
 
   return $args;
-});
+} );
 ```
 
 
