@@ -956,22 +956,22 @@
       const touchCaptureNav = ( transNav, transContent ) => {
         window.addEventListener( 'touchmove', Helpers.preventDefault, Helpers.supportsPassive ); // disable page scroll
         $nav.style.visibility = 'visible';
-        $nav_container.style[Helpers.browserPrefix( 'transition' )] = 'none';
+        $nav_container.style.transition = 'none';
         Helpers.setTransform( $nav_container, transNav, Settings.position );
 
         if ( $push_content ) {
-          $push_content.style[Helpers.browserPrefix( 'transition' )] = 'none';
+          $push_content.style.transition = 'none';
           Helpers.setTransform( $push_content, transContent, Settings.position );
         }
       };
 
       const touchReleaseNav = ( action, timeoutVsb = true, transNav = false, transContent = false ) => {
         window.removeEventListener( 'touchmove', Helpers.preventDefault, Helpers.supportsPassive ) // enable page scroll
-        $nav_container.style[Helpers.browserPrefix( 'transition' )] = '';
+        $nav_container.style.transition = '';
         Helpers.setTransform( $nav_container, transNav, Settings.position );
 
         if ( $push_content ) {
-          $push_content.style[Helpers.browserPrefix( 'transition' )] = '';
+          $push_content.style.transition = '';
           Helpers.setTransform( $push_content, transContent, Settings.position );
         }
 

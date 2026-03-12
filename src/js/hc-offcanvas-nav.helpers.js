@@ -35,25 +35,6 @@
     };
   };
 
-  const browserPrefix = ( prop ) => {
-    const prefixes = ['Webkit', 'Moz', 'Ms', 'O'];
-    const thisBody = document.body || document.documentElement;
-    const thisStyle = thisBody.style;
-    const Prop = prop.charAt( 0 ).toUpperCase() + prop.slice( 1 );
-
-    if ( typeof thisStyle[prop] !== 'undefined' ) {
-      return prop;
-    }
-
-    for ( let i = 0; i < prefixes.length; i++ ) {
-      if ( typeof thisStyle[prefixes[i] + Prop] !== 'undefined' ) {
-        return prefixes[i] + Prop;
-      }
-    }
-
-    return false;
-  };
-
   const children = ( el, selector ) => {
     if ( el instanceof Element ) {
       return selector ? Array.from( el.children ).filter( child => child.matches( selector ) ) : el.children;
@@ -395,8 +376,6 @@
   const getAxis = ( position ) => ['left', 'right'].indexOf( position ) !== -1 ? 'x' : 'y';
 
   const setTransform = ( () => {
-    const transform = browserPrefix( 'transform' );
-
     return ( $el, val, pos ) => {
       if ( val === false || val === '' ) {
         $el.style.transform = '';
@@ -445,7 +424,6 @@
     stopPropagation,
     preventDefault,
     preventClick,
-    browserPrefix,
     children,
     wrap,
     data,
