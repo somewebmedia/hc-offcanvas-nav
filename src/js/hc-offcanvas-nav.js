@@ -1613,6 +1613,7 @@
 
           $nav._eventListeners['close.level'].forEach( ev => {
             ev.fn( Helpers.customEventObject( 'close.level', $nav, $wrap, {
+              previousLevel: l,
               currentLevel: l - 1,
               currentIndex: activeIndex()
             } ), Object.assign( {}, Settings ) );
