@@ -232,11 +232,11 @@
 
         if ( typeof n === 'number' ) {
           // put focus on item with desired index
-          $focusable[n].focus();
+          $focusable.at( n )?.focus();
         }
         else {
           // focus last focusable element
-          _focusEls[_focusEls.length - 1].focus();
+          _focusEls[_focusEls.length - 1]?.focus();
           // remove last element from focusable array
           _focusEls.pop();
         }
@@ -1493,8 +1493,18 @@
             $toggle_open = $t;
           }
 
-          if ( _open ) closeNav();
-          else openNav();
+          if ( _open ) {
+            closeNav();
+          }
+          else {
+            openNav();
+
+            if ( e && e.detail > 0 ) {
+              setTimeout( () => {
+                trapFocus( -1, 0 );
+              }, 0 );
+            }
+          }
         };
       }
 
