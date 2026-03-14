@@ -150,8 +150,13 @@
   const addRemoveListener = ( op ) => {
     const f = EventTarget.prototype[op + 'EventListener'];
 
+    const getEventName = ( name ) => {
+      return name.endsWith( '.hcOffcanvasNav' ) ? name.split( '.' )[0] : name;
+    };
+
     return function ( name, cb, opts ) {
       const store = getRegistry( this );
+      const eventName = getEventName( name );
 
       if ( op === 'add' ) {
         store[name] = store[name] || [];
@@ -169,15 +174,15 @@
           }
 
           store[name].push( lstn );
-          f.call( this, name, cb, opts );
+          f.call( this, eventName, cb, opts );
         }
       }
       else {
         if ( typeof cb === 'function' ) {
-          f.call( this, name, cb, opts );
+          f.call( this, eventName, cb, opts );
 
           for ( const e in store ) {
-            store[e] = store[e].filter( l => ! ( l.fn === cb && e.split( '.' )[0] === name ) );
+            store[e] = store[e].filter( l => ! ( l.fn === cb && e.split( '.' )[0] === eventName ) );
 
             if ( ! store[e].length ) {
               delete store[e];
@@ -187,7 +192,7 @@
         else {
           if ( store[name] ) {
             for ( let i = store[name].length; i--; ) {
-              f.call( this, name, store[name][i].fn, store[name][i].options );
+              f.call( this, eventName, store[name][i].fn, store[name][i].options );
               store[name].splice( i, 1 );
             }
             delete store[name];
