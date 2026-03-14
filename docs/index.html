@@ -319,6 +319,22 @@
             labelClose: false
           } );
 
+          Nav.on( 'open', ( e, settings ) => {
+            console.log( 'Nav open' );
+          } );
+
+          Nav.on( 'open.level', ( e, settings ) => {
+            console.log( `Nav level ${e.data.currentLevel} open` );
+          } );
+
+          Nav.on( 'close', ( e, settings ) => {
+            console.log( 'Nav closed' );
+          } );
+
+          Nav.on( 'close.level', ( e, settings ) => {
+            console.log( `Nav level ${e.data.previousLevel} closed` );
+          } );
+
           // demo settings update
 
           const update = function( settings ) {
