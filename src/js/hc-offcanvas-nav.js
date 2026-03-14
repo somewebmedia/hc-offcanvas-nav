@@ -1405,6 +1405,12 @@
 
         $nav.classList.remove( navOpenClass );
         $nav.classList.remove( 'user-is-tabbing' );
+
+        const $focusedEl = $nav.querySelector( ':focus' );
+        if ( $focusedEl ) {
+          $focusedEl.blur();
+        }
+
         $nav.setAttribute( 'aria-hidden', true );
         $nav_container.removeAttribute( 'style' );
 
