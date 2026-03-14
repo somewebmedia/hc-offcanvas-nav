@@ -737,7 +737,8 @@
               if ( item.subnav.length ) {
                 const nextLevel = level + 1;
                 const uniqid = item.id;
-                let nav_title = '';
+                const nav_title = Settings.levelTitles === true ? $item_content[0].textContent.trim() : '';
+                const back_title = $item_content[0].textContent.trim();
 
                 // create new level
                 if ( ! _indexes[nextLevel] ) {
@@ -806,9 +807,6 @@
                     $checkbox.setAttribute( 'checked', true );
                   }
 
-                  // subnav title
-                  nav_title = Settings.levelTitles === true ? $item_content[0].textContent.trim() : '';
-
                   // item has no actual link
                   if ( ! $item_link.getAttribute( 'href' ) || $item_link.getAttribute( 'href' ) === '#' ) {
                     $item_link.appendChild( Helpers.createElement( 'span', {class: 'nav-next'}, Helpers.createElement( 'span' ) ) );
@@ -838,7 +836,7 @@
 
                 _indexes[nextLevel]++;
 
-                createDom( item.subnav, $item, nextLevel, nav_title, _indexes[nextLevel]-1, typeof title === 'string' ? title : '' );
+                createDom( item.subnav, $item, nextLevel, nav_title, _indexes[nextLevel]-1, title ? title : back_title );
               }
             } );
           } );
