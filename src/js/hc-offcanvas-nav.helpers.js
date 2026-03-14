@@ -151,7 +151,6 @@
     const f = EventTarget.prototype[op + 'EventListener'];
 
     return function ( name, cb, opts ) {
-      const eventName = name.split( '.' )[0];
       const store = getRegistry( this );
 
       if ( op === 'add' ) {
@@ -170,15 +169,15 @@
           }
 
           store[name].push( lstn );
-          f.call( this, eventName, cb, opts );
+          f.call( this, name, cb, opts );
         }
       }
       else {
         if ( typeof cb === 'function' ) {
-          f.call( this, eventName, cb, opts );
+          f.call( this, name, cb, opts );
 
           for ( const e in store ) {
-            store[e] = store[e].filter( l => ! ( l.fn === cb && e.split( '.' )[0] === eventName ) );
+            store[e] = store[e].filter( l => ! ( l.fn === cb && e.split( '.' )[0] === name ) );
 
             if ( ! store[e].length ) {
               delete store[e];
@@ -188,7 +187,7 @@
         else {
           if ( store[name] ) {
             for ( let i = store[name].length; i--; ) {
-              f.call( this, eventName, store[name][i].fn, store[name][i].options );
+              f.call( this, name, store[name][i].fn, store[name][i].options );
               store[name].splice( i, 1 );
             }
             delete store[name];
