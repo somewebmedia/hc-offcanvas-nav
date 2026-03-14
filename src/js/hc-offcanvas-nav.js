@@ -197,7 +197,7 @@
       /* ARIA Keyboard Focus */
 
       const trapFocus = ( n, l, i ) => {
-        if ( typeof l !== 'number' || (typeof n !== 'number' && !_focusEls.length ) ) {
+        if ( typeof l !== 'number' || ( typeof n !== 'number' && !_focusEls.length ) ) {
           return;
         }
 
@@ -216,7 +216,7 @@
         $focusable = Helpers.children( $focusable, ':not(.nav-wrapper)' );
         $focusable = [...$navControls, ...$focusable];
         $focusable = Array.from( $focusable ).map( ( el ) => {
-          return Array.from( el.querySelectorAll(focusableSelector ) );
+          return Array.from( el.querySelectorAll( focusableSelector ) );
         } ).flat();
         $focusable = Array.from( $focusable ).filter( el => el.getAttribute( 'tabindex' ) !== '-1' );
 
