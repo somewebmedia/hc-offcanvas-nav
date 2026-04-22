@@ -1,3 +1,5 @@
 @use './core';
 @use './toggle';
-@use './theme-carbon';
+@use '../src/scss/theme-carbon' as theme-carbon;
+
+@include theme-carbon.styles();

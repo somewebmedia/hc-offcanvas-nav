@@ -1,3 +1,5 @@
 @use './core';
 @use './toggle';
-@use './theme-default';
+@use '../src/scss/theme-default' as theme-default;
+
+@include theme-default.styles();
