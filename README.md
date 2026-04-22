@@ -515,6 +515,12 @@ This package comes with [Gulp](https://gulpjs.com/). The following tasks are ava
 
 You can pass a `--dev` command if you don't want the compiled JS and Css to be minified.
 
+```js
+npx gulp
+npx gulp watch
+npx gulp --dev
+```
+
 
 
 ## License
